@@ -1,0 +1,18 @@
+PredictorGroup,MeanAbsContribution
+specialty_group,0.4983321897825552
+specialty_group × time_in_hospital,0.32199505266658685
+time_in_hospital,0.2947576502925264
+primary_diag_group,0.2535710475648656
+primary_diag_group × time_in_hospital,0.23320176818639762
+age_group3,0.2135614971331772
+specialty_group × age_group3,0.18847245653566666
+discharge_group × specialty_group,0.18015608881393064
+discharge_group,0.13400272857136605
+discharge_group × primary_diag_group,0.0969907301250108
+primary_diag_group × hba1c_group,0.09142689544103433
+hba1c_group,0.07706193451883885
+discharge_group × time_in_hospital,0.07062761424784153
+race_group,0.04710695904629491
+admission_source_group,0.039310273922455265
+discharge_group × race_group,0.025157035337300574
+gender,0.014051440245039525

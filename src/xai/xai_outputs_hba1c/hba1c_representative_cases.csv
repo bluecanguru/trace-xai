@@ -1,0 +1,6 @@
+,readmitted_bin,hba1c_group,gender,discharge_group,admission_source_group,specialty_group,primary_diag_group,race_group,age_group3,age_mid,time_in_hospital,y_true,y_prob,y_pred,dist_to_thr,CaseType
+71214,1,No test was performed,Female,Discharged to home,Admitted because of physician/clinic referral,Cardiology,Circulatory,African American,30 years old or younger,25.0,5,1,0.3165078361597319,1,0.23227894022134932,TP
+20924,0,Result was high and the diabetic medication was changed,Female,Discharged to home,Admitted from emergency room,Surgery,Injury,Caucasian,30 years old or younger,15.0,8,0,0.009531647448095457,0,0.0746972484902871,TN
+98382,0,Normal result of the test,Female,Otherwise,Admitted from emergency room,Internal Medicine,Genitourinary,Other,Older than 60,85.0,14,0,0.35282606409965933,1,0.26859716816127677,FP
+1313,1,Normal result of the test,Male,Discharged to home,Otherwise,Cardiology,Respiratory,Caucasian,30-60 years old,55.0,2,1,0.020808575087753533,0,0.06342032085062901,FN
+85617,1,No test was performed,Male,Discharged to home,Admitted because of physician/clinic referral,Missing or unknown,Circulatory,African American,30-60 years old,45.0,7,1,0.08422889593838255,1,0.0,Borderline

@@ -1,0 +1,86 @@
+PredictorGroup,Importance,Seed,Rank
+admission_source_group,0.0414306464540153,1,16.0
+age_group3,0.21552806417005735,1,6.0
+discharge_group,0.21048589891261835,1,7.0
+discharge_group × primary_diag_group,0.10756715039090597,1,10.0
+discharge_group × race_group,0.045100524507685105,1,15.0
+discharge_group × specialty_group,0.12517912386182065,1,9.0
+discharge_group × time_in_hospital,0.06891340334550713,1,13.0
+gender,0.017399457570348557,1,17.0
+hba1c_group,0.08279258759597638,1,12.0
+primary_diag_group,0.281381350165537,1,3.0
+primary_diag_group × hba1c_group,0.10271470894673482,1,11.0
+primary_diag_group × time_in_hospital,0.29382114384509167,1,2.0
+race_group,0.05664797413845218,1,14.0
+specialty_group,0.4736707997525484,1,1.0
+specialty_group × age_group3,0.23932369808631218,1,5.0
+specialty_group × time_in_hospital,0.190666799823268,1,8.0
+time_in_hospital,0.2641876029360649,1,4.0
+admission_source_group,0.03967714655025506,2,15.0
+age_group3,0.1789870510515909,2,7.0
+discharge_group,0.08808501001331102,2,10.0
+discharge_group × primary_diag_group,0.11227009968918919,2,9.0
+discharge_group × race_group,0.02814599407936603,2,16.0
+discharge_group × specialty_group,0.23252792466402872,2,6.0
+discharge_group × time_in_hospital,0.05730906100154587,2,13.0
+gender,0.012614339984957902,2,17.0
+hba1c_group,0.08136417342726944,2,11.0
+primary_diag_group,0.2715768703555286,2,4.0
+primary_diag_group × hba1c_group,0.08119006106442782,2,12.0
+primary_diag_group × time_in_hospital,0.2621513574768683,2,5.0
+race_group,0.056599154554158614,2,14.0
+specialty_group,0.3914052028603898,2,1.0
+specialty_group × age_group3,0.13882531422798208,2,8.0
+specialty_group × time_in_hospital,0.3525991821303662,2,2.0
+time_in_hospital,0.3064558284926587,2,3.0
+admission_source_group,0.04207659951438761,3,15.0
+age_group3,0.1522119048342236,3,7.0
+discharge_group,0.13872108239588551,3,9.0
+discharge_group × primary_diag_group,0.0974788910374669,3,10.0
+discharge_group × race_group,0.034672657326267786,3,16.0
+discharge_group × specialty_group,0.19536317718743773,3,6.0
+discharge_group × time_in_hospital,0.09699161934669016,3,11.0
+gender,0.013085251718491684,3,17.0
+hba1c_group,0.0922105587282569,3,12.0
+primary_diag_group,0.26540651670195287,3,4.0
+primary_diag_group × hba1c_group,0.08949281670105232,3,13.0
+primary_diag_group × time_in_hospital,0.22201782105247087,3,5.0
+race_group,0.05066331432816693,3,14.0
+specialty_group,0.42797638256925236,3,1.0
+specialty_group × age_group3,0.1517102462396518,3,8.0
+specialty_group × time_in_hospital,0.3491206030677372,3,2.0
+time_in_hospital,0.30986677826432274,3,3.0
+admission_source_group,0.04656312240366638,4,15.0
+age_group3,0.2701927666112305,4,6.0
+discharge_group,0.12289805267754804,4,9.0
+discharge_group × primary_diag_group,0.10130165437503931,4,10.0
+discharge_group × race_group,0.037664275969211576,4,16.0
+discharge_group × specialty_group,0.18295228211231396,4,8.0
+discharge_group × time_in_hospital,0.06521370723611371,4,13.0
+gender,0.001319856185607616,4,17.0
+hba1c_group,0.09173221966505551,4,11.0
+primary_diag_group,0.30418695160983084,4,4.0
+primary_diag_group × hba1c_group,0.08137601295816989,4,12.0
+primary_diag_group × time_in_hospital,0.24866259595580448,4,7.0
+race_group,0.06212160632424289,4,14.0
+specialty_group,0.5469084282281418,4,1.0
+specialty_group × age_group3,0.3058724745520038,4,3.0
+specialty_group × time_in_hospital,0.340086752021159,4,2.0
+time_in_hospital,0.3037993665789389,4,5.0
+admission_source_group,0.03478432576949453,5,16.0
+age_group3,0.11359451367209543,5,9.0
+discharge_group,0.12425308888421485,5,8.0
+discharge_group × primary_diag_group,0.101013945901676,5,10.0
+discharge_group × race_group,0.04120269200880021,5,15.0
+discharge_group × specialty_group,0.15497078941284287,5,6.0
+discharge_group × time_in_hospital,0.0698946897178758,5,13.0
+gender,0.01801240889054015,5,17.0
+hba1c_group,0.08313542536727554,5,12.0
+primary_diag_group,0.2857236723354209,5,4.0
+primary_diag_group × hba1c_group,0.09597133106894161,5,11.0
+primary_diag_group × time_in_hospital,0.2637927167180263,5,5.0
+race_group,0.0686766963511423,5,14.0
+specialty_group,0.3840444984592429,5,1.0
+specialty_group × age_group3,0.14590029226111095,5,7.0
+specialty_group × time_in_hospital,0.3169960552698272,5,2.0
+time_in_hospital,0.2975342096159368,5,3.0

@@ -1,0 +1,91 @@
+CaseIndex,CaseType,Rule,Weight
+127,TP,sc > 3.20,0.0709276388783265
+127,TP,0.00 < htn <= 1.00,0.06912117882923421
+127,TP,10.30 < hemo <= 12.70,0.0677946862986395
+127,TP,0.00 < dm <= 1.00,0.047883951795265334
+127,TP,32.00 < pcv <= 41.00,0.047686733926005295
+127,TP,al > 2.00,0.04377316773880477
+127,TP,appet > 0.00,0.04090022970474124
+127,TP,bp <= 70.00,-0.014490206243702506
+127,TP,su <= 0.00,-0.011080671340172321
+127,TP,bu > 71.25,0.010990493655192434
+356,TN,hemo > 15.00,-0.09744610989701152
+356,TN,sg > 1.02,-0.09664035678629371
+356,TN,pcv > 45.00,-0.09248851774634682
+356,TN,sc <= 0.97,-0.08584197465886742
+356,TN,htn <= 0.00,-0.06847621106349297
+356,TN,al <= 0.00,-0.05414377981488945
+356,TN,dm <= 0.00,-0.0442785482876208
+356,TN,bgr <= 99.00,-0.030845598674783342
+356,TN,appet <= 0.00,-0.029955991859378934
+356,TN,rc > 5.50,-0.019942229766094208
+324,FP,sc <= 0.97,-0.08435507129275704
+324,FP,pcv <= 32.00,0.07513798351823275
+324,FP,htn <= 0.00,-0.07155090460295002
+324,FP,10.30 < hemo <= 12.70,0.06712304803303203
+324,FP,al <= 0.00,-0.05551104035410487
+324,FP,dm <= 0.00,-0.041399181113166386
+324,FP,appet <= 0.00,-0.03238040888463151
+324,FP,age <= 43.00,-0.02240064933481927
+324,FP,sod > 142.00,-0.020759630183307447
+324,FP,rc > 5.50,-0.017650750999749706
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",hemo > 15.00,-0.0959982914196261
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",htn <= 0.00,-0.07225986485537102
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",41.00 < pcv <= 45.00,-0.06381469140698864
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",al <= 0.00,-0.05376375742651684
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",1.35 < sc <= 3.20,0.04704787455645436
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",dm <= 0.00,-0.046972584964868024
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",appet <= 0.00,-0.029863685660638843
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",age <= 43.00,-0.022105133041073272
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",bp <= 70.00,-0.01869380274031874
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",su <= 0.00,-0.014206411005940167
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",hemo > 15.00,-0.10278073741202388
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",htn <= 0.00,-0.07281416749300058
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",41.00 < pcv <= 45.00,-0.06090548056668808
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",al <= 0.00,-0.05403611008395451
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",1.35 < sc <= 3.20,0.05301920524618595
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",dm <= 0.00,-0.0429052617820071
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",appet <= 0.00,-0.038169519181080636
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",age <= 43.00,-0.02112733238204548
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",pe > 0.00,0.0185731589734052
+224,"224            FN
+224    Borderline
+Name: CaseType, dtype: object",4.80 < rc <= 5.50,-0.01502334959242194

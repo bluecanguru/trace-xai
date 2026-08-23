@@ -1,0 +1,22 @@
+training:
+  test_size: 0.3
+  random_state: 42
+  stratify: true
+
+evaluation:
+  primary_metric: roc_auc
+  secondary_metric: f1
+
+xai:
+  explanation_level: predictor
+  methods:
+    - shap
+    - permutation
+    - lime
+
+stability:
+  enabled: true
+  seeds: [1, 2, 3, 4, 5]
+
+model:
+  mode: auto

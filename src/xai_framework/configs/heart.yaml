@@ -1,0 +1,8 @@
+dataset_name: heart
+
+data:
+  path: data/heart/processed.cleveland.data
+  target_column: target
+
+output:
+  dir: results/heart

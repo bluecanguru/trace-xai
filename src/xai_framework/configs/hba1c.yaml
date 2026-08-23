@@ -1,0 +1,8 @@
+dataset_name: hba1c
+
+data:
+  path: data/hba1c/hba1c.csv
+  target_column: label
+
+output:
+  dir: results/hba1c

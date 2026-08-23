@@ -1,0 +1,8 @@
+dataset_name: diabetes
+
+data:
+  path: data/diabetes/diabetes.csv
+  target_column: outcome
+
+output:
+  dir: results/diabetes

@@ -1,0 +1,8 @@
+dataset_name: ckd
+
+data:
+  path: data/ckd/ckd.csv
+  target_column: class
+
+output:
+  dir: results/ckd

@@ -1,0 +1,8 @@
+dataset_name: stroke
+
+data:
+  path: data/stroke/stroke.csv
+  target_column: stroke
+
+output:
+  dir: results/stroke

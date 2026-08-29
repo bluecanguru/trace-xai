@@ -174,5 +174,8 @@ def get_representative_cases(
     representative_cases = representative_cases.loc[
         ~representative_cases.index.duplicated(keep="first")
     ]
+    representative_cases = representative_cases.copy()
 
+    representative_cases["CaseIndex"] = representative_cases.index
+    
     return representative_cases

@@ -24,14 +24,23 @@ def run_native(model, feature_names):
         }).sort_values("Importance", ascending=False)
 
     if hasattr(model, "params"):
+        p = model.params.copy()
 
-        p = model.params
+        # Exclude intercept/constant from feature importance
+        p = p[
+            ~p.index.str.lower().isin(
+                ["intercept", "const"]
+            )
+        ]
 
         return pd.DataFrame({
             "Feature": p.index,
             "Importance": np.abs(p.values),
             "RawValue": p.values,
             "Method": "statsmodels"
-        }).sort_values("Importance", ascending=False)
+        }).sort_values(
+            "Importance",
+            ascending=False
+        )
 
     return None

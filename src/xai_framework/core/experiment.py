@@ -154,34 +154,20 @@ class XAIExperiment:
 
             return
 
-        stability_df, stability_summary = run_stability_analysis(
-
+        stability_df, stability_summary, rank_stability = run_stability_analysis(
             cfg["train_model_fn"],
-
             self.state.data["X_train"],
-
             self.state.data["X_test"],
-
             self.state.data["y_train"],
-
             self.state.data["y_test"],
-
             self.state.data["feature_names"],
-
-            scoring=cfg.get(
-                "scoring",
-                "roc_auc"
-            )
+            scoring=cfg.get("scoring", "roc_auc")
         )
 
         self.state.results["stability"] = {
-
-            "raw":
-                stability_df,
-
-            "summary":
-                stability_summary
-
+            "raw": stability_df,
+            "summary": stability_summary,
+            "rank_stability": rank_stability
         }
 
     # ============================================================
@@ -322,7 +308,12 @@ class XAIExperiment:
             "stability_summary":
                 stability_results.get(
                     "summary"
-                )
+                ),
+            
+            "stability_rank":
+                stability_results.get(
+                    "rank_stability"
+                ),
 
         }
 

@@ -1,5 +1,4 @@
-# Paths are relative to project_root; project_root is relative to THIS YAML.
 project_root: ../../..
 dataset_name: heart
-bundle_dir: results/heart/bundle
-output_dir: results/cli_runs/heart_run_01
+bundle_dir: results/{dataset}/bundle
+output_dir: results/cli_runs/{dataset}_{timestamp}

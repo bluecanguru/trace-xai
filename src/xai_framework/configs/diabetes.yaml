@@ -1,4 +1,4 @@
 project_root: ../../..
 dataset_name: diabetes
-bundle_dir: results/diabetes/bundle
-output_dir: results/cli_runs/diabetes_run_01
+bundle_dir: results/{dataset}/bundle
+output_dir: results/cli_runs/{dataset}_{timestamp}

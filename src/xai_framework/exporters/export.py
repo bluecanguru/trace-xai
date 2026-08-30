@@ -5,6 +5,11 @@ import json
 import joblib
 import pandas as pd
 
+try:
+    from xai_framework.versioning import runtime_versions
+except ImportError:  # Legacy notebooks import modules from src/xai_framework.
+    from versioning import runtime_versions
+
 
 # ==========================================================
 # Internal helpers
@@ -104,7 +109,10 @@ def save_xai_bundle(
             len(feature_names),
 
         "feature_names":
-            feature_names
+            feature_names,
+
+        "runtime":
+            runtime_versions()
     }
 
     if metadata is not None:

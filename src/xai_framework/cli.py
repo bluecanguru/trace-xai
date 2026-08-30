@@ -6,11 +6,17 @@ against project_root; project_root is relative to the YAML file, not the shell.
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import yaml
+
+try:
+    from xai_framework.versioning import runtime_versions
+except ImportError:
+    from versioning import runtime_versions
 
 
 def load_config(filename):
@@ -30,8 +36,19 @@ def load_config(filename):
     if not isinstance(root_value, str):
         raise ValueError("project_root must be a path string.")
     root = (path.parent / Path(root_value).expanduser()).resolve()
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    replacements = {
+        "dataset": config["dataset_name"],
+        "timestamp": timestamp
+    }
     for key in ("bundle_dir", "output_dir"):
-        config[key] = (root / Path(config[key]).expanduser()).resolve()
+        try:
+            rendered = config[key].format(**replacements)
+        except KeyError as exc:
+            raise ValueError(
+                "Path templates support only {dataset} and {timestamp}."
+            ) from exc
+        config[key] = (root / Path(rendered).expanduser()).resolve()
     if "scoring" in config and not isinstance(config["scoring"], str):
         raise ValueError("scoring must be a scikit-learn scoring name.")
     return config
@@ -154,7 +171,10 @@ def main(argv=None):
             print("CSV/JSON validation passed. Model loading and predictions are not verified.")
             return 0
         runtime = prepare_runtime(config, metadata, data, names, scoring)
-        from run_pipeline import run_pipeline
+        if __package__:
+            from .run_pipeline import run_pipeline
+        else:
+            from run_pipeline import run_pipeline
         run_pipeline(runtime)
         # The framework can catch individual LIME errors; detect incomplete exports.
         output = config["output_dir"]
@@ -169,6 +189,7 @@ def main(argv=None):
             "stability": "not rerun: no train_model_fn", "retraining": False,
             "note": "CSV roundtrips and library versions may affect numeric reproducibility."
         }
+        manifest["runtime"] = runtime_versions()
         (output / "cli_run.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
         print("Bundle-based XAI rerun completed. Original results were not overwritten.")
         return 0

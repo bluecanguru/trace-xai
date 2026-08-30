@@ -1,8 +1,6 @@
-# Template only: copy and fill in the dataset and bundle paths before using.
-# There is NO automatic base.yaml inheritance or training configuration.
+# Copy this template. Paths are relative to project_root, which is relative to
+# this YAML file. Supported placeholders: {dataset}, {timestamp}.
 project_root: ../../..
 dataset_name: REPLACE_ME
-bundle_dir: results/REPLACE_ME/bundle
-output_dir: results/cli_runs/REPLACE_ME_run_01
-# Optional override; omitted means use metadata.scoring (fallback roc_auc).
-# scoring: roc_auc
+bundle_dir: results/{dataset}/bundle
+output_dir: results/cli_runs/{dataset}_{timestamp}

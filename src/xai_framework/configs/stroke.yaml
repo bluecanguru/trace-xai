@@ -1,4 +1,4 @@
 project_root: ../../..
 dataset_name: stroke
-bundle_dir: results/stroke/bundle
-output_dir: results/cli_runs/stroke_run_01
+bundle_dir: results/{dataset}/bundle
+output_dir: results/cli_runs/{dataset}_{timestamp}

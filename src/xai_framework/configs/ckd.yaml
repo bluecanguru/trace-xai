@@ -1,4 +1,4 @@
 project_root: ../../..
 dataset_name: ckd
-bundle_dir: results/ckd/bundle
-output_dir: results/cli_runs/ckd_run_01
+bundle_dir: results/{dataset}/bundle
+output_dir: results/cli_runs/{dataset}_{timestamp}

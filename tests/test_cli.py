@@ -9,8 +9,7 @@ import pandas as pd
 import pytest
 import yaml
 
-import cli
-
+from xai_framework import cli
 
 @pytest.fixture
 def fixture_bundle(tmp_path):
@@ -103,7 +102,7 @@ def test_runtime_loads_fitted_model_without_training(fixture_bundle, monkeypatch
 
 
 def test_cli_dispatches_existing_pipeline(fixture_bundle, monkeypatch):
-    import run_pipeline
+    from xai_framework import run_pipeline
     cfg = cli.load_config(fixture_bundle)
     sentinel = {"output_dir": str(cfg["output_dir"])}
     monkeypatch.setattr(cli, "prepare_runtime", lambda *args: sentinel)

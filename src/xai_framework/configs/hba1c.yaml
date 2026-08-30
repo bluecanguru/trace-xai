@@ -1,8 +1,5 @@
+# Preserve the exported Patsy design matrix, including Intercept and interactions.
+project_root: ../../..
 dataset_name: hba1c
-
-data:
-  path: data/hba1c/hba1c.csv
-  target_column: label
-
-output:
-  dir: results/hba1c
+bundle_dir: results/hba1c/bundle
+output_dir: results/cli_runs/hba1c_run_01

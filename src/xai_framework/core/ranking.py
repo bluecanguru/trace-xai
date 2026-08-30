@@ -48,9 +48,9 @@ def compare_importance_ranks(
         .reset_index(drop=True)
     )
 
-    shap_rank["SHAPRank"] = np.arange(
-        1,
-        len(shap_rank)+1
+    shap_rank["SHAPRank"] = shap_rank["MeanAbsSHAP"].rank(
+        ascending=False,
+        method="average"
     )
 
     # -------------------------
@@ -68,9 +68,9 @@ def compare_importance_ranks(
         .reset_index(drop=True)
     )
 
-    perm_rank["PermutationRank"] = np.arange(
-        1,
-        len(perm_rank)+1
+    perm_rank["PermutationRank"] = perm_rank["Importance"].rank(
+        ascending=False,
+        method="average"
     )
 
     # -------------------------
@@ -114,9 +114,9 @@ def compare_importance_ranks(
         .reset_index(drop=True)
     )
 
-    native_rank["NativeRank"] = np.arange(
-        1,
-        len(native_rank)+1
+    native_rank["NativeRank"] = native_rank["Importance"].rank(
+        ascending=False,
+        method="average"
     )
 
     merged = (

@@ -1,8 +1,4 @@
+project_root: ../../..
 dataset_name: stroke
-
-data:
-  path: data/stroke/stroke.csv
-  target_column: stroke
-
-output:
-  dir: results/stroke
+bundle_dir: results/stroke/bundle
+output_dir: results/cli_runs/stroke_run_01

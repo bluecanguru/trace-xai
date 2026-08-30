@@ -1,8 +1,4 @@
+project_root: ../../..
 dataset_name: ckd
-
-data:
-  path: data/ckd/ckd.csv
-  target_column: class
-
-output:
-  dir: results/ckd
+bundle_dir: results/ckd/bundle
+output_dir: results/cli_runs/ckd_run_01

@@ -1,22 +1,8 @@
-training:
-  test_size: 0.3
-  random_state: 42
-  stratify: true
-
-evaluation:
-  primary_metric: roc_auc
-  secondary_metric: f1
-
-xai:
-  explanation_level: predictor
-  methods:
-    - shap
-    - permutation
-    - lime
-
-stability:
-  enabled: true
-  seeds: [1, 2, 3, 4, 5]
-
-model:
-  mode: auto
+# Template only: copy and fill in the dataset and bundle paths before using.
+# There is NO automatic base.yaml inheritance or training configuration.
+project_root: ../../..
+dataset_name: REPLACE_ME
+bundle_dir: results/REPLACE_ME/bundle
+output_dir: results/cli_runs/REPLACE_ME_run_01
+# Optional override; omitted means use metadata.scoring (fallback roc_auc).
+# scoring: roc_auc

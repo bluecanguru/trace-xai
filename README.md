@@ -143,6 +143,8 @@ If the virtual environment is not activated, use:
 & ".\.venv\Scripts\python.exe" -m xai_framework
 ```
 
+CLI configurations are parsed using YAML safe loading, and unsupported configuration keys are rejected. Validation checks the CSV/JSON schema, row counts, finite numerical values, binary labels, and ordered feature alignment. Configuration paths are resolved relative to the project root defined by the YAML rather than the shell's current directory. `base.yaml` is a copyable template and is not automatically merged into dataset configurations. An optional dataset-level `scoring` value overrides the scorer stored in bundle metadata; when omitted, the saved experiment scorer is preserved.
+
 ### Validate a bundle
 
 Validate a trusted saved bundle without deserializing its model:

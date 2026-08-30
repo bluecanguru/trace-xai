@@ -204,8 +204,8 @@ def find_created_output(existing_directories, started_at):
     return max(candidates, key=lambda path: path.stat().st_mtime)
 
 
-def main():
-    args = build_parser().parse_args()
+def main(argv=None):
+    args = build_parser().parse_args(argv)
 
     if not CONFIG_PATH.is_file():
         raise FileNotFoundError(

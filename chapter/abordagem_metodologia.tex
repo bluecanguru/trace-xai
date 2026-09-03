@@ -1,4 +1,129 @@
-\chapter*{\thechapter \quad Abordagem Metodológica}
-\addcontentsline{toc}{chapter}{\thechapter \quad Abordagem Metodológica}
-\paragraph{}
-Algum texto.
+\chapter*{\thechapter \quad Methodology}
+\addcontentsline{toc}{chapter}{\thechapter \quad Methodology}
+
+\section{Research Design}
+
+This thesis adopted a replication-and-extension design to investigate whether a common explainable artificial intelligence (XAI) framework could be applied consistently to heterogeneous clinical prediction studies. The work comprised three connected stages. First, five published studies were reconstructed using their reported datasets, preprocessing decisions, model families, and evaluation procedures. Second, methodological corrections were introduced where a literal implementation would cause information leakage or use held-out test data for model selection. Third, the fitted models were passed to a common XAI pipeline that generated global explanations, local explanations, method-agreement measures, and, where retraining was available, explanation-stability estimates.
+
+The study distinguishes between three types of analytical operation:
+
+\begin{enumerate}
+    \item \textbf{Replication}, referring to reconstruction of the workflow described by each source study;
+    \item \textbf{Methodological correction}, referring to changes required to preserve separation between training and test information or to avoid test-set-driven model selection; and
+    \item \textbf{XAI extension}, referring to application of the standardised explanation framework to a fitted model derived from each study.
+\end{enumerate}
+
+This distinction was necessary because exact imitation of a published workflow is not always equivalent to a methodologically valid predictive experiment. Where the two objectives conflicted, the paper-style analysis was retained and labelled as such, while the corrected branch supplied the model and data used by the XAI extension. The study evaluates fitted models and their explanations; it does not assess clinical effectiveness, establish causal relationships, or propose deployment in clinical practice.
+
+\section{Literature Review and Study Selection}
+
+The introduction, state of the art, and selection of replication studies were informed by a structured literature review guided by the organisational principles of PRISMA 2020 \citep{page_prisma_2021}. Searches covered IEEE Xplore, Google Scholar, PubMed Central, ScienceDirect, Springer Nature, Scopus, the ACM Digital Library, and supplementary sources such as ResearchGate. Reference-network exploration was also used to identify connected and frequently cited studies.
+
+Screening was conducted in stages. Titles and abstracts were first examined to remove duplicate, non-clinical, non-predictive, or otherwise irrelevant records. Potentially eligible papers were then read in full and assessed for methodological relevance, availability of the underlying dataset, sufficient description of the analytical workflow, and suitability for computational replication. Recent, frequently cited, and strongly connected publications were prioritised during exploration, but citation frequency was not treated as evidence of methodological quality.
+
+The original review was conducted to support the literature review and to identify studies for replication, rather than to estimate a pooled clinical effect. Complete record-level counts for every screening stage were not retained. Accordingly, the review is described as \emph{PRISMA-guided} rather than as a fully PRISMA-compliant systematic review, and no retrospective flow counts are fabricated.
+
+Five studies were selected because they collectively provided variation in clinical domain, sample size, feature dimensionality, model family, class imbalance, and analytical purpose. They addressed heart disease, stroke, diabetes mellitus, chronic kidney disease (CKD), and hospital readmission in relation to HbA1c measurement.
+
+\section{Datasets and Final Analytical Configurations}
+
+All datasets were obtained from publicly accessible repositories or from the source-study data package. Personally identifying fields were excluded from modelling. Table~\ref{tab:final-configurations} summarises the configurations supplied to the common XAI framework after replication and methodological correction.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Final configurations used by the XAI framework.}
+    \label{tab:final-configurations}
+    \begin{tabular}{lrrrrl}
+        \hline
+        Dataset & Training & Test & Features & Outcome & XAI model \\
+        \hline
+        Heart disease & 148 & 149 & 13 & Binary & Logistic regression \\
+        Stroke & 4,087 & 1,022 & 7 & Binary & Balanced logistic regression \\
+        Diabetes & 538 & 230 & 5 & Binary & Random forest \\
+        CKD & 280 & 120 & 24 & Binary & Random forest \\
+        HbA1c/readmission & 69,970 & 69,970 & 91 & Binary & Statsmodels logistic model \\
+        \hline
+    \end{tabular}
+\end{table}
+
+The identical training and explanation counts reported for HbA1c do not represent a held-out predictive experiment. The source study used a full-cohort inferential logistic-regression design. The complete eligible design matrix was therefore supplied as both reference and explanation data to satisfy the common framework interface. HbA1c explanation results are consequently interpreted as in-sample descriptions of the fitted statistical model and not as estimates of predictive generalisation.
+
+\subsection{Heart Disease}
+
+The processed Cleveland heart-disease data were loaded from the local UCI-format file used by the replicated comparative study \citep{khanna_heart_2015}. Missing values denoted by question marks were converted to missing values, incomplete observations were removed, and the original multi-level diagnostic outcome was converted to absence versus presence of heart disease. The cleaned sample contained 297 observations and 13 predictors.
+
+An equal, stratified training/test partition was used to follow the source study. Standardisation parameters were estimated exclusively from the training partition and then applied to the test partition. Logistic regression with five-fold and ten-fold internal cross-validation, three support-vector-machine kernels, and the reported neural-network families were compared descriptively. Ten-fold L2-regularised logistic regression was pre-specified for the XAI extension because it represented a central replicated model and provided a probabilistic, coefficient-based baseline. Held-out performance rankings were not used to make this selection.
+
+\subsection{Stroke}
+
+The stroke dataset was restricted to valid binary gender categories, and the identifier field was removed before reconstructing the published stroke-prediction comparison \citep{wu_stroke_2024}. A missingness indicator was created for body mass index (BMI). The data were split using a stratified 80:20 partition before any learned preprocessing operation. Mean BMI imputation was estimated from the training partition, categorical dummy columns were derived from the training categories and aligned in the test data, and standardisation was fitted on training data only.
+
+The reduced feature set was identified using absolute correlations with the outcome greater than 0.1, calculated only within the training partition. This produced seven predictors in the final extension. The paper-style comparison of logistic regression, decision tree, random forest, support vector machine, k-nearest neighbours, XGBoost, and a deep neural network was retained. A class-balanced logistic-regression model was pre-specified for XAI to address the severe class imbalance and to provide a stable probabilistic baseline. The held-out model comparison remained descriptive.
+
+\subsection{Diabetes}
+
+The Pima Indians Diabetes dataset contained 768 observations and eight predictors, following the study by \citet{chang_pima_2022}. Zero values in glucose, blood pressure, skin thickness, insulin, and BMI were treated as physiologically invalid missing values. Descriptive PCA and clustering analyses were retained as exploratory full-dataset analyses and were not used to estimate predictive performance.
+
+For predictive modelling, the stratified split was performed before median imputation. Medians were estimated from the 538 training observations and applied unchanged to the 230 test observations. Decision tree, random forest, and Gaussian naive Bayes models were evaluated using the complete predictor set and the three- and five-feature configurations defined by the source study. A random forest using the five-feature configuration was pre-specified for the XAI extension. This choice preserved the source-defined reduced feature set and enabled comparison of native tree importance, permutation importance, and SHAP importance; it was not selected by maximising test accuracy.
+
+\subsection{Chronic Kidney Disease}
+
+The CKD dataset contained 400 observations and was analysed using the classifier families reported by \citet{santhiya_ckd_2024}. Formatting artefacts and malformed missing-value markers were harmonised, the identifier was removed, and the outcome was encoded as CKD versus non-CKD. The source-study workflow---random-sample imputation and label encoding before a 70:30 split---was retained in an explicitly labelled paper-style branch so that its reported behaviour could be examined.
+
+A second branch controlled information leakage by splitting first. Missing values in both training and test data were sampled only from the observed training distribution, with training-derived mean or mode values used as fallbacks. Categorical encoding was fitted on training data, with unseen test categories assigned a reserved value. The same KNN, decision-tree, random-forest, naive-Bayes, and gradient-boosting families were evaluated in both branches. The corrected branch supplied the XAI data and model. Random forest was pre-specified because it was the leading classifier reported by the source study, not because it ranked first on the present test partition.
+
+\subsection{HbA1c and Hospital Readmission}
+
+The HbA1c analysis reconstructed the cohort and inferential design reported by \citet{strack_hba1c_2014}. The outcome indicated readmission within 30 days. Variables excluded by the source study were removed, missing race and medical-specialty categories were represented explicitly, coded admission and discharge fields were mapped to readable groups, and only the first encounter for each patient was retained. Encounters with invalid gender coding or discharge dispositions associated with death or hospice were excluded.
+
+The analysis reconstructed the four-level HbA1c variable and grouped demographic, admission, discharge, specialty, age, and primary-diagnosis covariates. Nested logistic-regression specifications were fitted with Statsmodels, culminating in an interaction-rich model containing HbA1c-by-diagnosis and selected clinical-context interactions. The final Patsy design matrix contained 91 terms for 69,970 eligible encounters.
+
+This analysis estimates conditional associations within the observed cohort and is not directly equivalent to the four held-out prediction studies. Coefficients and odds ratios retain their inferential interpretation, whereas the XAI outputs describe behaviour of the fitted model. No causal effect of HbA1c testing or medication change is inferred from the explanations.
+
+\section{Standardised XAI Framework}
+
+Each replication notebook supplied a fitted binary model, aligned training and test matrices, binary labels, ordered feature names, a scoring rule, an output directory, and, where available, a retraining callback. A common experiment runner then applied the same global, local, stability, metadata, and export stages. Heart, stroke, and HbA1c used ROC AUC as the permutation scoring rule; diabetes and CKD used accuracy to remain aligned with their replicated evaluation emphasis.
+
+\subsection{Global Explanations}
+
+Three global importance representations were generated where supported:
+
+\begin{itemize}
+    \item \textbf{Native importance}: absolute model coefficients for linear models, absolute non-intercept parameters for the Statsmodels model, or impurity-based feature importance for tree ensembles. Signed coefficient or parameter values were retained separately where available.
+    \item \textbf{Permutation importance}: decrease in the configured score after feature permutation, using 20 repetitions and a fixed random seed of 42. The mean and standard deviation across permutations were exported.
+    \item \textbf{SHAP importance}: mean absolute SHAP value for global magnitude and mean signed SHAP value for average direction \citep{NIPS2017_8a20a862}. Tree models used a tree-specific explainer when supported; other models used a model-appropriate or model-agnostic SHAP interface with the training matrix as background data.
+\end{itemize}
+
+Importance magnitudes were not compared directly across methods because native, permutation, and SHAP values have different scales and interpretations. Features were instead ranked within each method. Ties received their average rank. Agreement was quantified using Spearman rank correlation over features present in all methods being compared. Where native importance was unavailable, agreement was restricted to SHAP and permutation importance.
+
+\subsection{Representative Cases and LIME}
+
+Local explanations were generated for representative true-positive, true-negative, false-positive, false-negative, and borderline observations. At a classification threshold of 0.5, the selected cases were respectively the most confident correctly classified positive, most confident correctly classified negative, most confident false positive, most confident false negative, and observation closest to the threshold. A case type was omitted when no corresponding observation existed, and duplicate selections were removed.
+
+LIME was fitted using the training matrix and a fixed random seed of 42 \citep{ribeiro_why_2016}. It generated rule-based local contributions for each available representative case. Positive and negative LIME weights indicate movement toward and away from the positive class within the local surrogate, respectively. These weights describe the surrogate around one observation; they are not equivalent to global feature effects, regression coefficients, or causal effects.
+
+\subsection{Explanation Stability}
+
+Stability analysis was performed only when a replication notebook supplied a retraining callback. Five fitted models were generated using seeds 1 to 5. For each model, permutation importance was calculated on the same fixed test partition using ten repetitions. Feature-level summaries contained the mean and standard deviation of importance and rank. Pairwise stability between seeds was assessed through Spearman rank correlation and overlap among the three highest-ranked features.
+
+This procedure measures sensitivity to repeated seeded fits and permutation randomness under a fixed data partition. It is not repeated cross-validation and does not measure sensitivity to alternative train/test samples. For deterministic estimators whose optimisation is unaffected by the supplied seed, observed variation primarily reflects the permutation procedure. HbA1c had no serialisable retraining callback and was therefore excluded from repeated-fit stability analysis.
+
+\section{Cross-Dataset Analysis}
+
+The exported dataset-level results were analysed in a separate notebook. Global agreement was summarised from the within-dataset Spearman correlations. Top-five overlap was defined as the number of shared features divided by five; it should therefore not be interpreted as a Jaccard coefficient. Feature-stability summaries were compared across datasets for which retraining was available.
+
+Local explanations were compared by case type, outcome correctness, and explanation strength. Global--local consistency was operationalised as the presence of globally high-ranked feature names within the strongest LIME rule strings. This is a lexical overlap measure and not a formal statistical agreement coefficient between SHAP and LIME.
+
+Cross-dataset synthesis was descriptive because the datasets represent different populations, outcomes, feature definitions, sample sizes, preprocessing procedures, and model families. In particular, similarly named variables across datasets were not assumed to be clinically or statistically interchangeable. HbA1c was treated as a separate inferential-model case when interpreting robustness and generalisability.
+
+\section{Reproducibility and Verification}
+
+The final implementation used Windows CPython 3.12.6 with exact focused and archival dependency locks. Each canonical experiment exported aligned data, labels, ordered feature names, the fitted model, metadata, and XAI tables. Runtime metadata recorded the Python, platform, and relevant library versions. A package-level command-line interface allowed trusted saved bundles to be validated or rerun without overwriting canonical notebook results.
+
+Automated tests covered task detection, binary metrics, representative-case selection, native importance, ranking and tie handling, export round trips, command-line validation, safe output paths, bundle orchestration, result comparison, runtime provenance, and a real small SHAP/LIME integration pipeline. Following the methodological corrections, all 42 tests passed and all five canonical bundles passed CSV/JSON validation. These checks establish internal software consistency within the tested scope; they do not constitute clinical validation or proof that an explanation is clinically correct.
+
+\section{Ethical and Methodological Scope}
+
+The study used secondary datasets and did not interact with patients or alter clinical care. Nevertheless, public availability does not eliminate risks associated with bias, under-representation, measurement error, missingness, historical practice patterns, or label construction. Performance and explanation results are specific to the analysed datasets and implementations.
+
+SHAP, LIME, native importance, and permutation importance explain relationships learned by a fitted model. They do not demonstrate that a feature causes an outcome, that an explanation is clinically actionable, or that a model is safe for deployment. The framework is therefore evaluated as a reproducible analytical instrument for comparing explanation behaviour, not as a clinical decision-support system.

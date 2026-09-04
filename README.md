@@ -1,8 +1,14 @@
 # Reproducible XAI Framework for Cross-Dataset Replication
 
-This repository contains five paper-replication notebooks and a reusable binary-classification XAI framework.
+This repository contains paper replications for Heart, Stroke, Diabetes, CKD and HbA1c, a reusable binary-classification XAI framework, and cross-dataset analysis.
 
-The replication notebooks own data preparation, model selection, training, and the optional retraining callback. The framework consumes the selected fitted model and prepared matrices, then produces native, permutation, SHAP, LIME, rank-agreement, representative-case, and optional stability outputs.
+The workflow separates three responsibilities:
+
+- **Replication notebooks** reproduce the source-paper analyses and report their results.
+- **XAI-extension notebooks** prepare the specified model and data, call the shared framework, and inspect its outputs. Explanation algorithms are implemented in the framework rather than copied into each notebook.
+- **Predictive uncertainty analysis** evaluates the saved fitted models and test data using the central bootstrap script. Dataset-specific validation notebooks are supplementary analyses, not prerequisites for running XAI.
+
+The XAI framework generates native, permutation, SHAP, LIME, rank-agreement, representative-case and optional repeated-fit stability outputs. Its normal `run_pipeline(config)` path does not generate the full predictive-performance report; the bootstrap script handles that evaluation.
 
 ## Supported scope
 
@@ -13,7 +19,7 @@ The framework currently supports:
 - The tested statsmodels binary-model adapter.
 - NumPy arrays and pandas DataFrames.
 - Already-created Patsy design matrices.
-- Repeated-fit stability when the replication notebook supplies `train_model_fn`.
+- Repeated-fit stability when the XAI-extension notebook supplies `train_model_fn`.
 
 It does not claim general support for:
 
@@ -62,37 +68,114 @@ New bundles and CLI manifests record Python, platform, and relevant library vers
 
 ```text
 data/                         dataset inputs
-src/replication/              model replication and selection notebooks
+src/replication/              *_replication.ipynb: source-paper reproduction
+src/validation/               *_validation.ipynb: supplementary evaluations
+src/xai_extension/            *_xai_extension.ipynb: model preparation and framework calls
 src/xai_framework/            reusable XAI implementation
 src/xai_framework/configs/    bundle-based CLI configurations
-src/analysis/                 cross-dataset results analysis
+src/analysis/                 bootstrap script and cross-dataset analysis
 tests/                        unit and integration tests
-results/<dataset>/            canonical notebook-generated results
-results/cli_runs/             independent bundle-based reruns
+results/<dataset>/            canonical XAI outputs and model/data bundle
+results/uncertainty/           predictive metrics and bootstrap intervals
+results/cross_dataset/         combined analysis tables
+results/cli_runs/              independent bundle-based reruns
 examples/                     optional examples
 chapter/                      thesis text
-main.py                       multi-dataset batch orchestrator
+main.py                       multi-dataset bundle rerun orchestrator
 main.tex                      thesis document
 mybib.bib                     thesis bibliography
 ```
 
-The older notebooks under `src/notebooks/` are prototypes and are not the canonical workflow.
+Use the five `*_replication.ipynb` notebooks and the five `*_xai_extension.ipynb` notebooks. The original combined `*_paper.ipynb` files and older notebooks under `src/notebooks/` are retained references/prototypes, not additional steps in this workflow.
 
-Empty `__init__.py` files are valid Python package markers. Empty legacy result folders are not used by the dataset-oriented exporter.
+The active analysis notebook is `src/analysis/xai_results_analysis_updated.ipynb`. Older `xai_results_analysis.ipynb` and `xai_results_analysis_corrected.ipynb` copies are not additional execution steps.
 
 ## Canonical workflow
 
-The canonical thesis workflow is:
+Use the thesis Python environment for every notebook. Start each notebook with its containing folder as the kernel working directory so that `../../data/`, `../../results/` and `../xai_framework/` resolve correctly. Restart the kernel, run all cells, and save the executed notebook.
 
-1. Open each notebook under `src/replication/` using the thesis environment.
-2. Restart the kernel and run all cells.
-3. Confirm that each notebook selects its replication model and calls `run_pipeline(config)`.
-4. Confirm that each dataset writes its canonical outputs to `results/<dataset>/`.
-5. After all five datasets succeed, restart and run `src/analysis/xai_results_analysis_corrected.ipynb`.
-6. Run the complete automated test suite.
-7. Optionally use the bundle CLI or batch runner to independently reproduce and compare the saved XAI outputs.
+### 1. Run the paper replications
 
-Model-selection evidence remains in the replication notebooks. CLI-generated results must not replace the canonical notebook-generated results without an explicit reviewed decision.
+Run these notebooks in `src/replication/`:
+
+```text
+heart_replication.ipynb
+stroke_replication.ipynb
+diabetes_replication.ipynb
+ckd_replication.ipynb
+hba1c_replication.ipynb
+```
+
+They preserve the source analyses and their implementation choices. Test rankings are descriptive and do not automatically select a different XAI model.
+
+CKD replication also writes `src/replication/ckd_replication_metrics.csv`, used only by its supplementary validation comparison.
+
+### 2. Run the XAI extensions
+
+Run the corresponding five `*_xai_extension.ipynb` notebooks in `src/xai_extension/`. Each independently prepares its model and data, calls `run_pipeline(config)`, checks the returned outputs and exports to `results/<dataset>/`.
+
+| Dataset | Specified model/configuration | Explanation scope | Permutation scorer |
+| --- | --- | --- | --- |
+| Heart | 10-fold L2 logistic regression | Held-out observations | ROC-AUC |
+| Stroke | Class-balanced logistic regression on training-selected features | Held-out observations | ROC-AUC |
+| Diabetes | Random Forest, 300 trees, five paper-defined features | Held-out observations | Accuracy |
+| CKD | Random Forest, 200 trees, split-first preprocessing | Held-out observations | Accuracy |
+| HbA1c | Full-cohort statsmodels logistic interaction model | In-sample | ROC-AUC |
+
+The scorer controls permutation-importance calculations; it is not a substitute for the predictive evaluation below. The four predictive extensions supply retraining callbacks for explanation stability. HbA1c does not.
+
+### 3. Run predictive metrics and bootstrap uncertainty
+
+After the XAI exports exist, run from the repository root:
+
+```powershell
+python src/analysis/bootstrap_model_uncertainty.py
+```
+
+Without activating the environment:
+
+```powershell
+& ".\.venv\Scripts\python.exe" src/analysis/bootstrap_model_uncertainty.py
+```
+
+The script reads `model.pkl`, `X_test.csv` and `y_test.csv` from `results/<dataset>/bundle/` for Heart, Stroke, Diabetes and CKD. Use the trusted environment compatible with those saved models. It evaluates the exact models exported by the XAI extensions, not every candidate from replication.
+
+It reports Accuracy, Precision, Recall, Specificity, F1, ROC-AUC and average precision (stored under `PR_AUC`), with 95% percentile bootstrap intervals. Defaults are 5,000 resamples and seed 42. These intervals describe test-sample uncertainty conditional on the fitted model; the script does not retrain models or quantify training variability.
+
+Outputs are written to `results/uncertainty/`:
+
+```text
+bootstrap_metrics_long.csv       numeric estimates and interval bounds
+bootstrap_metrics_table.csv      formatted comparison table
+bootstrap_metrics_table.tex      LaTeX table
+bootstrap_run.json               sampling settings and test-set counts
+```
+
+HbA1c is excluded because the replicated design has no held-out test partition.
+
+### 4. Run cross-dataset analysis
+
+Restart and run `src/analysis/xai_results_analysis_updated.ipynb` from `src/analysis/`.
+
+It reads the current XAI exports and `results/uncertainty/bootstrap_metrics_long.csv`, generates comparison plots, and writes combined tables to `results/cross_dataset/`. HbA1c explanations are explicitly labelled in-sample and excluded from predictive-performance charts. Save the executed notebook. Plot display does not itself export image files; save the required figures explicitly for use in LaTeX.
+
+### Supplementary validation notebooks
+
+The notebooks in `src/validation/` are optional for the main workflow:
+
+- **CKD:** compares paper-style preprocessing before the split with split-first preprocessing. Run CKD replication first; its CSV must be read as `Path("../replication/ckd_replication_metrics.csv")`.
+- **Heart:** isolates the existing logistic-regression evaluation.
+- **Stroke:** compares unweighted logistic-regression configurations with the balanced extension model.
+- **Diabetes:** compares Random Forest feature configurations using the existing metrics.
+- **HbA1c:** records why held-out predictive validation is not applicable; it does not run another model.
+
+These notebooks do not provide a new independent test cohort. The main validation chapter can use the central bootstrap outputs, with the CKD comparison or other supplementary comparisons included where relevant.
+
+### Execution order and thesis presentation
+
+The main execution order is **replication → XAI extensions → bootstrap evaluation → cross-dataset analysis**. XAI currently exports the model/data bundles needed by the bootstrap script. This file dependency does not require presenting XAI before validation in the thesis: the chapters can remain **Replication → Validation → XAI**.
+
+For framework changes or a final reproducibility check, run the automated tests below. Bundle CLI and batch reruns are optional independent checks, not replacements for training in the extension notebooks.
 
 ## Tests
 
@@ -108,7 +191,7 @@ If the environment is not activated, use its Python executable directly:
 & ".\.venv\Scripts\python.exe" -m pytest tests -v --run-integration
 ```
 
-The complete suite currently contains 40 tests, including a small real SHAP/LIME integration pipeline.
+The suite includes a small real SHAP/LIME integration pipeline.
 
 The tests cover:
 
@@ -307,22 +390,20 @@ The batch runner does not train models or reproduce repeated-fit stability. The 
 
 To add another dataset:
 
-1. Reproduce and select the model in a replication notebook.
-2. Produce aligned `X_train`, `X_test`, `y_train`, and `y_test` objects.
-3. Define unique, ordered feature names.
-4. Supply the fitted binary model, scoring name, output directory, and optional `train_model_fn` to `run_pipeline`.
-5. Run the canonical notebook pipeline successfully.
-6. Add unit fixtures and an integration test appropriate to the model family.
-7. Add a dataset YAML file only after a successful canonical bundle exists.
-8. Add the dataset to the batch configuration.
-9. Extend the cross-dataset analysis without silently changing established definitions.
+1. Reproduce the source study in a replication notebook and document the model/configuration used for the extension.
+2. Add an XAI-extension notebook that prepares aligned `X_train`, `X_test`, `y_train` and `y_test` objects with unique, ordered feature names.
+3. Supply the fitted binary model, scoring name, output directory and optional `train_model_fn` to `run_pipeline`.
+4. Run the extension successfully and inspect its canonical outputs and bundle.
+5. Add unit fixtures and an integration test appropriate to the model family.
+6. Add a dataset YAML file only after a successful canonical bundle exists, then add it to the batch configuration.
+7. Extend bootstrap evaluation only when the dataset has an appropriate held-out design.
+8. Extend the cross-dataset analysis without silently changing established definitions.
 
 ## Outputs
 
-Dataset outputs can include:
+XAI dataset outputs can include:
 
 - A reproducibility bundle.
-- Evaluation metrics.
 - Native model importance.
 - Permutation importance.
 - SHAP importance.
@@ -333,7 +414,7 @@ Dataset outputs can include:
 - Stability summaries when a retraining callback is available.
 - Runtime and dependency metadata.
 
-Canonical notebook outputs are stored under:
+Canonical XAI-extension outputs are stored under:
 
 ```text
 results/<dataset>/
@@ -351,6 +432,8 @@ Cross-dataset analysis outputs are stored under:
 results/cross_dataset/
 ```
 
+Predictive evaluation outputs are stored separately under `results/uncertainty/`. Replication tables and figures remain in the executed replication notebooks unless explicitly exported.
+
 Generated results, serialized models, caches, editable-install metadata, and local virtual environments remain excluded from version control.
 
 ## Methodological limitations
@@ -364,9 +447,11 @@ The framework and analysis have several important limitations:
 - LIME explanations are local surrogate approximations.
 - Permutation importance depends on the selected evaluation data and scoring metric.
 - SHAP values can vary slightly due to explainer behavior, sampling, software versions, and numerical precision.
-- Repeated-fit stability is available only when the original notebook supplies a retraining callback.
+- Repeated-fit stability is available only when the XAI-extension notebook supplies a retraining callback; it measures explanation variability, not bootstrap predictive uncertainty.
 - Bundle-based reruns evaluate an existing fitted model and do not repeat model selection.
-- HbA1c explanations refer to Patsy design terms and interactions rather than only raw clinical variables.
+- HbA1c explanations refer to Patsy design terms and interactions rather than only raw clinical variables. The same full cohort supplies reference and explanation data; scores and explanations are in-sample and are not equivalent to held-out predictive results.
+- Diabetes has five features, so top-five set overlap is automatically complete when all methods cover the feature set; this alone does not establish ranking agreement.
+- Bootstrap intervals are conditional on each fitted model and do not incorporate retraining or model-selection uncertainty.
 - The framework does not establish causal relationships or clinical utility.
 
 ## Reproducibility record
@@ -378,6 +463,9 @@ For the final thesis archive, retain:
 - `requirements-environment-lock.txt`.
 - `pyproject.toml`.
 - The five executed replication notebooks.
+- The five executed XAI-extension notebooks.
+- Supplementary validation notebooks used in the thesis.
+- The bootstrap script, uncertainty tables and `bootstrap_run.json`.
 - The executed cross-dataset analysis notebook.
 - Canonical dataset results.
 - Selected batch manifests and comparison reports.

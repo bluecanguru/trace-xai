@@ -477,5 +477,3 @@ Timestamped CLI and batch outputs are reproducibility evidence. They should not 
 ## Citation and license
 
 See `mybib.bib` for source-paper and software citations, `main.tex` for the thesis, and `LICENSE` for repository licensing terms.
-
-Add the final thesis citation after institutional publication details are assigned.

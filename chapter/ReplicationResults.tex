@@ -1,0 +1,137 @@
+\chapter{Replication Results}
+\label{chap:replication_results}
+
+\section{Chapter Overview}
+
+This chapter reports the results of the five dataset-specific replications. Its purpose is to document how closely the source-study workflows and results could be reconstructed before the thesis-specific validation and XAI extensions are considered.
+
+Paper-style results reproduce the model families and analytical choices described in the source studies as closely as the available information permits. Where the source workflow raised a methodological concern, this chapter records the replicated procedure without treating its test result as an independently validated estimate. Thesis-specific corrected configurations are evaluated in Chapter~\ref{chap:validation_results}.
+
+Four experiments---heart disease, stroke, diabetes, and chronic kidney disease (CKD)---use held-out test partitions. The HbA1c study is different: it reproduces a full-cohort inferential logistic-regression analysis and therefore produces in-sample descriptive predictions rather than an estimate of out-of-sample predictive performance.
+
+\section{Heart Disease Replication}
+
+\subsection{Dataset and Experimental Result}
+
+After replacing the original missing-value marker and removing incomplete records, the Cleveland heart-disease dataset contained 297 observations. The binary outcome distinguished absence from presence of heart disease. A fixed stratified near-equal partition produced 148 training observations and 149 test observations with 13 predictors.
+
+The replicated experiment compared logistic regression, three support-vector-machine (SVM) kernels, and three neural-network variants, following the model scope of the source study \citep{khanna_comparative_2015}. Table~\ref{tab:heart_replication_results} reports the observed held-out results. The backpropagation network produced the highest test ROC AUC (0.924), while the generalized regression neural network (GRNN) produced the highest test accuracy (86.58\%). The radial-basis-function neural network performed substantially worse than the other models.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Descriptive held-out results for the heart-disease replication.}
+    \label{tab:heart_replication_results}
+    \begin{tabular}{@{}lrrr@{}}
+        \toprule
+        \textbf{Model} & \textbf{Accuracy} & \textbf{F1} & \textbf{ROC AUC} \\
+        \midrule
+        Logistic regression (10-fold CV) & 0.852 & 0.841 & 0.915 \\
+        Linear SVM & 0.839 & 0.830 & 0.911 \\
+        RBF SVM & 0.859 & 0.840 & 0.912 \\
+        Polynomial SVM & 0.785 & 0.760 & 0.880 \\
+        Backpropagation neural network & 0.859 & 0.844 & 0.924 \\
+        RBF neural network & 0.758 & 0.670 & 0.648 \\
+        GRNN & 0.866 & 0.850 & 0.913 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The variation among the neural implementations illustrates a limitation of exact replication: architecture labels alone do not fully specify initialization, optimization, stopping, and implementation details. The reconstructed results should therefore be interpreted as a procedural replication rather than as evidence that every published numerical value can be recovered exactly.
+
+\section{Stroke Replication}
+
+\subsection{Outcome Imbalance and Feature Selection}
+
+The cleaned stroke dataset contained 5,109 observations after removal of the single record with the invalid ``Other'' gender category. A stratified 80:20 partition produced 4,087 training and 1,022 test observations. Feature selection was performed using training data only. Seven encoded predictors were retained: age, hypertension, heart disease, average glucose level, the BMI-missingness indicator, and the two encoded levels of marital status. The evaluated model families followed the scope of the replicated stroke study \citep{wu_machine_2024}.
+
+The outcome was strongly imbalanced. Consequently, accuracy alone could reward models that mainly predicted the majority class. This was visible in the descriptive model comparison: the neural network achieved accuracies of 0.951 before and 0.948 after feature selection, but the corresponding ROC AUC values were 0.814 and 0.826. The difference between accuracy and discrimination motivated emphasis on ROC AUC, recall, and the confusion matrix.
+
+Among the classical models evaluated on the selected features, logistic regression produced the highest observed test ROC AUC, as shown in Table~\ref{tab:stroke_auc_results}.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Test ROC AUC after training-only feature selection in the stroke replication.}
+    \label{tab:stroke_auc_results}
+    \begin{tabular}{@{}lr@{}}
+        \toprule
+        \textbf{Model} & \textbf{ROC AUC} \\
+        \midrule
+        Logistic regression & 0.834 \\
+        XGBoost & 0.786 \\
+        Random forest & 0.720 \\
+        K-nearest neighbours & 0.693 \\
+        SVM & 0.599 \\
+        Decision tree & 0.520 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The corrected branch differs from a full-data correlation-selection workflow because imputation, encoding, feature selection, and scaling were learned exclusively from the training partition. This reduces information leakage but also means that exact equality with results obtained through full-dataset preprocessing is neither expected nor methodologically required.
+
+\section{Diabetes Replication}
+
+\subsection{Preprocessing and Model Comparison}
+
+The Pima Indians diabetes dataset contained 768 observations, comprising 500 negative and 268 positive outcomes. Biologically invalid zero values in glucose, blood pressure, skin thickness, insulin, and BMI were replaced with missing values. For predictive evaluation, median imputation was fitted on the training data after the stratified split. The final partition contained 538 training and 230 test observations.
+
+The replication compared decision tree, random forest, and Naive Bayes classifiers across the eight-feature dataset and the paper-defined three- and five-feature subsets \citep{chang_pima_2023}. Table~\ref{tab:diabetes_best_results} reports the highest-accuracy configuration observed within each feature set.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Highest-accuracy test result within each diabetes feature configuration.}
+    \label{tab:diabetes_best_results}
+    \begin{tabular}{@{}llrrrr@{}}
+        \toprule
+        \textbf{Features} & \textbf{Model} & \textbf{Accuracy} & \textbf{Recall} & \textbf{F1} & \textbf{ROC AUC} \\
+        \midrule
+        Three features & Naive Bayes & 0.739 & 0.525 & 0.583 & 0.818 \\
+        Five features & Random forest & 0.752 & 0.600 & 0.627 & 0.816 \\
+        Eight features & Random forest & 0.739 & 0.538 & 0.589 & 0.824 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The full feature set produced the highest AUC among these three configurations, whereas the five-feature random forest produced the highest accuracy, recall, and F1 score. Thus, the preferred configuration depends on the evaluation objective; no single result dominated every metric.
+
+\section{Chronic Kidney Disease Replication}
+
+The CKD dataset contained 400 observations with 24 predictors after removal of the identifier and normalization of the binary outcome. The source-style workflow imputed missing values and encoded categorical variables on the complete dataset before creating a stratified 70:30 split. This order was retained here solely to reproduce the published workflow \citep{santhiya_chronic_2024}.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Paper-style CKD replication results.}
+    \label{tab:ckd_replication_results}
+    \begin{tabular}{@{}lrrrr@{}}
+        \toprule
+        \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+        \midrule
+        Random forest & 0.992 & 0.987 & 1.000 & 0.993 \\
+        Gradient boosting & 0.992 & 1.000 & 0.987 & 0.993 \\
+        Decision tree & 0.983 & 1.000 & 0.973 & 0.987 \\
+        Gaussian Naive Bayes & 0.942 & 1.000 & 0.907 & 0.951 \\
+        K-nearest neighbours & 0.650 & 0.739 & 0.680 & 0.708 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Because preprocessing used the complete dataset, these values reproduce the source-style implementation but do not constitute leakage-controlled held-out estimates. The effect of correcting the preprocessing order is evaluated separately in Chapter~\ref{chap:validation_results}.
+
+\section{HbA1c and Hospital Readmission Replication}
+
+\subsection{Cohort Reconstruction}
+
+The HbA1c study was reconstructed as an observational full-cohort analysis rather than a held-out classification benchmark \citep{strack_impact_2014}. After retaining the first eligible encounter per patient, excluding invalid gender records and death- or hospice-associated discharge dispositions, and deriving the grouped covariates, the analytical cohort contained 69,970 observations.
+
+Within this cohort, 6,277 encounters (8.97\%) were followed by readmission within 30 days. Most patients had no HbA1c test recorded: 57,125 observations (81.64\%). The within-group 30-day readmission proportions were 9.10\% when no test was performed, 8.61\% for a normal result, 8.58\% for a high result followed by a medication change, and 7.38\% for a high result without a medication change. These percentages are unadjusted descriptive associations and do not estimate causal effects of HbA1c testing or medication changes.
+
+\section{Replication Findings in Relation to RQ1}
+
+The five published workflows were reproducible at the level of datasets, broad preprocessing stages, model families, and analytical objectives, but not always as exact numerical reproductions. Sources of divergence included incomplete reporting of random procedures, implementation-specific neural architectures, ambiguous preprocessing order, feature-selection leakage, and differences between predictive and inferential study designs.
+
+Three general findings emerged. First, splitting before learned preprocessing was necessary for the final predictive configurations, even when a paper-style branch was retained for comparison. Second, held-out performance was unsuitable as a retrospective model-selection rule; final XAI models were therefore pre-specified from the source-study rationale and corrected analytical design. Third, task heterogeneity materially affected interpretation: the four held-out binary classifiers and the full-cohort HbA1c regression cannot be treated as equivalent prediction experiments.
+
+These findings answer RQ1 by showing that procedural replication was achievable, while exact numerical reproducibility was constrained by reporting detail and methodological ambiguity. The replications provide the documented basis for the separately evaluated analytical configurations in Chapter~\ref{chap:validation_results}.

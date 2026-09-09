@@ -1,0 +1,120 @@
+\chapter{State of the Art}
+\label{chap:state_of_art}
+
+\section{Artificial Intelligence in Clinical Prediction}
+
+Artificial intelligence (AI) and machine learning (ML) have been applied to a wide range of medical prediction tasks, including disease detection, prognosis, hospital readmission, and risk stratification. Their adoption has been supported by the increasing availability of electronic health records, public clinical datasets, and software libraries for statistical learning. In tabular clinical applications, commonly used model families include logistic regression, decision trees, random forests, support vector machines, nearest-neighbour methods, boosting algorithms, and neural networks \citep{ahmed_artificial_2022, bharati_review_2024}.
+
+The relationship between model complexity and interpretability is not absolute. Logistic regression coefficients can often be inspected directly, while individual decision trees expose explicit decision paths. Conversely, ensembles, kernel methods, and neural networks are generally more difficult to interpret without additional tools. Nevertheless, an intrinsically interpretable model is not automatically clinically valid, and a complex model is not automatically more accurate. Reliability depends on the data-generating process, preprocessing, validation design, calibration, discrimination, and intended use rather than on model family alone \citep{barredo_arrieta_explainable_2020}.
+
+In clinical contexts, predictions are commonly expected to support rather than replace professional judgement. Explanations can help users inspect whether a fitted model relies on plausible variables, identify unexpected dependencies, and investigate individual predictions. They do not, however, convert statistical associations into causal mechanisms or establish that a system is safe for clinical deployment \citep{tjoa_survey_2021, yang_unbox_2021}. This distinction is fundamental to the interpretation of post-hoc XAI results.
+
+\section{Reproducibility in Medical Machine Learning}
+
+Reproducibility is a prerequisite for evaluating both predictive results and their explanations. A published score cannot be interpreted independently of the procedure that produced it. Dataset versions, exclusion criteria, missing-value treatment, categorical encoding, feature selection, data partitioning, resampling, hyperparameter tuning, decision thresholds, and random seeds can all affect reported performance. If these elements are omitted or ambiguous, a replication may require assumptions that produce a technically reasonable workflow without reproducing the original numerical result.
+
+Particular care is required to prevent information from the test set from influencing model development. Imputation, scaling, feature selection, and hyperparameter tuning should be estimated using training data or internal validation procedures. Selecting the final model according to performance on the held-out test set converts that set into part of the model-development process and can produce optimistic estimates of generalization. In replication research, it is therefore useful to distinguish two objectives: reconstructing the procedure reported by the source paper and establishing a corrected analytical configuration for subsequent evaluation.
+
+Reproducibility also affects XAI. Explanations depend on the fitted model, the feature representation, the background or reference data, the sampled observations, and method-specific settings. Two implementations that appear to use the same explainer may produce different outputs if any of these components differ. Recording feature order, model versions, random seeds, library versions, exported matrices, and fitted-model metadata is consequently part of explanation reproducibility rather than a separate software concern \citep{lombardi_explainable_2021}.
+
+\section{Explainable Artificial Intelligence}
+
+XAI encompasses methods intended to make the behaviour of predictive systems more accessible to human inspection. Existing taxonomies distinguish between intrinsic and post-hoc interpretability, local and global scope, and model-specific and model-agnostic methods \citep{adadi_peeking_2018, arrieta_explainable_2019, linardatos_explainable_2020}. These distinctions determine what question an explanation can answer.
+
+Global explanations summarize behaviour across a collection of observations. They may identify variables that are influential for the fitted model overall, but aggregation can obscure heterogeneous or interaction-dependent effects. Local explanations instead describe the factors associated with one prediction or a small neighbourhood. Their case-specific nature is relevant to clinical review, but a local explanation should not be generalized to the full population without additional analysis.
+
+Model-specific methods use properties of a particular estimator, such as regression coefficients or tree-based feature importance. Model-agnostic methods interact with a model through its predictions and can therefore be used across multiple model families. This flexibility facilitates standardized analysis, although model-agnostic methods introduce their own assumptions and computational costs.
+
+\section{Global Feature-Importance Methods}
+
+\subsection{Native Model Importance}
+
+Some fitted models expose a direct importance representation. For a binary linear or logistic model, coefficient sign indicates the direction of association on the model's linear scale, while coefficient magnitude depends on feature scaling, coding, and regularization. For tree ensembles, common native measures aggregate reductions in an impurity or loss criterion. These quantities are specific to the estimator and should not be interpreted as universal measures of clinical relevance.
+
+Native importance is useful as a model-specific reference because it reflects information already contained in the fitted estimator. It is not available in a comparable form for every model family. Moreover, coefficients, split-based importance, and other native quantities have different definitions and cannot be compared directly by raw magnitude.
+
+\subsection{Permutation Importance}
+
+Permutation importance estimates the reduction in predictive performance caused by disrupting one feature while holding the fitted model fixed. It is model-agnostic and connects importance to a selected scoring metric. A feature receives greater importance when permuting its observed values produces a larger deterioration in performance.
+
+The method has several limitations. Correlated variables may substitute for one another, reducing the apparent importance of each variable considered separately. Permutation can also create combinations of feature values that are uncommon or implausible in the observed data. Results depend on the test sample, the scoring metric, and the random permutations. Negative values can occur when permutation produces a small apparent improvement and should not automatically be interpreted as evidence of a protective clinical effect.
+
+\subsection{SHAP}
+
+SHAP assigns feature contributions using concepts derived from Shapley values in cooperative game theory \citep{NIPS2017_8a20a862}. For an individual observation, contributions relate the prediction to an explainer-specific expected value. Aggregating absolute SHAP values across observations provides a global summary of attribution magnitude, while signed values preserve the direction of contributions on the explainer's output scale.
+
+SHAP offers a common attribution vocabulary across several model classes, but its interpretation depends on the selected explainer, background distribution, feature dependence assumptions, output scale, and implementation. Theoretical properties such as local accuracy and consistency apply under their stated definitions; they do not imply that empirical SHAP rankings are invariant across samples, retrained models, or alternative background data. SHAP explanations are therefore analysed as model-dependent attribution results rather than as ground-truth clinical effects \citep{vilone_classification_2021, poncebobadilla_practical_2024}.
+
+\section{Local Explanations and Representative Cases}
+
+LIME constructs a local surrogate by perturbing an observation, obtaining predictions from the original model, weighting perturbed samples according to proximity, and fitting an interpretable approximation in that neighbourhood \citep{ribeiro_why_2016}. The resulting weights describe the surrogate's local approximation rather than the original model globally. They depend on the perturbation process, discretization, kernel, feature representation, and random seed.
+
+In clinical prediction research, local explanations are often illustrated using a small number of cases. Arbitrary case selection can, however, emphasize convenient examples and conceal model errors. A more systematic descriptive strategy is to distinguish correct positive and negative predictions, false positives, false negatives, and observations close to the decision threshold. These categories connect explanation analysis to the confusion matrix and expose both successful and unsuccessful model behaviour.
+
+Representative-case analysis remains limited. One selected observation does not characterize every member of its outcome category, and a LIME rule does not establish clinical causality. The approach is most defensible as a transparent case-study procedure that complements, rather than replaces, global analysis.
+
+\section{Agreement Between Explanation Methods}
+
+Different importance methods need not identify the same features because they answer different questions. Native importance reflects estimator-specific parameters or structures; permutation importance measures reliance through performance degradation; and SHAP distributes differences from an expected prediction according to an attribution model. Disagreement is therefore not necessarily evidence that one method has failed.
+
+Rank-based comparison provides a scale-independent way to examine whether methods prioritize features similarly. Spearman correlation assesses monotonic agreement between rankings, provided features are aligned by name and tied importance values receive appropriate average ranks. Top-$k$ overlap provides a complementary and more readily interpretable summary of whether the most prominent features are shared. Both measures are descriptive: high agreement does not establish clinical correctness, while low agreement may reflect correlation, interactions, estimator structure, sampling variability, or the distinct definitions of the methods \citep{mohseni_multidisciplinary_2021, vilone_classification_2021}.
+
+Comparisons become more difficult across datasets. Feature spaces may describe different diseases, populations, coding systems, or transformed design terms. Consequently, cross-dataset analysis should compare framework behaviour and recurring analytical patterns rather than raw importance magnitudes. Apparent lexical matches should also be interpreted cautiously when variables have different definitions or preprocessing histories.
+
+\section{Stability of Explanations}
+
+Explanation stability refers broadly to the extent to which explanation results persist under a defined source of variation. The term has no single universal operational definition. Stability can be studied under perturbations of an observation, resampling of a dataset, retraining of a model, changes in the explainer background, or changes in method-specific random seeds. These designs test different properties and should not be conflated \citep{lofstrom_meta_2022, canha_functionally-grounded_2025}.
+
+For a repeated-fit analysis, the training procedure is executed under multiple random seeds and a global importance ranking is obtained for each fitted model. The frequency with which a feature appears among the top-ranked variables and the distribution of its rank provide evidence about persistence under retraining. This design evaluates the combined effect of training-data variation and stochastic model fitting as implemented. It does not measure local surrogate fidelity, sensitivity to arbitrary patient perturbations, or robustness under dataset shift.
+
+Stability results are meaningful only when the model can genuinely be retrained using the original analytical procedure. A saved fitted model is insufficient because it does not contain the data-processing and training callback required to generate independent fits. Reporting stability as unavailable in such cases is methodologically preferable to substituting a different training procedure.
+
+\section{XAI in Clinical Decision Support}
+
+Clinical XAI research emphasizes comprehensibility, usefulness, plausibility, and the ability to support appropriate reliance \citep{barredo_arrieta_explainable_2020, mohseni_multidisciplinary_2021}. User studies also indicate that explanations can have mixed effects: they may help users identify appropriate recommendations, but they can also reinforce overreliance when presented without information about system limitations \citep{vasconcelos_explanations_2023, lee_understanding_2023}. Explanation presentation should therefore be evaluated in relation to users, tasks, and decision consequences rather than through technical properties alone.
+
+Computational explanation analysis is only one stage of clinical validation. Demonstrating that two attribution methods agree, or that a ranking is stable across repeated fits, does not establish clinical usefulness, fairness, safety, or regulatory compliance. Those questions require additional evidence, potentially including external validation, calibration analysis, subgroup assessment, prospective evaluation, workflow studies, and participation by healthcare professionals \citep{panigutti_co-design_2023, allgaier_how_2023}.
+
+The present dissertation remains at the computational stage. It uses XAI to inspect fitted models and to compare explanation behaviour under a standardized framework. It does not define an explanation-acceptance threshold, suppress explanations, or claim that the resulting artefacts are ready for clinical use.
+
+\section{Selected Replication Studies}
+
+Five studies were selected to provide heterogeneous medical-data tasks for replication and XAI extension. They differ in sample size, outcome, preprocessing, model family, feature representation, and reporting detail.
+
+The heart-disease study compares logistic regression, support vector machines, and neural-network approaches using the Cleveland dataset \citep{khanna_comparative_2015}. The stroke study evaluates multiple classical and neural models on a strongly imbalanced public stroke-prediction dataset \citep{wu_machine_2024}. The diabetes study investigates several feature subsets and classifiers using the Pima Indians diabetes dataset \citep{chang_pima_2023}. The chronic-kidney-disease study compares classification algorithms on a dataset containing mixed variable types and missing values \citep{santhiya_chronic_2024}. The HbA1c study differs from the other four by analysing hospital readmission in a large observational cohort through multivariable logistic regression and interaction terms \citep{strack_impact_2014}.
+
+This heterogeneity is analytically useful. It tests whether the same framework interfaces and outputs can be maintained across small and large datasets, different model families, alternative scoring metrics, and both raw feature matrices and encoded statistical design matrices. At the same time, it prevents direct comparison of raw importance values and requires dataset-specific interpretation.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Characteristics of the five studies selected for replication and XAI extension.}
+    \label{tab:selected_replication_studies}
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabularx}{\textwidth}{@{}>{\RaggedRight\arraybackslash}p{1.8cm}>{\RaggedRight\arraybackslash}p{2.5cm}>{\RaggedRight\arraybackslash}p{3.0cm}>{\RaggedRight\arraybackslash}X@{}}
+        \toprule
+        \textbf{Study} & \textbf{Clinical task} & \textbf{Principal model scope} & \textbf{Reason for inclusion} \\
+        \midrule
+        \citep{khanna_comparative_2015} & Heart-disease classification & Logistic regression, SVM, and neural models & Multiple model families on a small benchmark dataset. \\
+        \citep{wu_machine_2024} & Stroke classification & Classical classifiers and a neural network & Severe class imbalance and alternative feature-selection branches. \\
+        \citep{chang_pima_2023} & Diabetes classification & Decision tree, random forest, and Naive Bayes & Comparison of predefined feature subsets and tree-based native importance. \\
+        \citep{santhiya_chronic_2024} & CKD classification & Multiple classical classifiers & Mixed data types, missingness, and explicit analysis of leakage effects. \\
+        \citep{strack_impact_2014} & Thirty-day readmission & Multivariable logistic regression with interactions & Large cohort and an interaction-rich statsmodels/Patsy design matrix. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\section{Research Gap and Thesis Positioning}
+
+The literature provides extensive taxonomies of XAI methods and a growing number of medical applications, but three practical gaps remain relevant to this dissertation. First, explanation studies often begin with an already selected model without examining whether the underlying predictive workflow can be reproduced. Second, applied analyses commonly present one importance method without evaluating whether alternative methods prioritize the same variables. Third, framework demonstrations frequently focus on one dataset or model family, limiting evidence about software and analytical generalizability.
+
+This dissertation addresses these gaps through a replication-and-extension design. It reconstructs five published workflows, establishes a final leakage-controlled analytical configuration for each dataset, applies a common set of global and local explanation procedures, evaluates within-model rank agreement, examines representative correct and incorrect cases, assesses repeated-fit feature stability where retraining is available, and synthesizes framework behaviour across datasets.
+
+The contribution is not a new attribution algorithm or a clinically validated decision-support system. It is a reproducible empirical framework for studying how established XAI methods behave across heterogeneous replicated medical-prediction tasks, together with an explicit account of the limits of the resulting comparisons.
+
+\section{Chapter Summary}
+
+Medical prediction and XAI are both sensitive to analytical design. Reproducing the predictive workflow is therefore necessary before interpreting its explanations. Native importance, permutation importance, SHAP, and LIME provide complementary but non-equivalent views of model behaviour. Rank agreement, representative-case analysis, and repeated-fit stability can make their relationships more explicit, provided each result is interpreted according to its operational definition.
+
+The next chapter describes how the five studies were replicated, how final analytical configurations were selected, how the standardized XAI framework was implemented, and how dataset-level outputs were combined for cross-dataset analysis.

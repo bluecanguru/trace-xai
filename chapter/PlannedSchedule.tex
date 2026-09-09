@@ -1,0 +1,164 @@
+\chapter{Planned Schedule}
+
+\section{Activities and Timeline}
+The research activities are structured according to the six-stage experimental pipeline defined in Chapter 3, spanning a period of 12 months (November to October). The project is divided into five operational phases, detailed below along with their estimated duration and deliverables.
+
+% --- 1. DEFINE COLORS ---
+\definecolor{p1col}{RGB}{0, 90, 160}      % Blue
+\definecolor{p2col}{RGB}{70, 150, 160}    % Teal
+\definecolor{p3col}{RGB}{200, 100, 50}    % Orange
+\definecolor{p4col}{RGB}{100, 160, 80}    % Green
+\definecolor{p5col}{RGB}{100, 60, 140}    % Purple
+\definecolor{gridcol}{RGB}{220, 220, 220} % Light Grey
+
+% --- 2. CALCULATE EXACT WIDTH (To fill margins) ---
+\newlength{\ganttcolwidth}
+% We take the full text width, subtract 4.5cm for the labels, and divide by 12 months.
+\setlength{\ganttcolwidth}{\dimexpr(\textwidth-4.5cm)/12\relax}
+
+\subsection{Task Description}
+
+\paragraph{Phase 1: Methodology and Data Setup (Nov - Feb)} \mbox{} \\
+Focus on finalizing the state-of-the-art review and the acquisition/cleaning of the clinical dataset.
+\begin{itemize}
+    \item \textbf{Deliverable:} Finalized Chapter 2 and a clean, structured CSV dataset.
+\end{itemize}
+
+\paragraph{Phase 2: Predictive Model Development (Feb - Apr)} \mbox{} \\
+Implementation, training, and hyperparameter tuning of the baseline classifiers (\gls{rf}, \gls{xgboost}, \gls{dl}).
+\begin{itemize}
+    \item \textbf{Deliverable:} Trained model binaries with optimized performance metrics.
+\end{itemize}
+
+\paragraph{Phase 3: Explainability Generation (Apr - Jul)} \mbox{} \\
+Application of \gls{shap} and \gls{lime} algorithms to generate local explanation datasets for the test instances.
+\begin{itemize}
+    \item \textbf{Deliverable:} Feature attribution database and visualization prototypes.
+\end{itemize}
+
+\paragraph{Phase 4: Evaluation and Validation (Jun - Sep)} \mbox{} \\
+Execution of quantitative testing (\gls{fidelity}, \gls{stability}) and clinical concordance assessment against medical guidelines.
+\begin{itemize}
+    \item \textbf{Deliverable:} Chapter 4 (Results) and Statistical Analysis Report.
+\end{itemize}
+
+\paragraph{Phase 5: Dissertation Writing (Jan - Oct)} \mbox{} \\
+Final synthesis of results, writing of discussion/conclusions, and preparation of the defense presentation.
+\begin{itemize}
+    \item \textbf{Deliverable:} Final Dissertation manuscript and Defense slides.
+\end{itemize}
+
+\subsection{Gantt Chart}
+The temporal distribution of these tasks is illustrated in Figure \ref{fig:gantt_chart_final}.
+
+\begin{figure}[H]
+    \noindent\hspace*{-0.05cm}%
+    \begin{ganttchart}[
+        hgrid,
+        vgrid={*1{draw=gridcol, dashed}},
+        x unit=\ganttcolwidth,
+        y unit title=0.5cm,
+        y unit chart=0.5cm,
+        time slot format=isodate-yearmonth,
+        time slot unit=month,
+        title/.style={draw=none, fill=black!70},
+        title label font=\sffamily\bfseries\color{white}\scriptsize,
+        title height=1,
+        bar label font=\sffamily\scriptsize\color{black!90},
+        bar label node/.append style={
+            align=right,
+            text width=4cm,
+            left=0.2cm,
+            anchor=east
+        },
+        bar/.style={draw=none, rounded corners=2pt},
+        bar height=0.5,
+    ]{2025-11}{2026-10}
+        
+        % --- HEADER ---
+        \gantttitlecalendar{year, month=shortname} \\
+        
+        % --- PHASE 1 (BLUE) ---
+        % Anchor Bar (Invisible, at start date) -> Sets Label
+        \ganttbar[bar/.style={draw=none, fill=none}]{\textbf{Ph 1: Setup and Data}}{2025-11}{2025-11} 
+        % Real Bar (Colored, duration) -> No Label
+        \ganttbar[bar/.style={fill=p1col, rounded corners=0pt}]{}{2025-11}{2026-02} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Literature Review}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p1col!50}]{}{2025-11}{2026-01} \\
+    
+        \ganttbar[bar/.style={draw=none, fill=none}]{Pipeline Definition}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p1col!50}]{}{2025-11}{2026-01} \\
+    
+        \ganttbar[bar/.style={draw=none, fill=none}]{Dataset Selection}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p1col!50}]{}{2025-12}{2026-02} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Dataset Cleaning}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p1col!50}]{}{2026-01}{2026-02} \\
+        
+        % --- PHASE 2 (TEAL) ---
+        \ganttbar[bar/.style={draw=none, fill=none}]{\textbf{Ph 2: Architecture Design}}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p2col, rounded corners=0pt}]{}{2026-02}{2026-04} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Data Pre-processing}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p2col!50}]{}{2026-02}{2026-03} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Exploratory Data Analysis}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p2col!50}]{}{2026-02}{2026-03} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Model Development}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p2col!50}]{}{2026-02}{2026-04} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Training and Optimization}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p2col!50}]{}{2026-02}{2026-04} \\
+        
+        % --- PHASE 3 (ORANGE) ---
+        \ganttbar[bar/.style={draw=none, fill=none}]{\textbf{Ph 3: XAI Development}}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p3col, rounded corners=0pt}]{}{2026-04}{2026-07} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{SHAP/LIME Implementation}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p3col!50}]{}{2026-04}{2026-05} \\
+    
+        \ganttbar[bar/.style={draw=none, fill=none}]{Post-hoc Method Application}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p3col!50}]{}{2026-04}{2026-06} \\
+    
+        \ganttbar[bar/.style={draw=none, fill=none}]{Visualization Prototyping}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p3col!50}]{}{2026-06}{2026-06} \\
+    
+        \ganttbar[bar/.style={draw=none, fill=none}]{Monitoring and Refinement}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p3col!50}]{}{2026-06}{2026-07} \\
+        
+        % --- PHASE 4 (GREEN) ---
+        \ganttbar[bar/.style={draw=none, fill=none}]{\textbf{Ph 4: Validation}}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p4col, rounded corners=0pt}]{}{2026-06}{2026-09} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{XAI Metric Definition}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p4col!50}]{}{2026-06}{2026-07} \\
+    
+        \ganttbar[bar/.style={draw=none, fill=none}]{Fidelity and Stability Analysis}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p4col!50}]{}{2026-07}{2026-08} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Clinical Concordance}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p4col!50}]{}{2026-07}{2026-08} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Iterative Pipeline Refinement}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p4col!50}]{}{2026-08}{2026-09} \\
+    
+        % --- PHASE 5 (PURPLE) ---
+        \ganttbar[bar/.style={draw=none, fill=none}]{\textbf{Ph 5: Dissertation Writing}}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p5col, rounded corners=0pt}]{}{2026-01}{2026-10} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Dissertation Drafting}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p5col!50}]{}{2026-01}{2026-10} \\
+    
+        \ganttbar[bar/.style={draw=none, fill=none}]{Revision}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p5col!50}]{}{2026-09}{2026-10} \\
+        
+        \ganttbar[bar/.style={draw=none, fill=none}]{Final Submission}{2025-11}{2025-11}
+        \ganttbar[bar/.style={fill=p5col!50}]{}{2026-10}{2026-10}
+        
+    \end{ganttchart}%
+    
+    \caption{Gantt chart illustrating the project schedule and research activities spanning from November 2025 to October 2026.}
+    \label{fig:gantt_chart_final}
+\end{figure}

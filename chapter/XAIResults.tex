@@ -1,0 +1,361 @@
+\chapter{Explainable Artificial Intelligence Results}
+\label{chap:xai_results}
+
+\section{Chapter Overview}
+
+This chapter reports the outputs produced by the standardized XAI framework for the five final analytical configurations. The analysis covers global feature importance, agreement among global methods, repeated-fit stability, representative local explanations, cross-dataset and model-family patterns, and the demonstrated capabilities and limitations of the framework.
+
+The results were generated from the evaluated configurations described in Chapter~\ref{chap:validation_results}. Native importance, permutation importance, and mean absolute SHAP values have different definitions and scales. Their raw magnitudes are therefore interpreted only within method and dataset. Comparisons among methods use feature ranks and top-five membership. Local LIME analysis uses rule presence and signed local weights; it does not treat LIME weights as directly comparable with global importance magnitudes.
+
+For Heart, Stroke, Diabetes, and CKD, explanations refer to models evaluated on held-out test partitions. The HbA1c explanations are descriptive and in-sample because the replicated source analysis fitted an inferential model to the eligible cohort. The HbA1c terms also represent an encoded Patsy design matrix containing main effects and interactions rather than only raw clinical variables.
+
+\section{Global XAI Results by Dataset}
+
+The combined importance plots display five features or design terms per dataset. Each method's values are divided by its own maximum, and the five displayed terms are selected by their mean normalized importance across the three methods. This display selection is distinct from each method's own top-five set. Normalization facilitates visual comparison of relative importance but does not make raw effect magnitudes comparable. Full-ranking agreement is evaluated separately, using all aligned features. Negative permutation values are retained in the plots: they indicate an observed improvement in the scoring measure after permutation, not a negative clinical effect.
+
+\subsection{Heart Disease}
+
+For the heart logistic-regression model, \emph{thal} was ranked first by native coefficient magnitude, permutation importance, and SHAP. Native importance and SHAP also assigned high ranks to chest-pain type (\emph{cp}), exercise-induced angina (\emph{exang}), and maximum heart rate (\emph{thalach}). Permutation importance differed by placing the number of major vessels (\emph{ca}) second and sex third.
+
+Three features---\emph{thal}, \emph{cp}, and \emph{thalach}---appeared in the top five of all three methods. The result indicates a shared core accompanied by method-specific ordering. In particular, \emph{slope} was fifth under SHAP but was not among the permutation top five, whereas sex was third under permutation but lower under native and SHAP rankings.
+
+See Figure~\ref{fig:global_heart}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/global_heart.pdf}
+    \caption{Normalized global feature importance for Heart, comparing Native, Permutation, and SHAP. Values are normalized independently by each method's maximum; the five displayed features are selected by mean normalized importance across methods. Bars represent within-method relative importance, not comparable raw effects.}
+    \label{fig:global_heart}
+\end{figure}
+
+\subsection{Stroke}
+
+Age was the leading feature under all three methods and was separated clearly from the remaining variables in the permutation and SHAP outputs. Average glucose level, the BMI-missingness indicator, hypertension, and heart disease formed the remaining shared group. Four of these five variables appeared in the top five of every method; the fifth position differed because permutation importance included the encoded \emph{ever\_married\_No} term.
+
+The strong role of age should be interpreted as model reliance within this dataset and preprocessing configuration. It does not establish a causal effect, nor does it remove the influence of the class-weighted decision rule documented in Chapter~\ref{chap:validation_results}.
+
+See Figure~\ref{fig:global_stroke}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/global_stroke.pdf}
+    \caption{Normalized global feature importance for Stroke, comparing Native, Permutation, and SHAP. Values are normalized independently by each method's maximum; the five displayed features are selected by mean normalized importance across methods. Bars represent within-method relative importance, not comparable raw effects.}
+    \label{fig:global_stroke}
+\end{figure}
+
+\subsection{Diabetes}
+
+The five-feature diabetes random forest produced the same complete ordering under native importance, permutation importance, and SHAP: glucose, BMI, age, insulin, and skin thickness. Glucose ranked first under every method, followed by BMI and age.
+
+Because the model contains exactly five predictors, a top-five overlap of 1.0 is guaranteed at the set level. The informative result is the identical ordering, not merely the complete top-five membership. This distinction prevents the overlap statistic from overstating agreement in a five-feature model.
+
+See Figure~\ref{fig:global_diabetes}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/global_diabetes.pdf}
+    \caption{Normalized global feature importance for Diabetes, comparing Native, Permutation, and SHAP. Values are normalized independently by each method's maximum; the five displayed features are selected by mean normalized importance across methods. Bars represent within-method relative importance, not comparable raw effects.}
+    \label{fig:global_diabetes}
+\end{figure}
+
+\subsection{Chronic Kidney Disease}
+
+Serum creatinine (\emph{sc}), specific gravity (\emph{sg}), haemoglobin (\emph{hemo}), packed cell volume (\emph{pcv}), and albumin (\emph{al}) dominated the native and SHAP results. Native importance ranked serum creatinine first, whereas permutation importance and SHAP ranked specific gravity first. Four features---specific gravity, serum creatinine, packed cell volume, and albumin---were common to the top five of all three methods.
+
+Permutation importance was markedly concentrated on specific gravity. Several other variables produced values close to zero, which reduced differentiation among their permutation ranks. This pattern becomes important in the repeated-fit stability analysis because small changes among near-zero values can substantially alter lower ranks.
+
+See Figure~\ref{fig:global_ckd}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/global_ckd.pdf}
+    \caption{Normalized global feature importance for CKD, comparing Native, Permutation, and SHAP. Values are normalized independently by each method's maximum; the five displayed features are selected by mean normalized importance across methods. Bars represent within-method relative importance, not comparable raw effects.}
+    \label{fig:global_ckd}
+\end{figure}
+
+\subsection{HbA1c and Hospital Readmission}
+
+The HbA1c model exhibited the clearest separation between estimator-specific coefficients and model-agnostic importance. Native coefficient magnitude was dominated by interactions between medical specialty and the youngest age group. The largest coefficient magnitude corresponded to the interaction between surgery specialty and age 30 years or younger. In contrast, permutation importance and SHAP both ranked time in hospital first, followed by missing or unknown specialty and the non-home-discharge indicator.
+
+Permutation and SHAP shared four of their top five terms. Native importance shared none of its top five with either model-agnostic top-five set. This is not necessarily contradictory. Native ranking uses absolute coefficient magnitude, which can emphasize large coefficients for sparse encoded categories and interactions. Permutation importance measures degradation in ROC AUC when a design column is disrupted, while aggregated SHAP measures average attribution magnitude across observations. A large coefficient attached to a rare design term can consequently have limited population-level permutation or SHAP importance.
+
+See Figure~\ref{fig:global_hba1c}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/global_hba1c.pdf}
+    \caption{Normalized global feature importance for HbA1c, comparing Native, Permutation, and SHAP. Values are normalized independently by each method's maximum; the five displayed features are selected by mean normalized importance across methods. Bars represent within-method relative importance, not comparable raw effects.}
+    \label{fig:global_hba1c}
+\end{figure}
+
+\subsection{Top-Five Synthesis}
+
+Table~\ref{tab:global_top5_overlap} summarizes top-five overlap. The final column reports the number of features included by all three methods.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Pairwise top-five overlap and common features across all global XAI methods.}
+    \label{tab:global_top5_overlap}
+    \begin{tabular}{@{}lrrrrl@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{N--S} & \textbf{N--P} & \textbf{S--P} & \textbf{Common} & \textbf{Features common to all} \\
+        \midrule
+        Heart & 0.80 & 0.80 & 0.60 & 3 & thal, cp, thalach \\
+        Stroke & 1.00 & 0.80 & 0.80 & 4 & age, glucose, BMI missing, heart disease \\
+        Diabetes & 1.00 & 1.00 & 1.00 & 5 & all five model predictors \\
+        CKD & 1.00 & 0.80 & 0.80 & 4 & al, pcv, sc, sg \\
+        HbA1c & 0.00 & 0.00 & 0.80 & 0 & none \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Here, N--S denotes native versus SHAP, N--P denotes native versus permutation, and S--P denotes SHAP versus permutation. The results show that top-ranked agreement was dataset-dependent. Complete agreement occurred only for the five-feature diabetes model, while HbA1c produced agreement primarily between the two model-agnostic methods.
+
+\section{Agreement Between Global XAI Methods}
+
+Spearman rank correlation was calculated after aligning features by name and assigning average ranks to tied importance values. Table~\ref{tab:rank_agreement} reports all pairwise results.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Spearman agreement among global feature rankings.}
+    \label{tab:rank_agreement}
+    \begin{tabular}{@{}lrrrr@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{Features} & \textbf{Native--SHAP} & \textbf{Native--Permutation} & \textbf{SHAP--Permutation} \\
+        \midrule
+        Heart & 13 & 0.978 & 0.621 & 0.615 \\
+        Stroke & 7 & 0.893 & 0.739 & 0.631 \\
+        Diabetes & 5 & 1.000 & 1.000 & 1.000 \\
+        CKD & 24 & 0.981 & 0.645 & 0.646 \\
+        HbA1c & 90 & 0.047 & 0.409 & 0.883 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Heart and CKD showed near-perfect agreement between native and SHAP rankings but only moderate agreement with permutation importance. Stroke followed the same general pattern, although its native--SHAP correlation was lower. Diabetes produced identical ranks across all methods. HbA1c reversed the pattern: SHAP and permutation were strongly correlated ($\rho=0.883$), while native and SHAP were almost uncorrelated ($\rho=0.047$).
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/method_agreement.pdf}
+    \caption{Spearman rank agreement across all aligned features, with average ranks for ties. The comparison uses 13, 7, 5, 24, and 90 features for Heart, Stroke, Diabetes, CKD, and HbA1c, respectively.}
+    \label{fig:method_agreement}
+\end{figure}
+
+These findings answer RQ2 by showing that agreement was neither universal nor random. Native and SHAP rankings were particularly similar for the two scikit-learn model types represented by Heart, Stroke, Diabetes, and CKD, whereas permutation rankings diverged more often. For the interaction-rich statsmodels model, the two population-oriented model-agnostic summaries agreed with one another but not with absolute coefficient magnitude. Method agreement must therefore be interpreted in relation to model structure and the quantity measured by each explanation method.
+
+For HbA1c, absolute logistic-regression coefficients also depend on the scale and coding of each design term. Sparse categories and interactions can receive large coefficients without large average prediction contributions. The weak Native--SHAP correlation therefore does not, on its own, indicate an implementation inconsistency. Permutation of individual expanded design columns should likewise be interpreted at the encoded-term level, rather than as a clinical intervention.
+
+\section{Stability of Global Explanations}
+
+Repeated-fit stability was evaluated for Heart, Stroke, Diabetes, and CKD across five seeded model fits, producing ten pairwise ranking comparisons per dataset. Table~\ref{tab:stability_results} reports the mean Spearman correlation and mean overlap among the three highest-ranked features.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Repeated-fit global feature-ranking stability.}
+    \label{tab:stability_results}
+    \begin{tabular}{@{}lrrrl@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{Mean $\rho$} & \textbf{Mean top-3 overlap} & \textbf{Comparisons} & \textbf{Most persistent features} \\
+        \midrule
+        Heart & 0.945 & 0.867 & 10 & thal, ca \\
+        Stroke & 0.825 & 0.800 & 10 & age, average glucose \\
+        Diabetes & 0.940 & 0.800 & 10 & glucose, BMI \\
+        CKD & 0.341 & 0.567 & 10 & specific gravity, creatinine \\
+        HbA1c & -- & -- & 0 & not available \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/stability_ranks.pdf}
+    \caption{Stability of permutation-importance rankings across five seeded fits: mean Spearman correlation over ten fit pairs. HbA1c was not evaluated because its bundle lacked a retraining callback.}
+    \label{fig:stability_ranks}
+\end{figure}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/stability_top3.pdf}
+    \caption{Stability of the three highest-ranked permutation features across the same ten fit pairs. Overlap is the intersection size divided by three. HbA1c is unavailable, not zero.}
+    \label{fig:stability_top3}
+\end{figure}
+
+Heart and Diabetes were highly stable, with mean rank correlations above 0.93. In Heart, \emph{thal} and \emph{ca} retained mean ranks of 1.0 and 2.0 with zero rank standard deviation. In Diabetes, glucose and BMI likewise remained first and second in every fit. Stroke showed lower but still positive stability; age and average glucose retained the first two ranks, while the ordering of lower-ranked variables varied more strongly.
+
+CKD was substantially less stable. Specific gravity remained first, and serum creatinine had a mean rank of 2.5, but many remaining permutation importances were close to or equal to zero. Their ordering consequently changed across fits, producing a mean rank correlation of 0.341 and mean top-three overlap of 0.567. One pair of seeded fits even produced a correlation slightly below zero. This result shows that strong performance and high within-fit native--SHAP agreement do not imply stable rankings under retraining.
+
+Repeated-fit stability was unavailable for HbA1c because the fitted bundle did not contain a retraining callback for the full inferential workflow. No substitute model or alternative stability definition was introduced. RQ4 is therefore answered for four datasets only: global rankings were highly stable for Heart and Diabetes, moderately stable for Stroke, and weakly stable beyond the leading variables for CKD.
+
+\section{Local Explanations and Representative Cases}
+
+\subsection{Case Availability}
+
+Representative cases were selected from true positives (TP), true negatives (TN), false positives (FP), false negatives (FN), and the observation closest to the decision threshold when this produced a distinct case. Table~\ref{tab:local_case_availability} summarizes availability.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Availability of representative local cases.}
+    \label{tab:local_case_availability}
+    \begin{tabular}{@{}lccccc@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{TP} & \textbf{TN} & \textbf{FP} & \textbf{FN} & \textbf{Borderline} \\
+        \midrule
+        Heart & yes & yes & yes & yes & yes \\
+        Stroke & yes & yes & yes & yes & yes \\
+        Diabetes & yes & yes & yes & yes & yes \\
+        CKD & yes & yes & yes & yes & no \\
+        HbA1c & no & yes & no & yes & yes \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+CKD had no distinct borderline case after duplicate-case prevention. HbA1c had neither a TP nor an FP because the model produced no positive classifications at the 0.5 threshold. Its case labelled borderline was the observation closest to the threshold, with probability 0.353; it was not close to 0.5 in an absolute sense.
+
+\subsection{Illustrative LIME Results}
+
+The strongest LIME rule for each representative case reflected local rather than population-level behaviour. In Heart, chest-pain type was the strongest rule in all five cases. Its contribution changed direction according to the discretized interval: lower chest-pain coding supported the negative class, whereas an intermediate interval supported the positive class. This rule was present both in correct predictions and errors, demonstrating that feature presence alone does not distinguish successful from unsuccessful reasoning.
+
+In Stroke, age dominated the TP, TN, FP, and FN explanations. Age above the upper standardized interval strongly supported the positive class for both the TP and the high-confidence FP, while low age strongly supported the negative class for both the TN and FN. The borderline explanation was instead led by the BMI-missingness rule. The FP probability was 0.986 and the FN probability was 0.024, showing that prediction errors were not confined to uncertain observations.
+
+In Diabetes, high glucose was the strongest positive rule for both the TP and FP, while low glucose supported the TN. The FN was led by a low-BMI rule, and the borderline prediction by high BMI. In CKD, serum creatinine led the TP and FP explanations, while packed cell volume and haemoglobin led the TN and FN explanations, respectively. These examples again show that similar local rules can occur in correct and incorrect predictions.
+
+All three available HbA1c cases were led by the same absent interaction indicator involving ``Other'' specialty and age 30 years or younger. LIME weights were much larger numerically than in the other datasets, but this does not imply stronger explanations because LIME magnitude depends on the design representation, perturbation distribution, and local surrogate. The encoded interaction rule is also less directly interpretable than a raw clinical measurement.
+
+\subsection{Local Explanation Magnitude by Case and Outcome}
+
+Figures~\ref{fig:lime_case_type} and~\ref{fig:lime_outcome} summarize the mean absolute LIME rule weight for each representative case, first by case type and then by prediction outcome. Correct groups comprise TP and TN cases; error groups comprise FP and FN cases, while the distinct borderline selection is retained separately. Missing case types are omitted rather than assigned zero.
+
+Absolute LIME weights are interpreted primarily within each dataset and model. Their magnitudes depend on the local representation, perturbations, and fitted surrogate and are not calibrated effect sizes across datasets. In particular, the larger HbA1c weights do not establish greater explanation fidelity or clinical relevance. These deliberately selected cases are illustrative and cannot support population-level comparisons of correct and erroneous predictions.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/lime_case_type_normalized.pdf}
+    \caption{Relative local explanation strength by representative case type. Values are normalized independently within each dataset by its largest mean absolute LIME weight. The figure supports comparison of case-type patterns within datasets; it does not compare absolute explanation magnitudes across datasets.}
+    \label{fig:lime_case_type}
+\end{figure}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/lime_outcome.pdf}
+    \caption{Mean of case-level absolute LIME rule weights by outcome group. Correct combines TP and TN; Error combines FP and FN. Borderline remains separate. The small, deliberately selected groups support descriptive within-dataset interpretation only.}
+    \label{fig:lime_outcome}
+\end{figure}
+
+\subsection{Global--Local Feature Presence}
+
+Global--local overlap was defined as the proportion of the global top-five SHAP features whose names appeared in a case's LIME rules. Table~\ref{tab:global_local_overlap} reports the average and observed range across representative cases.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Lexical overlap between global top-five SHAP features and representative-case LIME rules.}
+    \label{tab:global_local_overlap}
+    \begin{tabular}{@{}lrrr@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{Cases} & \textbf{Mean overlap} & \textbf{Range} \\
+        \midrule
+        Heart & 5 & 0.72 & 0.60--0.80 \\
+        Stroke & 5 & 0.96 & 0.80--1.00 \\
+        Diabetes & 5 & 1.00 & 1.00--1.00 \\
+        CKD & 4 & 0.80 & 0.80--0.80 \\
+        HbA1c & 3 & 0.20 & 0.20--0.20 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/global_local_overlap.pdf}
+    \caption{Mean proportion of the global top-five SHAP features whose names appear in representative-case LIME rules. Means summarize five Heart, Stroke, and Diabetes cases, four CKD cases, and three HbA1c cases. Feature presence does not imply agreement in sign, magnitude, or local surrogate fidelity.}
+    \label{fig:global_local_overlap}
+\end{figure}
+
+Stroke, Diabetes, and CKD exhibited high global--local feature presence, while Heart was lower and HbA1c markedly lower. For Diabetes, overlap is structurally inflated because all five model predictors form the global top-five set. For HbA1c, only the missing-specialty term from the global SHAP top five appeared in each local explanation.
+
+This overlap is lexical, not a formal agreement measure between SHAP and LIME. It does not compare signs, attribution magnitudes, rule intervals, or the behaviour of the local surrogate. RQ3 is therefore answered descriptively: local explanations reflected case-specific values and could differ in direction even when the same globally important variables appeared. Correct and erroneous predictions frequently shared their strongest local rules, while confidence and error status were not consistently related.
+
+The mean absolute LIME weights were slightly higher for correct than erroneous cases in each dataset for which both groups were available. However, each summary contained only one or two deliberately selected cases per outcome group, and weights are not comparable across datasets. No inferential or population-level conclusion is supported by these differences.
+
+\section{Cross-Dataset and Model-Family Comparison}
+
+Together with the held-out results in Section~\ref{sec:bootstrap_uncertainty}, the explanation analyses distinguish predictive performance from explanation reliability. Heart combines strong discrimination with stable rankings, although agreement involving permutation is only moderate. Stroke combines high recall with low precision and lower stability than Heart. Diabetes has moderate predictive performance but identical global rankings and high retraining stability. CKD has near-perfect held-out performance yet the lowest rank stability. Thus, high predictive accuracy does not necessarily imply stable feature explanations.
+
+The two random forests illustrate why these differences cannot be attributed to model family alone: Diabetes is highly stable, whereas CKD is substantially less stable. Feature count, near-zero importances, predictor dependence, preprocessing, and importance definitions can affect the observed rankings. HbA1c adds the complications of an interaction-rich representation, in-sample evaluation, low global--local feature overlap, and unavailable retraining stability.
+
+Dataset-level results were grouped descriptively into linear classification, tree ensemble, and statsmodels logistic-regression families. Table~\ref{tab:model_family_results} reports the resulting means.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{Descriptive XAI summaries by represented model family.}
+    \label{tab:model_family_results}
+    \begin{tabularx}{\textwidth}{@{}>{\RaggedRight\arraybackslash}Xrrrrr@{}}
+        \toprule
+        \textbf{Family} & \textbf{Datasets} & \textbf{Mean features} & \textbf{Cross-method $\rho$} & \textbf{Stability $\rho$} & \textbf{Top-3 overlap} \\
+        \midrule
+        Linear classification & 2 & 10.0 & 0.746 & 0.885 & 0.833 \\
+        Tree ensemble & 2 & 14.5 & 0.879 & 0.641 & 0.683 \\
+        Statsmodels logistic regression & 1 & 90.0 & 0.446 & -- & -- \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+The tree-ensemble group had higher mean cross-method agreement than the linear group, but lower repeated-fit stability. This contrast was driven by perfect agreement in the five-feature diabetes model and weak CKD stability. The statsmodels result was driven entirely by HbA1c and its 90 non-intercept design terms.
+
+These means do not isolate a model-family effect. Each group contains at most two datasets, and model family is confounded with sample size, feature count, outcome prevalence, preprocessing, and clinical task. The valid cross-dataset conclusion is therefore about demonstrated framework behaviour, not superiority of one model family.
+
+\section{Framework Robustness and Generalizability}
+
+The framework successfully generated native importance, permutation importance, SHAP, representative cases, and LIME outputs for all five final configurations. It handled scikit-learn linear classifiers, scikit-learn random forests, DataFrame inputs, and the tested statsmodels logistic-regression wrapper with a Patsy design matrix. Repeated-fit stability was demonstrated for the four configurations that supplied a retraining callback.
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \caption{Framework capabilities demonstrated by the five experiments.}
+    \label{tab:framework_capabilities}
+    \begin{tabular}{@{}lllccccc@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{Model family} & \textbf{Input} & \textbf{Native} & \textbf{Perm.} & \textbf{SHAP} & \textbf{LIME} & \textbf{Stability} \\
+        \midrule
+        Heart & Linear & DataFrame & yes & yes & yes & yes & yes \\
+        Stroke & Linear & DataFrame & yes & yes & yes & yes & yes \\
+        Diabetes & Tree ensemble & DataFrame & yes & yes & yes & yes & yes \\
+        CKD & Tree ensemble & DataFrame & yes & yes & yes & yes & yes \\
+        HbA1c & Statsmodels logistic & Patsy matrix & yes & yes & yes & yes & no \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/framework_capabilities.pdf}
+    \caption{Capabilities demonstrated across the evaluated configurations. Green cells indicate successful execution; the grey HbA1c stability cell indicates that retraining-based stability was not evaluated, rather than an explanation failure.}
+    \label{fig:framework_capabilities}
+\end{figure}
+
+The complete automated framework test run comprised 47 tests, all of which passed (zero failures). Coverage included representative-case positional indexing and duplicate handling, native coefficient magnitudes and signs, statsmodels constant exclusion, optional native importance, CSV exports, fitted-bundle round-tripping, feature alignment and tied ranks, reproducibility comparisons, metric calculation, pipeline execution, model selection, and command-line validation and safeguards. Bootstrap-specific checks covered specificity, perfect predictions, reproducible intervals, single-class rejection, and LaTeX export structure. One warning arose in the deliberate single-class-input rejection test; it did not correspond to a failed test. These are results of the recorded framework test run, rather than evidence of universal compatibility or clinical validation.
+
+Robustness was supported by successful execution across these heterogeneous configurations, preservation of feature order, export validation, automated tests, saved-bundle reruns, and tolerance-aware result comparison. Generalizability remains bounded by the implemented evidence. The framework has been demonstrated for binary classification only; representative cases assume a binary threshold; saved bundles cannot recreate stability without a retraining callback; local cases are descriptive selections; and raw importance magnitudes cannot be compared across methods.
+
+The HbA1c experiment both broadened and exposed the boundary of generalizability. It demonstrated compatibility with a statsmodels result wrapper and 91-column interaction design matrix (90 non-intercept terms), but its encoded terms were less directly interpretable, computation was substantially more expensive, no held-out predictive design was available, and repeated-fit stability could not be reproduced from the bundle.
+
+RQ5 is therefore answered conditionally. The execution and export architecture generalized across the five tested configurations, and the four principal explanation outputs were produced consistently. Scientific interpretation did not generalize without qualification: feature semantics, evaluation design, model family, class distribution, and retraining availability continued to determine what could be concluded.
+
+\section{Chapter Summary}
+
+The global results identified dataset-specific areas of consensus but no universal pattern of method agreement. Native and SHAP rankings were closely aligned for Heart, Stroke, Diabetes, and CKD, whereas HbA1c showed strong agreement between SHAP and permutation but almost none between native importance and SHAP. Repeated-fit stability was high for Heart and Diabetes, moderate for Stroke, and weak for CKD beyond its leading variables.
+
+Representative-case analysis showed that the same influential rule could occur in correct and incorrect predictions. High global--local feature presence did not establish agreement in direction or correctness, and the HbA1c design terms complicated local interpretation. Cross-dataset aggregation was useful for evaluating framework coverage but insufficient for causal claims about model families.
+
+Taken together, the findings show that explanation method, model structure, feature representation, and retraining variability materially affect the account of model behaviour. The next chapter discusses these results in relation to the research questions, the source studies, and the wider XAI literature.

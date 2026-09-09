@@ -1,0 +1,118 @@
+\chapter{Discussion}
+\label{chap:discussion}
+
+\section{Overview}
+
+This dissertation combined replication of five published medical-data studies with a standardized XAI extension. The resulting evidence does not support a single universal explanation pattern. Instead, it shows that predictive-study design, model family, feature representation, explanation method, and retraining variability all influence the account of model behaviour.
+
+The discussion is organized around the five research questions introduced in Chapter~\ref{chap:introduction}. The principal findings are interpreted first at dataset level and then at framework level. Particular attention is given to the distinction between computational reproducibility and clinical validation, because the latter would require evidence not produced by the present retrospective experiments.
+
+\section{RQ1: Reproducibility of the Published Workflows}
+
+RQ1 asked to what extent the five predictive workflows could be reproduced and which methodological ambiguities or limitations affected their replication. At a procedural level, all five studies were reproducible: their datasets could be obtained, their principal preprocessing stages reconstructed, their reported model families implemented, and a final analytical configuration produced for XAI. Exact numerical reproduction was more limited.
+
+The Heart experiment illustrates the effect of implementation detail. Logistic regression and SVM configurations were comparatively well specified, but neural-network labels did not uniquely determine initialization, optimization, architecture, or stopping behaviour. The replicated neural results therefore varied across implementations even when the broad model type matched the source study \citep{khanna_comparative_2015}. The correction of the GRNN input bug also demonstrated that apparently minor data-structure assumptions can invalidate an implementation without changing its conceptual description.
+
+The Stroke experiment exposed the interaction between severe class imbalance and evaluation choices. High accuracy could be obtained while positive-case performance remained limited. The selected class-balanced logistic regression achieved high recall but low precision, making the trade-off visible rather than concealing it behind majority-class accuracy. Training-only feature selection and preprocessing also produced a methodologically stronger extension than a workflow in which correlation screening was informed by the complete dataset \citep{wu_machine_2024}.
+
+The Diabetes replication showed that the preferred configuration depended on the metric. The eight-feature random forest produced the highest AUC among the best configurations, while the five-feature random forest produced the highest accuracy, recall, and F1. This prevents a simple claim that one feature subset was uniformly superior. The five-feature random forest was retained because it was pre-specified from the study design and supported the three-method global comparison, not because a post-hoc search of test metrics established it as universally best \citep{chang_pima_2023}.
+
+The CKD experiment provided the clearest direct demonstration of preprocessing leakage. Fitting imputation and encoding before the train--test split changed performance, particularly for the decision tree and gradient-boosting models. The effect was neither constant nor positive for every classifier, but the direction of the numerical change is secondary: once test information contributes to preprocessing, the test set no longer represents an independent evaluation. Retaining the source-style branch while using the leakage-controlled branch for XAI preserved the distinction between reproduction and methodological correction \citep{santhiya_chronic_2024}.
+
+HbA1c required a different interpretation because the source study was an inferential observational analysis rather than a held-out predictive benchmark \citep{strack_impact_2014}. The model was reproducible as a full-cohort logistic regression with grouped covariates and interactions. Supplying that fitted model to the common XAI interface broadened framework testing, but it did not transform the study into an externally evaluated classifier. The zero positive predictions at the 0.5 threshold and modest in-sample AUC reinforce the need to preserve this distinction.
+
+Taken together, the replications show that reproducibility is not a binary property. Dataset access and executable code made procedural reconstruction possible, but exact numerical equivalence depended on reporting detail, random processes, library behaviour, and unreported analytical choices. The use of explicit assumptions, leakage-controlled branches, saved inputs, runtime metadata, and automated tests provided a more defensible account than silent substitution of missing methodological information.
+
+\section{RQ2: Agreement Between Global Explanation Methods}
+
+RQ2 examined the consistency of native importance, permutation importance, and SHAP rankings. The results show that agreement depended strongly on the model and feature representation. No method served as a universal reference against which the others could be judged.
+
+For Heart, Stroke, and CKD, native importance was much more strongly correlated with SHAP than with permutation importance. This pattern is plausible because native parameters and SHAP both preserve information about the fitted model's internal response to features, although they do so through different definitions. Permutation importance instead measures the change in a selected performance metric when the observed association between one feature and the outcome is disrupted. Correlation among predictors, redundant information, and a model's operating metric can therefore produce a different ranking \citep{NIPS2017_8a20a862, vilone_classification_2021}.
+
+The diabetes model produced perfect rank agreement. This result is informative because all methods produced the same ordering, particularly the leading position of glucose. Nevertheless, it should not be overgeneralized. The model had only five features, all of which necessarily appeared in a top-five set. Complete set overlap was therefore structurally guaranteed, and only rank order supplied additional evidence.
+
+HbA1c produced the opposite pattern from the other datasets. Absolute coefficient magnitude had almost no rank correlation with SHAP, while SHAP and permutation importance were strongly correlated. The largest coefficients belonged to interactions involving the youngest age group and specialty categories. Such terms can have large conditional coefficients but occur infrequently in the design matrix. Aggregated SHAP and permutation importance instead emphasize contributions or model reliance across the observed cohort. The discrepancy therefore illustrates the distinction between parameter magnitude and population-level importance rather than demonstrating that one method is inherently erroneous.
+
+These results support the use of multiple global methods as complementary diagnostic views. High agreement increases confidence that methods are prioritizing similar features, but it does not establish that those features are causal or clinically appropriate. Low agreement should prompt examination of feature dependence, encoding, sparsity, interactions, metric choice, and method assumptions. This interpretation is consistent with broader XAI evaluation literature, which emphasizes that explanation quality cannot be reduced to one universal metric \citep{mohseni_multidisciplinary_2021, lofstrom_meta_2022}.
+
+\section{RQ3: Local Explanations for Representative Cases}
+
+RQ3 asked how LIME explanations differed among correct, incorrect, and borderline predictions and how they related to global importance. The representative cases showed that local rules were case-dependent but not necessarily outcome-specific.
+
+In Heart, chest-pain type led every representative explanation, but different intervals supported opposite classes. In Stroke, age strongly supported both the true-positive and false-positive predictions at high values and both the true-negative and false-negative predictions at low values. In Diabetes, high glucose led both the true positive and false positive. In CKD, serum creatinine led both a correct positive and a false positive. These patterns show that an influential local rule can contribute consistently to the model's prediction while the prediction itself is correct or incorrect.
+
+This distinction is essential. A local explanation describes why the model produced an output; it does not explain why the ground-truth label occurred and does not certify the prediction. A persuasive explanation for a false positive remains an explanation of erroneous model behaviour. Presenting it without the outcome and uncertainty context could encourage inappropriate reliance, a concern also identified in studies of human interaction with AI explanations \citep{vasconcelos_explanations_2023, lee_understanding_2023}.
+
+The Stroke cases were particularly informative because the selected model's operating trade-off generated confident errors. The false positive had a probability of 0.986, and the false negative had a probability of 0.024. These were not borderline mistakes. Local explanations therefore complemented performance metrics by showing which rules sustained incorrect high-confidence outputs.
+
+Global--local feature presence was high for Stroke, Diabetes, and CKD, moderate for Heart, and low for HbA1c. This result does not constitute formal agreement between global SHAP and local LIME. A feature name may appear in both analyses while carrying a different sign, rule interval, scale, or contextual meaning. In Diabetes, complete overlap was partly mechanical because the model contained only five features. In HbA1c, local LIME explanations emphasized an encoded interaction absent from the global model-agnostic top-five set, illustrating the difficulty of interpreting sparse high-dimensional design terms.
+
+The mean absolute LIME weights were slightly larger for correct than error cases in each dataset, but the summaries contained only one or two deliberately selected observations per group. They were neither random samples nor independent populations. No inferential conclusion about explanation strength and prediction correctness is therefore justified. The representative-case design is best understood as a transparent model-audit procedure that exposes illustrative successes, failures, and boundary behaviour.
+
+\section{RQ4: Stability Under Repeated Model Fitting}
+
+RQ4 examined global ranking stability when the training workflow could be rerun. Heart and Diabetes were highly stable, Stroke was moderately stable, and CKD was weakly stable beyond its leading features. These differences show why explanation stability must be defined relative to a specific source of variation.
+
+The stability experiment retrained each available workflow using five random seeds and compared permutation-importance rankings across the resulting fits. It therefore assessed persistence under the implemented retraining process. It did not test perturbations of individual observations, alternative SHAP backgrounds, or repeated LIME sampling. Those would represent different stability questions \citep{canha_functionally-grounded_2025, lofstrom_meta_2022}.
+
+Heart retained \emph{thal} and \emph{ca} as the two highest-ranked features in every fit. Diabetes similarly retained glucose and BMI. Stroke consistently retained age and average glucose at the top but showed more variation among lower-ranked variables. These results suggest that a small leading feature core can remain stable even when the complete ordering changes.
+
+CKD demonstrated the strongest contrast between apparent predictive success and explanation stability. Its held-out AUC was near perfect, and native importance agreed closely with SHAP in the final fitted model. Nevertheless, its mean repeated-fit rank correlation was only 0.341. Specific gravity remained first and serum creatinine remained prominent, but many remaining permutation importances were close to zero. Small changes in these values produced large changes in their relative order, particularly in a 24-feature model trained on 280 observations.
+
+This does not imply that the CKD model was randomly refitted or that its leading signal disappeared. Rather, it shows that performance, within-fit cross-method agreement, and between-fit ranking stability are distinct properties. Reporting only the final ranking would conceal this uncertainty. The result also cautions against assigning clinical meaning to small rank differences among features with negligible or highly variable importance.
+
+HbA1c had no repeated-fit result because the saved inferential-model bundle did not contain the complete retraining callback. Labelling stability as unavailable preserved the operational definition of the experiment. Refitting a simplified or differently preprocessed model would have answered another question and would not have been a valid substitute.
+
+\section{RQ5: Framework Robustness and Generalizability}
+
+RQ5 concerned which framework components remained applicable across datasets and model families. At the software-execution level, the framework generalized successfully across the five tested configurations. It handled linear scikit-learn classifiers, random forests, the tested statsmodels result wrapper, DataFrames, and a Patsy interaction matrix. Native importance, permutation importance, SHAP, representative-case selection, and LIME were generated for every final model. Stability was generated whenever the notebook supplied a retraining function.
+
+The reproducibility infrastructure strengthened this result. Dataset-level exports, fitted bundles, environment locks, runtime metadata, configuration files, timestamped command-line runs, comparison reports, and 47 automated tests reduced dependence on notebook state and supported independent verification. The successful bundle validations and reruns indicate that the framework architecture was reusable within the tested scope.
+
+Scientific generalizability was more restricted. The model-family summaries involved only two linear datasets, two tree-ensemble datasets, and one statsmodels dataset. Their averages were confounded by feature count, sample size, class prevalence, task, preprocessing, and representation. The higher mean cross-method agreement of tree ensembles cannot therefore be interpreted as a general property of tree models. It was influenced strongly by the five-feature Diabetes configuration, while the lower tree stability was driven by CKD.
+
+HbA1c was valuable precisely because it tested the boundary of the framework. The execution interface accommodated a 91-column interaction matrix (90 non-intercept terms), but explanations referred to encoded terms that were more difficult to translate into raw clinical concepts. The model lacked held-out evaluation and a retraining callback, and its model-agnostic SHAP computation was substantially more expensive. General software compatibility did not eliminate methodological differences.
+
+The evidence consequently supports bounded generalizability: the framework is reusable for the tested binary-classification interfaces and produces a consistent export schema across heterogeneous configurations. It does not establish support for multiclass classification, regression, time-to-event analysis, arbitrary statsmodels formulas, unstructured clinical data, or prospective CDSS deployment.
+
+\section{Methodological and Clinical Implications}
+
+Several methodological implications follow from the combined results. First, predictive-workflow validation should precede explanation. An explanation of a model affected by leakage or inappropriate selection does not repair the underlying evaluation. Second, global importance should be triangulated across methods when possible, especially when correlated variables, sparse interactions, or metric-specific reliance may produce divergent rankings. Third, explanation stability should be reported using an explicit perturbation or retraining design rather than treated as an inherent property of SHAP, LIME, or another method.
+
+Fourth, local explanations should be presented together with prediction outcome, probability, and case-selection rationale. The confident Stroke errors demonstrate that visually coherent local rules may accompany incorrect predictions. Fifth, encoded interaction terms require additional care. In HbA1c, a design-column explanation is mathematically valid for the fitted model but may not correspond to a directly actionable or intuitively understood clinical variable.
+
+The study does not demonstrate that any explanation is clinically useful or safe. Clinical plausibility was not assessed by healthcare professionals, and no explanation interface was tested in a real workflow. Agreement and stability are computational properties, not substitutes for external validation, calibration, subgroup analysis, prospective evaluation, or human-factors research. Clinical XAI development requires participation by intended users and attention to how explanations affect reliance and decision quality \citep{panigutti_co-design_2023, allgaier_how_2023}.
+
+\section{Strengths of the Study}
+
+The principal strength of this work is the integration of replication and explanation. Rather than beginning from undocumented fitted models, the study reconstructed the data-processing and modelling context that generated each explanation. The explicit separation between paper-style and corrected branches made methodological departures visible.
+
+A second strength is the use of complementary XAI views. Native importance, permutation importance, SHAP, and LIME were not collapsed into one score. Rank agreement, top-feature overlap, representative-case analysis, and repeated-fit stability exposed both convergence and disagreement.
+
+A third strength is heterogeneity. The five datasets covered different outcomes, sample sizes, feature spaces, model families, and analytical traditions. Although this heterogeneity limits direct statistical comparison, it provides a meaningful test of framework interfaces and interpretive boundaries.
+
+Finally, the software was supported by reproducibility controls beyond notebook execution. The package entry point, YAML configurations, trusted-bundle acknowledgement, timestamped outputs, result comparison, dependency locks, provenance metadata, demonstrations, and automated tests make the computational contribution inspectable and reusable.
+
+\section{Limitations}
+
+The study has several limitations. The datasets are retrospective and originate from public or previously prepared research sources. Their representativeness, measurement processes, missingness mechanisms, and temporal relevance differ. No external validation cohort was used.
+
+Only one final analytical configuration was explained per dataset. The results therefore characterize selected fitted models rather than the complete set of plausible models. Model selection was pre-specified to avoid test-set optimization, but alternative defensible models could produce different explanations.
+
+The framework's predictive scope is binary classification. The HbA1c configuration is not directly comparable with the four held-out prediction tasks because it uses in-sample inference on the full cohort. Its inclusion broadens software testing but also increases analytical heterogeneity.
+
+Permutation importance can be affected by correlated features and unrealistic permutations. Aggregated SHAP results depend on the explainer, reference distribution, output scale, and feature-dependence assumptions. LIME depends on local perturbation and discretization choices. None of the methods provides causal attribution \citep{NIPS2017_8a20a862, ribeiro_why_2016, vilone_classification_2021}.
+
+The stability experiment used five seeded fits and one operational definition based on permutation rankings. This is sufficient to reveal differences among the tested workflows but does not characterize every source of explanation uncertainty. HbA1c stability was unavailable.
+
+Representative cases were deliberately selected and are not a population sample. Correct-versus-error LIME summaries had very small case counts, preventing inferential analysis. The global--local overlap measure captured lexical feature presence only and did not compare signs, magnitudes, or local surrogate fidelity.
+
+No clinician evaluation, usability study, fairness audit, causal analysis, prospective trial, clinical-utility assessment, or regulatory conformity assessment was performed. Conclusions are therefore limited to computational model behaviour, explanation consistency, repeated-fit stability, and framework execution.
+
+\section{Discussion Summary}
+
+The combined evidence supports a cautious view of XAI. Explanation methods were useful for exposing recurring feature reliance, disagreement among importance definitions, confident prediction errors, and instability under retraining. They did not produce a single authoritative account of clinical reasoning.
+
+Procedural replication was achievable across the five studies, although exact numerical reproducibility was constrained by reporting and implementation details. Cross-method agreement was high in some fitted models and low in others. Stability differed substantially even among models with strong predictive performance. Local explanations clarified model behaviour around selected observations but did not distinguish correct from incorrect reasoning automatically. The framework generalized operationally across the tested interfaces while remaining scientifically bounded by task, data, and representation.
+
+These findings establish the basis for the final conclusions. They support reproducible, multi-method explanation analysis as a model-audit practice while rejecting the stronger claim that computational explanations alone validate a model for clinical use.

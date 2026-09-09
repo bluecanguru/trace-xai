@@ -1,5 +1,5 @@
-\chapter*{\thechapter \quad Methodology}
-\addcontentsline{toc}{chapter}{\thechapter \quad Methodology}
+\chapter{Methodology}
+\label{chap:methodology}
 
 \section{Research Design}
 
@@ -50,31 +50,31 @@ The identical training and explanation counts reported for HbA1c do not represen
 
 \subsection{Heart Disease}
 
-The processed Cleveland heart-disease data were loaded from the local UCI-format file used by the replicated comparative study \citep{khanna_heart_2015}. Missing values denoted by question marks were converted to missing values, incomplete observations were removed, and the original multi-level diagnostic outcome was converted to absence versus presence of heart disease. The cleaned sample contained 297 observations and 13 predictors.
+The processed Cleveland heart-disease data were loaded from the local UCI-format file used by the replicated comparative study \citep{khanna_comparative_2015}. Missing values denoted by question marks were converted to missing values, incomplete observations were removed, and the original multi-level diagnostic outcome was converted to absence versus presence of heart disease. The cleaned sample contained 297 observations and 13 predictors.
 
 An equal, stratified training/test partition was used to follow the source study. Standardisation parameters were estimated exclusively from the training partition and then applied to the test partition. Logistic regression with five-fold and ten-fold internal cross-validation, three support-vector-machine kernels, and the reported neural-network families were compared descriptively. Ten-fold L2-regularised logistic regression was pre-specified for the XAI extension because it represented a central replicated model and provided a probabilistic, coefficient-based baseline. Held-out performance rankings were not used to make this selection.
 
 \subsection{Stroke}
 
-The stroke dataset was restricted to valid binary gender categories, and the identifier field was removed before reconstructing the published stroke-prediction comparison \citep{wu_stroke_2024}. A missingness indicator was created for body mass index (BMI). The data were split using a stratified 80:20 partition before any learned preprocessing operation. Mean BMI imputation was estimated from the training partition, categorical dummy columns were derived from the training categories and aligned in the test data, and standardisation was fitted on training data only.
+The stroke dataset was restricted to valid binary gender categories, and the identifier field was removed before reconstructing the published stroke-prediction comparison \citep{wu_machine_2024}. A missingness indicator was created for body mass index (BMI). The data were split using a stratified 80:20 partition before any learned preprocessing operation. Mean BMI imputation was estimated from the training partition, categorical dummy columns were derived from the training categories and aligned in the test data, and standardisation was fitted on training data only.
 
 The reduced feature set was identified using absolute correlations with the outcome greater than 0.1, calculated only within the training partition. This produced seven predictors in the final extension. The paper-style comparison of logistic regression, decision tree, random forest, support vector machine, k-nearest neighbours, XGBoost, and a deep neural network was retained. A class-balanced logistic-regression model was pre-specified for XAI to address the severe class imbalance and to provide a stable probabilistic baseline. The held-out model comparison remained descriptive.
 
 \subsection{Diabetes}
 
-The Pima Indians Diabetes dataset contained 768 observations and eight predictors, following the study by \citet{chang_pima_2022}. Zero values in glucose, blood pressure, skin thickness, insulin, and BMI were treated as physiologically invalid missing values. Descriptive PCA and clustering analyses were retained as exploratory full-dataset analyses and were not used to estimate predictive performance.
+The Pima Indians Diabetes dataset contained 768 observations and eight predictors, following the study by \citet{chang_pima_2023}. Zero values in glucose, blood pressure, skin thickness, insulin, and BMI were treated as physiologically invalid missing values. Descriptive PCA and clustering analyses were retained as exploratory full-dataset analyses and were not used to estimate predictive performance.
 
 For predictive modelling, the stratified split was performed before median imputation. Medians were estimated from the 538 training observations and applied unchanged to the 230 test observations. Decision tree, random forest, and Gaussian naive Bayes models were evaluated using the complete predictor set and the three- and five-feature configurations defined by the source study. A random forest using the five-feature configuration was pre-specified for the XAI extension. This choice preserved the source-defined reduced feature set and enabled comparison of native tree importance, permutation importance, and SHAP importance; it was not selected by maximising test accuracy.
 
 \subsection{Chronic Kidney Disease}
 
-The CKD dataset contained 400 observations and was analysed using the classifier families reported by \citet{santhiya_ckd_2024}. Formatting artefacts and malformed missing-value markers were harmonised, the identifier was removed, and the outcome was encoded as CKD versus non-CKD. The source-study workflow---random-sample imputation and label encoding before a 70:30 split---was retained in an explicitly labelled paper-style branch so that its reported behaviour could be examined.
+The CKD dataset contained 400 observations and was analysed using the classifier families reported by \citet{santhiya_chronic_2024}. Formatting artefacts and malformed missing-value markers were harmonised, the identifier was removed, and the outcome was encoded as CKD versus non-CKD. The source-study workflow---random-sample imputation and label encoding before a 70:30 split---was retained in an explicitly labelled paper-style branch so that its reported behaviour could be examined.
 
 A second branch controlled information leakage by splitting first. Missing values in both training and test data were sampled only from the observed training distribution, with training-derived mean or mode values used as fallbacks. Categorical encoding was fitted on training data, with unseen test categories assigned a reserved value. The same KNN, decision-tree, random-forest, naive-Bayes, and gradient-boosting families were evaluated in both branches. The corrected branch supplied the XAI data and model. Random forest was pre-specified because it was the leading classifier reported by the source study, not because it ranked first on the present test partition.
 
 \subsection{HbA1c and Hospital Readmission}
 
-The HbA1c analysis reconstructed the cohort and inferential design reported by \citet{strack_hba1c_2014}. The outcome indicated readmission within 30 days. Variables excluded by the source study were removed, missing race and medical-specialty categories were represented explicitly, coded admission and discharge fields were mapped to readable groups, and only the first encounter for each patient was retained. Encounters with invalid gender coding or discharge dispositions associated with death or hospice were excluded.
+The HbA1c analysis reconstructed the cohort and inferential design reported by \citet{strack_impact_2014}. The outcome indicated readmission within 30 days. Variables excluded by the source study were removed, missing race and medical-specialty categories were represented explicitly, coded admission and discharge fields were mapped to readable groups, and only the first encounter for each patient was retained. Encounters with invalid gender coding or discharge dispositions associated with death or hospice were excluded.
 
 The analysis reconstructed the four-level HbA1c variable and grouped demographic, admission, discharge, specialty, age, and primary-diagnosis covariates. Nested logistic-regression specifications were fitted with Statsmodels, culminating in an interaction-rich model containing HbA1c-by-diagnosis and selected clinical-context interactions. The final Patsy design matrix contained 91 terms for 69,970 eligible encounters.
 
@@ -98,7 +98,7 @@ Importance magnitudes were not compared directly across methods because native, 
 
 \subsection{Representative Cases and LIME}
 
-Local explanations were generated for representative true-positive, true-negative, false-positive, false-negative, and borderline observations. At a classification threshold of 0.5, the selected cases were respectively the most confident correctly classified positive, most confident correctly classified negative, most confident false positive, most confident false negative, and observation closest to the threshold. A case type was omitted when no corresponding observation existed, and duplicate selections were removed.
+Local explanations were generated for five representative case types: true positive, true negative, false positive, false negative, and borderline. At a classification threshold of 0.5, the selected cases were respectively the most confident correctly classified positive, most confident correctly classified negative, most confident false positive, most confident false negative, and observation closest to the threshold. A case type was omitted when no corresponding observation existed, and duplicate selections were removed.
 
 LIME was fitted using the training matrix and a fixed random seed of 42 \citep{ribeiro_why_2016}. It generated rule-based local contributions for each available representative case. Positive and negative LIME weights indicate movement toward and away from the positive class within the local surrogate, respectively. These weights describe the surrogate around one observation; they are not equivalent to global feature effects, regression coefficients, or causal effects.
 

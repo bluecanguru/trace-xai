@@ -1,0 +1,127 @@
+\chapter*{\thechapter \quad Conclusão}
+\addcontentsline{toc}{chapter}{\thechapter \quad Conclusão}
+\paragraph{}
+\chapter{Conclusions and Future Work}
+\label{chap:conclusions}
+
+\section{Conclusions}
+
+This dissertation investigated how a reproducible XAI framework could be applied across heterogeneous replicated medical-prediction studies and what the resulting global, local, agreement, and stability analyses could legitimately reveal about model behaviour. Five published studies were reconstructed using datasets concerning heart disease, stroke, diabetes, chronic kidney disease, and HbA1c-associated hospital readmission. One final analytical configuration from each replication was then analysed through a shared framework comprising native importance where supported, permutation importance, SHAP, representative-case LIME, rank agreement, and repeated-fit stability where retraining was available.
+
+The work produced two connected outcomes. The first was a documented replication-and-correction process. The second was a reusable software and analytical framework for generating and comparing explanation artefacts across distinct models and feature representations. The findings show that reproducibility of the predictive workflow is a necessary foundation for explanation: XAI cannot compensate for leakage, ambiguous preprocessing, inappropriate model selection, or an evaluation design that does not support the intended claim.
+
+\subsection{Answer to RQ1}
+
+The five source workflows were reproducible at the level of dataset, principal preprocessing stages, model families, and analytical objective. Exact numerical reproduction was not always achievable because several procedures depended on incompletely reported random choices, implementation-specific neural-network details, ambiguous preprocessing order, or differences between inferential and predictive study designs.
+
+The separation between paper-style and corrected branches was therefore essential. In CKD, it made the effect of preprocessing-before-splitting visible while ensuring that the model supplied to XAI used leakage-controlled preprocessing. In Stroke and Diabetes, learned preprocessing and feature selection were restricted to training data. In Heart, a model was pre-specified from the replicated design rather than selected after inspecting the held-out model ranking. HbA1c was retained as a full-cohort inferential model and was not presented as an out-of-sample classifier.
+
+RQ1 is consequently answered by a qualified conclusion: the studies were procedurally reproducible, but numerical equivalence was constrained by methodological reporting and implementation detail. Explicit assumptions and corrected evaluation branches produced defensible final configurations without silently rewriting the source studies.
+
+\subsection{Answer to RQ2}
+
+Global explanation methods did not agree uniformly. Heart, Stroke, and CKD showed strong agreement between native importance and SHAP but only moderate agreement with permutation importance. Diabetes produced an identical ordering across all three methods, although its five-feature design made complete top-five membership inevitable. HbA1c showed almost no agreement between absolute coefficient magnitude and SHAP, while SHAP and permutation importance were strongly aligned.
+
+These results demonstrate that native importance, permutation importance, and SHAP are complementary rather than interchangeable. Their agreement depends on estimator structure, feature correlation, encoding, sparsity, interactions, and the quantity each method measures. High agreement does not prove clinical correctness, and disagreement does not by itself identify a defective method. RQ2 is answered by showing that consistency must be evaluated empirically for each fitted model.
+
+\subsection{Answer to RQ3}
+
+Representative LIME explanations revealed case-specific model behaviour across correct, incorrect, and boundary predictions. The same leading rule frequently occurred in both correct and incorrect cases. High age supported both a Stroke true positive and a high-confidence false positive; low age supported both a true negative and a false negative. Comparable patterns occurred for chest-pain type in Heart, glucose in Diabetes, and serum creatinine in CKD.
+
+Global--local feature presence was high in several datasets, but it did not measure agreement in sign, magnitude, or predictive correctness. Complete overlap in Diabetes was partly structural because the model contained only five features. HbA1c produced low global--local overlap and explanations dominated by encoded interaction terms, illustrating the interpretive cost of a high-dimensional design matrix.
+
+RQ3 is therefore answered descriptively: local explanations clarified why the model produced selected outputs, including errors, but they did not independently distinguish correct from incorrect reasoning. Representative explanations should be presented with the true outcome, predicted class, probability, and selection rationale.
+
+\subsection{Answer to RQ4}
+
+Repeated-fit stability varied substantially. Heart and Diabetes produced highly stable global rankings, Stroke showed moderate stability, and CKD was weakly stable beyond its leading variables. The CKD result was particularly important because the final model combined near-perfect held-out discrimination with low mean ranking stability. Strong predictive performance and high within-fit agreement therefore did not guarantee that a complete feature ordering would persist after retraining.
+
+HbA1c stability was not available because the full inferential training process was not exposed through a retraining callback. The framework reported this limitation rather than substituting a different model or stability definition.
+
+RQ4 is answered within the implemented repeated-fit design: stable leading features were identifiable in the four retrainable experiments, but stability was model- and dataset-dependent and decreased when many importance values were close to zero. Rank differences among negligible features should consequently be interpreted cautiously.
+
+\subsection{Answer to RQ5}
+
+The framework generalized operationally across the five tested configurations. It supported scikit-learn linear classifiers and tree ensembles, the tested statsmodels result wrapper, DataFrame inputs, and a Patsy design matrix containing interactions. Native importance, permutation importance, SHAP, representative cases, and LIME were produced for every final model. Repeated-fit stability was produced whenever a retraining callback was supplied.
+
+Scientific generalizability was narrower. The represented model-family groups were small and confounded with dataset, feature count, task, sample size, and class distribution. HbA1c demonstrated compatibility with a substantially different analytical representation but also exposed limitations in interpretability, computation, held-out evaluation, and retraining. RQ5 is therefore answered conditionally: the framework architecture generalized across the tested binary-classification interfaces, whereas substantive interpretation remained dependent on the study design and feature representation.
+
+\section{Principal Contributions}
+
+The dissertation makes the following contributions:
+
+\begin{enumerate}
+    \item a transparent reconstruction of five heterogeneous medical-data studies, including explicit documentation of ambiguity, leakage risk, class imbalance, and differences between predictive and inferential designs;
+
+    \item a separation between source-study reproduction and corrected final configurations, preventing test-set optimization and leakage from being incorporated silently into the XAI extension;
+
+    \item a reusable binary-classification XAI framework integrating native importance, permutation importance, SHAP, LIME, representative-case selection, rank comparison, and optional repeated-fit stability;
+
+    \item an empirical demonstration that global explanation methods can converge strongly, diverge materially, or change their relationship according to model and representation;
+
+    \item a representative-case analysis that includes correct predictions, errors, and decision-boundary observations rather than presenting only favourable examples;
+
+    \item a repeated-fit analysis showing that strong predictive performance and within-fit explanation agreement do not imply stable rankings under retraining;
+
+    \item a cross-dataset synthesis that distinguishes operational framework coverage from scientific generalizability; and
+
+    \item a reproducibility workflow comprising dependency locks, package execution, YAML configuration, saved bundles, runtime provenance, automated tests, timestamped reruns, demonstrations, and tolerance-aware result comparison.
+\end{enumerate}
+
+The primary contribution is methodological and computational. The study does not introduce a new explanation algorithm and does not claim to validate a clinical decision-support system.
+
+\section{Limitations}
+
+The conclusions are bounded by the limitations discussed in Chapter~\ref{chap:discussion}. The datasets were retrospective, heterogeneous, and not externally validated. One final model was explained per dataset, and alternative defensible models could produce different results. Four tasks used held-out prediction, while HbA1c used full-cohort inference and cannot be treated as directly equivalent.
+
+The framework was evaluated only for binary classification and the model interfaces represented in the experiments. Explanation methods retained their known dependence on data representation, reference distributions, feature dependence, perturbation procedures, scoring metrics, and random variation. Rank agreement and top-feature overlap assessed similarity between method outputs, not clinical truth. Repeated-fit stability used five seeds and one global permutation-ranking definition. Representative local cases were deliberately selected and were not a population sample.
+
+No prospective data, external hospital cohort, temporal validation, fairness audit, causal analysis, clinician study, usability evaluation, calibration intervention, clinical-utility assessment, or regulatory conformity assessment was conducted. The models and explanations must therefore not be interpreted as ready for patient-care use.
+
+\section{Future Work}
+
+\subsection{External and Temporal Validation}
+
+The most important next step is to evaluate the final analytical configurations on independent cohorts. External validation would test whether predictive performance and explanation rankings persist under differences in population, clinical practice, coding, and measurement. Where longitudinal data are available, temporal validation should be preferred to random splitting because it more closely represents future deployment.
+
+Model calibration should also be examined explicitly. This is particularly important for imbalanced outcomes such as Stroke and HbA1c, where discrimination, threshold behaviour, and predicted-probability reliability address different questions. Thresholds should be selected according to a clearly defined use case and associated error costs rather than adopted automatically at 0.5.
+
+\subsection{Broader Stability Analysis}
+
+Future experiments should separate multiple sources of explanation variability. These may include resampling of the training cohort, alternative train--test partitions, model hyperparameter uncertainty, SHAP background selection, repeated LIME perturbation, correlated-feature grouping, and controlled perturbations of individual observations. Increasing the number of repeated fits would allow uncertainty intervals for rank and top-feature frequency to be estimated more reliably.
+
+For HbA1c, the complete preprocessing and fitting procedure should be exposed as a retraining callback before repeated-fit stability is attempted. A simplified substitute model should not be used unless it is introduced as a separate analytical experiment.
+
+\subsection{Model and Task Coverage}
+
+The framework could be extended to multiclass classification, regression, survival analysis, and calibrated risk prediction. Each extension would require task-specific metrics, representative-case definitions, output handling, and tests rather than a superficial relaxation of the current binary checks.
+
+Additional estimators could include calibrated boosting models, interpretable generalized additive models, and explicitly constrained models. Comparing an interpretable model with a more complex alternative would help determine whether post-hoc explanation is necessary for a given task rather than assuming that complexity is always justified.
+
+\subsection{Feature Dependence and Clinical Representation}
+
+Permutation and SHAP analyses should be extended with methods that account more explicitly for correlated predictors. Grouped permutation, conditional importance, or clinically defined feature groups may reduce misleading attribution among substitutable variables. Sensitivity to alternative background samples should be documented.
+
+Encoded categorical levels and interactions should be mapped back to readable clinical concepts where mathematically defensible. For HbA1c, future work could compare design-term explanations with grouped explanations at the level of age, specialty, diagnosis, discharge status, and HbA1c category. Such aggregation must preserve the interaction structure and should not combine coefficients or attributions without a stated rule.
+
+\subsection{Fairness and Subgroup Analysis}
+
+Future work should evaluate predictive performance, calibration, error rates, and explanation behaviour across clinically and demographically relevant subgroups. This is especially important when sex, age, race, or healthcare-utilization variables contribute to predictions. Subgroup analysis should account for sample size and uncertainty and should not infer fairness from global feature importance alone.
+
+\subsection{Human-Centred and Clinical Evaluation}
+
+The present computational study should be followed by evaluation with intended users before any claim of clinical usefulness. Clinicians should participate in defining relevant explanation tasks, selecting presentation formats, and identifying situations in which explanations help or hinder decisions. Studies should measure decision quality, appropriate reliance, time burden, comprehension, and the response to incorrect but persuasive explanations.
+
+Any future explanation-screening or warning mechanism would require prospectively justified criteria and human-factors validation. The current agreement and stability results are not sufficient to define a universal acceptance threshold or a clinical safety gate.
+
+\subsection{Reproducibility and Software Development}
+
+The framework should continue to evolve through versioned releases, continuous integration, expanded tests, schema validation, and automated generation of thesis-ready tables and figures from canonical outputs. Duplicate or obsolete result files should be detected by manifests or checksums to prevent stale analyses from entering reports. Model bundles should retain training provenance and, where feasible, a safe and reproducible specification of the training procedure.
+
+Containerized execution could complement the existing dependency locks, particularly for long-term preservation. Future archives should record data provenance, code commit, configuration, environment, generated outputs, and comparison reports as one immutable research object.
+
+\section{Final Remarks}
+
+Explainability is most useful when it increases scrutiny rather than confidence by default. Across the five experiments, XAI revealed consistent leading features, disagreements among importance definitions, confident prediction errors, and instability that predictive metrics alone did not expose. At the same time, none of these computational observations established clinical validity.
+
+The central conclusion of this dissertation is therefore that XAI should be treated as a reproducible model-audit process rather than as an automatic certificate of trust. Applying multiple explanation methods, documenting their assumptions, testing stability where possible, and presenting local explanations alongside outcomes and uncertainty produces a more complete account of model behaviour. That account remains one component of a broader validation process required before medical AI can responsibly influence clinical decisions.

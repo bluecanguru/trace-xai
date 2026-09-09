@@ -1,0 +1,94 @@
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{Context and Motivation}
+
+The increasing availability of electronic health records, public clinical datasets, and computational resources has expanded the use of artificial intelligence (AI) and machine learning (ML) in medical prediction. These methods have been applied to diagnosis, prognosis, risk stratification, and hospital-outcome prediction, often using heterogeneous combinations of demographic, physiological, laboratory, and administrative variables \citep{hassija_interpreting_2024, bharati_review_2024, ahmed_artificial_2022}. Their ability to model complex and potentially non-linear associations makes them attractive for clinical decision support systems (CDSS), particularly when conventional statistical summaries do not capture all relationships present in the data.
+
+Predictive performance alone, however, is insufficient to establish that a model is reliable, clinically meaningful, or suitable for deployment. Reported results can be influenced by data cleaning, missing-value treatment, feature encoding, class imbalance, train--test partitioning, feature selection, model-selection procedures, and information leakage. These decisions are not always described with enough precision to permit exact reproduction. Consequently, an apparently strong result may be difficult to reproduce or may depend on methodological choices that limit its validity beyond the original experiment.
+
+The interpretation of fitted models introduces a second layer of uncertainty. Many predictive models provide limited direct insight into the variables driving their outputs. Explainable artificial intelligence (XAI) methods attempt to address this limitation by producing global summaries of model behaviour or local explanations for individual predictions \citep{adadi_peeking_2018, arrieta_explainable_2019, linardatos_explainable_2020}. Nevertheless, different explanation methods quantify different objects. Model coefficients or impurity-based importance, permutation importance, SHAP values, and LIME weights are not interchangeable, and agreement among them cannot be assumed \citep{NIPS2017_8a20a862, ribeiro_why_2016, vilone_classification_2021}.
+
+These two concerns---reproducibility of predictive experiments and consistency of their explanations---motivate this dissertation. Instead of treating an XAI output as an automatically valid account of clinical reasoning, the study examines how several established explanation methods behave when applied through a common framework to models obtained from five heterogeneous medical-data replications.
+
+\section{Problem Statement}
+
+Medical ML studies frequently differ in their datasets, outcomes, preprocessing procedures, model families, evaluation metrics, and reporting quality. This heterogeneity complicates both reproduction of published findings and comparison of explanation results. Even when the same explanation methods are used, differences in feature representation, model structure, sample size, and class distribution can produce substantially different rankings and local rationales.
+
+Three connected problems are therefore addressed. First, published predictive workflows must be reconstructed carefully enough to distinguish the reported procedure from assumptions introduced during replication. Second, model selection and final evaluation must avoid using the held-out test set as a tuning instrument. Third, explanations must be analysed according to what each method measures rather than being treated as equivalent evidence of clinical relevance.
+
+The research problem is consequently formulated as follows: \emph{how can a reproducible XAI framework be applied across heterogeneous replicated medical-prediction studies, and what can the resulting global, local, agreement, and stability analyses legitimately reveal about model behaviour?}
+
+The study is computational and retrospective. It evaluates models and explanation artefacts derived from existing datasets; it does not evaluate clinical effectiveness, establish causal relationships, validate explanations with healthcare professionals, or propose the resulting models for clinical deployment.
+
+\section{Aim and Objectives}
+
+The general aim of this dissertation is to develop and evaluate a reproducible framework for applying and comparing global and local XAI methods across replicated medical-prediction studies.
+
+The specific objectives are:
+
+\begin{enumerate}
+    \item to reproduce five published analyses concerning heart disease, stroke, diabetes, chronic kidney disease, and hospital readmission associated with HbA1c measurement, while documenting ambiguities and methodological limitations in the reported workflows;
+    \item to distinguish paper-style replication from the corrected analytical configuration used for the XAI extension whenever exact imitation would introduce leakage, inappropriate evaluation, or another avoidable methodological limitation;
+    \item to apply a common XAI pipeline comprising native model importance where supported, permutation importance, SHAP, and LIME explanations for representative cases;
+    \item to assess agreement among global feature-ranking methods within each dataset and model;
+    \item to evaluate repeated-fit feature stability where the original training procedure can be rerun through a retraining callback;
+    \item to compare global and local explanation behaviour across datasets without treating raw importance magnitudes or differently encoded variables as directly equivalent; and
+    \item to assess the reproducibility, robustness, and generalizability of the implemented framework within its tested binary-classification scope.
+\end{enumerate}
+
+\section{Research Questions}
+
+The dissertation addresses the following research questions:
+
+\begin{description}
+    \item[RQ1] To what extent can the predictive workflows reported in five medical-data studies be reproduced, and which methodological ambiguities or limitations affect their replication?
+
+    \item[RQ2] How consistently do native importance, permutation importance, and SHAP rank influential features within each final dataset-specific model?
+
+    \item[RQ3] How do local LIME explanations differ across representative correct, incorrect, and borderline predictions, and how do they relate to global importance patterns?
+
+    \item[RQ4] How stable are global feature rankings across repeated model fits when the original training workflow can be rerun?
+
+    \item[RQ5] Which components of the standardized XAI framework remain applicable across heterogeneous datasets and model families, and what limits its generalizability?
+\end{description}
+
+The questions are primarily descriptive and comparative. The dissertation does not formulate confirmatory clinical hypotheses or infer clinical safety from agreement between explanation methods.
+
+\section{Research Design Overview}
+
+The study follows a replication-and-extension design. Five published studies were selected through a structured, PRISMA-guided literature process. Their datasets and analytical procedures were reconstructed in dataset-specific replication notebooks. Where the original description was ambiguous, the implementation records the assumption adopted. Where a paper-style procedure conflicted with leakage-controlled evaluation, the replication result was retained for comparison but a corrected branch was used to select the final model for explanation.
+
+Each selected model and its aligned training and test matrices were then passed to a shared XAI framework. The framework generated predictive metrics, native importance when available, permutation importance, global SHAP summaries, rank-agreement outputs, representative test cases, local LIME explanations, and repeated-fit stability results when retraining was available. Dataset-level outputs were subsequently analysed in a separate cross-dataset notebook.
+
+The use of a common framework standardizes the execution and export process but does not eliminate differences among the underlying studies. In particular, the HbA1c experiment uses a large observational cohort and an interaction-rich statsmodels logistic model represented through Patsy design terms. It therefore serves as a deliberately heterogeneous test of framework applicability rather than as a directly comparable disease-prediction task.
+
+Reproducibility was supported through fixed random seeds where applicable, dataset-oriented result directories, saved model bundles, environment locks, runtime-version metadata, automated tests, bundle validation, timestamped command-line reruns, and tolerance-aware comparison of canonical and regenerated outputs.
+
+\section{Contributions}
+
+The principal contributions of this dissertation are:
+
+\begin{itemize}
+    \item a documented replication of five heterogeneous published medical-data studies, including explicit separation between paper-style reproduction and methodological correction where required;
+    \item a reusable binary-classification XAI framework that applies a consistent set of global and local explanation procedures to scikit-learn estimators and the tested statsmodels model configuration;
+    \item an analysis of agreement and disagreement among native importance, permutation importance, and SHAP feature rankings;
+    \item a representative-case procedure covering true-positive, true-negative, false-positive, false-negative, and decision-boundary cases when those categories are available;
+    \item a repeated-fit assessment of feature-ranking stability for experiments that expose their training procedure to the framework;
+    \item a cross-dataset synthesis that identifies which framework capabilities transfer across model families and which conclusions remain dataset- or representation-dependent; and
+    \item a reproducible software and verification workflow comprising automated tests, configuration-based execution, provenance metadata, independent reruns, and result-comparison reports.
+\end{itemize}
+
+These contributions concern computational methodology and empirical model analysis. They do not constitute clinical validation of the models or explanations.
+
+\section{Scope and Limitations}
+
+The implemented framework is limited to binary classification and to the model interfaces exercised in the five experiments. The datasets are retrospective and were obtained from public or previously prepared research sources. Their sampling processes, missingness mechanisms, outcome definitions, and feature representations differ, limiting direct comparison and external generalization.
+
+Feature importance is method-dependent. Native, permutation, SHAP, and LIME outputs have different definitions and scales; raw magnitudes are therefore not compared across methods. Rank correlation and top-feature overlap describe agreement in ordering or presence, not proof that an explanation is clinically correct. Similarly, repeated-fit stability indicates whether selected global features persist under the implemented retraining procedure, but it does not establish robustness to every form of data or model perturbation.
+
+Local explanations are generated for deliberately selected representative cases and should not be interpreted as population estimates. No clinician study, prospective evaluation, causal analysis, fairness audit, clinical-utility assessment, or regulatory conformity assessment was conducted. These limitations define the boundary within which the results and conclusions must be interpreted.
+
+\section{Dissertation Structure}
+
+The remainder of this dissertation is organized as follows. Chapter~\ref{chap:state_of_art} reviews XAI in medical prediction, explanation methods, reproducibility concerns, and approaches for evaluating agreement and stability. Chapter~\ref{chap:methodology} describes study selection, the five replication workflows, the final analytical configurations, the standardized XAI framework, and the cross-dataset analysis. The subsequent results chapter reports the replication findings and model-selection outcomes. The XAI results chapter presents global explanations, method agreement, stability, representative local cases, and cross-dataset comparisons. The discussion interprets these findings in relation to the research questions and existing literature, while distinguishing computational evidence from clinical claims. The final chapter summarizes the contributions, limitations, and priorities for future work.

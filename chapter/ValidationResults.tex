@@ -1,0 +1,113 @@
+\chapter{Validation of the Replicated Analytical Configurations}
+\label{chap:validation_results}
+
+\section{Chapter Overview}
+
+This chapter evaluates the analytical configurations specified after replication. Heart, Stroke, Diabetes, and CKD use held-out test partitions. HbA1c retains the source study's full-cohort inferential design and is excluded from held-out predictive comparisons. The evaluation reuses the test partitions established by the dataset workflows; it is internal held-out validation, not external or prospective clinical validation.
+
+Model choice was specified independently of the held-out ranking. The central uncertainty analysis loads the fitted models and aligned test data exported by the XAI-extension notebooks. This execution dependency does not change the conceptual order: predictive validation precedes interpretation of the explanation results.
+
+
+\section{CKD Preprocessing Comparison}
+
+The CKD replication fitted imputation and categorical encoding before the train--test split. For the leakage-controlled evaluation, the split was performed first and all preprocessing parameters were learned from the training observations. Table~\ref{tab:ckd_leakage_comparison} compares the two workflows on the same split.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption{CKD test accuracy with leakage-controlled and paper-style full-dataset preprocessing.}
+    \label{tab:ckd_leakage_comparison}
+    \begin{tabular}{@{}lrrr@{}}
+        \toprule
+        \textbf{Model} & \textbf{Leakage-controlled} & \textbf{Paper-style} & \textbf{Difference} \\
+        \midrule
+        Random forest & 0.983 & 0.992 & +0.009 \\
+        Gradient boosting & 0.967 & 0.992 & +0.025 \\
+        Gaussian Naive Bayes & 0.958 & 0.942 & -0.016 \\
+        Decision tree & 0.942 & 0.983 & +0.041 \\
+        K-nearest neighbours & 0.658 & 0.650 & -0.008 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The direction and magnitude of the difference were model-dependent. The methodological issue does not depend on whether a score increased: when the complete dataset determines preprocessing parameters, the test partition is no longer independent. The leakage-controlled random forest was therefore used for the held-out evaluation and XAI extension.
+
+\section{Evaluated Analytical Configurations}
+
+Table~\ref{tab:final_model_metrics} consolidates the five analytical configurations evaluated after replication. Values for the first four datasets were calculated on held-out test data. HbA1c values are in-sample and are included only to characterize the fitted inferential model.
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \caption{Final model configurations and predictive metrics.}
+    \label{tab:final_model_metrics}
+    \setlength{\tabcolsep}{3.5pt}
+    \begin{tabular}{@{}llrrrrrr@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{Final model} & \textbf{$n_{test}$} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{AUC} \\
+        \midrule
+        Heart & Logistic regression CV & 149 & 0.852 & 0.841 & 0.841 & 0.841 & 0.915 \\
+        Stroke & Balanced logistic regression & 1,022 & 0.754 & 0.142 & 0.800 & 0.242 & 0.834 \\
+        Diabetes & Random forest, five features & 230 & 0.752 & 0.658 & 0.600 & 0.627 & 0.816 \\
+        CKD & Random forest & 120 & 0.983 & 0.987 & 0.987 & 0.987 & 0.999 \\
+        HbA1c$^{a}$ & Interaction logistic regression & 69,970 & 0.910 & 0.000 & 0.000 & 0.000 & 0.619 \\
+        \bottomrule
+        \multicolumn{8}{@{}p{0.96\textwidth}@{}}{\footnotesize $^{a}$In-sample descriptive values from a full-cohort inferential analysis; not a held-out predictive evaluation.} \\
+    \end{tabular}
+\end{table}
+
+The consolidated results illustrate why a single performance measure cannot summarize the five tasks. Heart disease showed comparatively balanced discrimination and classification performance. The balanced stroke model prioritized sensitivity and consequently produced low precision. Diabetes produced moderate discrimination and classification performance. CKD produced near-perfect performance on a small test sample. HbA1c showed modest in-sample discrimination and no positive classifications at the conventional threshold.
+
+\section{Predictive Performance and Bootstrap Uncertainty}
+\label{sec:bootstrap_uncertainty}
+
+Figure~\ref{fig:predictive_performance} compares accuracy, F1, ROC AUC, and precision--recall performance for the four held-out configurations. PR AUC is reported using the analysis implementation's average-precision estimator (AP), rather than trapezoidal integration of the precision--recall curve. The corresponding values were 0.912 for Heart, 0.220 for Stroke, 0.689 for Diabetes, and 0.999 for CKD. HbA1c is excluded because its predictions are in-sample.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/predictive_performance.pdf}
+    \caption{Held-out predictive performance of the final models. PR AUC denotes average precision (AP). The datasets have different outcome prevalences and evaluation samples; the figure is descriptive and does not establish a controlled ranking of model families.}
+    \label{fig:predictive_performance}
+\end{figure}
+
+Uncertainty was estimated using a nonparametric observation-level percentile bootstrap with 5,000 resamples and random seed 42. Observed labels and predicted probabilities were resampled together within each test partition; the fitted model remained fixed. The 2.5th and 97.5th percentiles formed the 95\% confidence interval (CI). All 5,000 resamples were valid for each dataset. These intervals quantify test-sample uncertainty conditional on the fitted model and do not incorporate model-selection uncertainty, retraining variability, or external population shift.
+
+Table~\ref{tab:bootstrap_performance_new} reports the principal metrics and their intervals. Figure~\ref{fig:bootstrap_roc_auc} presents ROC AUC separately to make the interval widths visible.
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \setlength{\tabcolsep}{3pt}
+    \caption{Held-out performance with 95\% percentile bootstrap confidence intervals. PR AUC is average precision.}
+    \label{tab:bootstrap_performance_new}
+    \begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lrrrr@{}}
+        \toprule
+        Dataset & Accuracy & F1 & ROC AUC & PR AUC \\
+        \midrule
+        Heart & 0.852 [0.792, 0.906] & 0.841 [0.767, 0.903] & 0.915 [0.865, 0.956] & 0.912 [0.849, 0.959] \\
+        Stroke & 0.754 [0.728, 0.780] & 0.242 [0.181, 0.303] & 0.834 [0.774, 0.887] & 0.220 [0.147, 0.339] \\
+        Diabetes & 0.752 [0.696, 0.804] & 0.627 [0.531, 0.710] & 0.816 [0.757, 0.867] & 0.689 [0.586, 0.790] \\
+        CKD & 0.983 [0.958, 1.000] & 0.987 [0.965, 1.000] & 0.999 [0.996, 1.000] & 0.999 [0.998, 1.000] \\
+        \bottomrule
+    \end{tabular*}
+\end{table}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{images/results/bootstrap_roc_auc.pdf}
+    \caption{ROC AUC point estimates and 95\% bootstrap confidence intervals for the four held-out models. Narrow intervals, including CKD, remain conditional on the observed test sample and fixed fitted model.}
+    \label{fig:bootstrap_roc_auc}
+\end{figure}
+
+Heart combined strong discrimination (ROC AUC 0.915, 95\% CI 0.865--0.956) with balanced precision and recall, both 0.841. Diabetes showed moderate discrimination (ROC AUC 0.816, 0.757--0.867) and an F1 score of 0.627 (0.531--0.710). Stroke illustrates the distinction between discrimination and positive-class classification: ROC AUC was 0.834 (0.774--0.887), but precision was 0.142 (0.103--0.184), despite recall of 0.800 (0.686--0.906). Its PR AUC of 0.220 (0.147--0.339) complements ROC AUC by exposing the limited precision under this imbalanced outcome.
+
+CKD had the highest observed scores, with accuracy 0.983 (0.958--1.000), F1 0.987 (0.965--1.000), and ROC AUC 0.999 (0.996--1.000). This result does not establish external validity and must be considered alongside the low repeated-fit explanation stability in Chapter~\ref{chap:xai_results}. Predictive uncertainty and explanation stability address different sources of variability.
+
+
+\section{Validation Findings}
+
+The four held-out configurations showed materially different operating characteristics. Heart combined strong discrimination with balanced precision and recall. Diabetes showed moderate discrimination and classification performance. The balanced Stroke model detected most positive cases but generated many false positives, producing high recall alongside low precision, F1, and average precision. CKD produced near-perfect discrimination on a small internal test sample, so external generalization cannot be inferred.
+
+These results establish the predictive context for Chapter~\ref{chap:xai_results}. Bootstrap uncertainty and repeated-fit explanation stability answer different questions: the former resamples the fixed model's test observations, whereas the latter refits models and measures changes in permutation-importance rankings.

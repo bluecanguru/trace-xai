@@ -1,0 +1,6 @@
+Dataset,CommonTop5Features,NCommon
+Heart,"cp, thal, thalach",3
+Stroke,"age, avg_glucose_level, bmi_missing, heart_disease",4
+Diabetes,"Age, BMI, Glucose, Insulin, SkinThickness",5
+CKD,"al, pcv, sc, sg",4
+HbA1c (in-sample),,0

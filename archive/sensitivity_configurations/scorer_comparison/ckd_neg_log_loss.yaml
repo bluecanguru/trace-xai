@@ -1,0 +1,5 @@
+project_root: ../../..
+dataset_name: ckd
+bundle_dir: results/{dataset}/bundle
+output_dir: results/scorer_sensitivity/{dataset}_neg_log_loss_{timestamp}
+scoring: neg_log_loss

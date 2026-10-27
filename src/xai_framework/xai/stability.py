@@ -1,4 +1,3 @@
-# xai/stability.py
 
 import numpy as np
 import pandas as pd
@@ -8,6 +7,27 @@ from scipy.stats import spearmanr
 from sklearn.inspection import permutation_importance
 
 
+def _take_rows(values, indices):
+    """Select rows without discarding pandas column or index metadata."""
+    if hasattr(values, "iloc"):
+        return values.iloc[indices].copy()
+    return np.asarray(values)[indices].copy()
+
+
+def _stratified_bootstrap_indices(y, rng):
+    """Sample each observed class with replacement at its original size."""
+    y_array = np.asarray(y)
+    sampled = []
+    for label in np.unique(y_array):
+        class_indices = np.flatnonzero(y_array == label)
+        sampled.append(
+            rng.choice(class_indices, size=len(class_indices), replace=True)
+        )
+    indices = np.concatenate(sampled)
+    rng.shuffle(indices)
+    return indices
+
+
 def run_stability_analysis(
     train_model_fn,
     X_train,
@@ -15,73 +35,40 @@ def run_stability_analysis(
     y_train,
     y_test,
     feature_names,
-    seeds=(1, 2, 3, 4, 5),
-    scoring="roc_auc",
+    n_bootstrap=100,
+    bootstrap_seed=42,
+    scoring="neg_log_loss",
     n_repeats=10,
-    top_k=3
+    permutation_seed=42,
+    top_k=3,
 ):
+    """Evaluate permutation-ranking stability across bootstrap model refits.
+
+    Each replicate draws a class-stratified bootstrap sample from the fixed
+    training matrix, refits the final estimator on that sample, and calculates
+    permutation importance on the unchanged test partition. Model and
+    permutation seeds are held fixed so that the intended source of variation
+    is training-sample composition.
     """
-    Evaluate permutation-importance stability across repeated model fits.
+    if n_bootstrap < 2:
+        raise ValueError("n_bootstrap must be at least 2")
+    if n_repeats < 1:
+        raise ValueError("n_repeats must be at least 1")
 
-    Stability is assessed at two levels:
-
-    1. Importance-value stability
-       - mean permutation importance
-       - standard deviation of permutation importance
-
-    2. Ranking stability
-       - feature rank for each seed
-       - pairwise Spearman rank correlation between seeds
-       - top-k feature overlap between seeds
-
-    Parameters
-    ----------
-    train_model_fn : callable
-        Function receiving a seed and returning a fitted model.
-
-    X_train, X_test :
-        Training and test feature matrices.
-
-    y_train, y_test :
-        Training and test labels.
-
-    feature_names : list
-        Names of the predictors.
-
-    seeds : iterable
-        Random seeds used for repeated runs.
-
-    scoring : str
-        Scikit-learn scoring metric.
-
-    n_repeats : int
-        Number of permutation repetitions per seed.
-
-    top_k : int
-        Number of highest-ranked features used for top-k overlap.
-
-    Returns
-    -------
-    stability_df : pandas.DataFrame
-        Feature-level importance and rank for every seed.
-
-    stability_summary : pandas.DataFrame
-        Mean and standard deviation of importance and rank by feature.
-
-    rank_stability : pandas.DataFrame
-        Pairwise Spearman rank correlations and top-k overlap
-        between seeds.
-    """
+    feature_names = list(feature_names)
+    if len(feature_names) != np.asarray(X_train).shape[1]:
+        raise ValueError("feature_names must match the number of training columns")
 
     rows = []
+    master_rng = np.random.default_rng(bootstrap_seed)
 
-    # ============================================================
-    # 1. COMPUTE PERMUTATION IMPORTANCE FOR EACH MODEL/SEED
-    # ============================================================
-
-    for seed in seeds:
-
-        model = train_model_fn(seed)
+    for bootstrap_id in range(1, n_bootstrap + 1):
+        sample_seed = int(master_rng.integers(0, np.iinfo(np.uint32).max))
+        sample_rng = np.random.default_rng(sample_seed)
+        indices = _stratified_bootstrap_indices(y_train, sample_rng)
+        X_bootstrap = _take_rows(X_train, indices)
+        y_bootstrap = _take_rows(y_train, indices)
+        model = train_model_fn(X_bootstrap, y_bootstrap)
 
         perm = permutation_importance(
             model,
@@ -89,128 +76,60 @@ def run_stability_analysis(
             y_test,
             n_repeats=n_repeats,
             scoring=scoring,
-            random_state=seed
+            random_state=permutation_seed,
         )
 
-        df = pd.DataFrame({
-            "Feature": feature_names,
-            "Importance": perm.importances_mean,
-            "ImportanceStd": perm.importances_std,
-            "Seed": seed
-        })
-
-        # Rank 1 = most important
-        df["Rank"] = (
-            df["Importance"]
-            .rank(
-                method="average",
-                ascending=False
-            )
+        df = pd.DataFrame(
+            {
+                "Feature": feature_names,
+                "Importance": perm.importances_mean,
+                "ImportanceStd": perm.importances_std,
+                "Bootstrap": bootstrap_id,
+                "BootstrapSampleSeed": sample_seed,
+            }
         )
-
+        df["Rank"] = df["Importance"].rank(method="average", ascending=False)
+        k = min(top_k, len(df))
+        top_features = set(df.nsmallest(k, "Rank")["Feature"])
+        df["InTopK"] = df["Feature"].isin(top_features)
         rows.append(df)
 
-    stability_df = pd.concat(
-        rows,
-        ignore_index=True
-    )
-
-    # ============================================================
-    # 2. FEATURE-LEVEL STABILITY SUMMARY
-    # ============================================================
-
+    stability_df = pd.concat(rows, ignore_index=True)
     stability_summary = (
-        stability_df
-        .groupby("Feature")
+        stability_df.groupby("Feature")
         .agg(
             MeanImportance=("Importance", "mean"),
             StdImportance=("Importance", "std"),
             MeanRank=("Rank", "mean"),
-            StdRank=("Rank", "std")
+            StdRank=("Rank", "std"),
+            TopKFrequency=("InTopK", "mean"),
         )
         .reset_index()
-        .sort_values(
-            "MeanImportance",
-            ascending=False
-        )
+        .sort_values(["MeanRank", "MeanImportance"], ascending=[True, False])
     )
-
-    # ============================================================
-    # 3. PAIRWISE RANK STABILITY
-    # ============================================================
 
     rank_rows = []
-
-    seed_values = list(seeds)
-
-    for seed_a, seed_b in combinations(seed_values, 2):
-
-        a = (
-            stability_df[
-                stability_df["Seed"] == seed_a
-            ][["Feature", "Rank", "Importance"]]
-            .rename(
-                columns={
-                    "Rank": "Rank_A",
-                    "Importance": "Importance_A"
-                }
-            )
+    bootstrap_values = list(range(1, n_bootstrap + 1))
+    for bootstrap_a, bootstrap_b in combinations(bootstrap_values, 2):
+        a = stability_df[stability_df["Bootstrap"] == bootstrap_a][
+            ["Feature", "Rank"]
+        ].rename(columns={"Rank": "Rank_A"})
+        b = stability_df[stability_df["Bootstrap"] == bootstrap_b][
+            ["Feature", "Rank"]
+        ].rename(columns={"Rank": "Rank_B"})
+        merged = a.merge(b, on="Feature")
+        rho = spearmanr(merged["Rank_A"], merged["Rank_B"]).correlation
+        k = min(top_k, len(merged))
+        top_a = set(merged.nsmallest(k, "Rank_A")["Feature"])
+        top_b = set(merged.nsmallest(k, "Rank_B")["Feature"])
+        rank_rows.append(
+            {
+                "Bootstrap_A": bootstrap_a,
+                "Bootstrap_B": bootstrap_b,
+                "SpearmanRankCorrelation": rho,
+                "TopK": k,
+                "TopKOverlap": len(top_a.intersection(top_b)) / k,
+            }
         )
 
-        b = (
-            stability_df[
-                stability_df["Seed"] == seed_b
-            ][["Feature", "Rank", "Importance"]]
-            .rename(
-                columns={
-                    "Rank": "Rank_B",
-                    "Importance": "Importance_B"
-                }
-            )
-        )
-
-        merged = a.merge(
-            b,
-            on="Feature"
-        )
-
-        rho = spearmanr(
-            merged["Rank_A"],
-            merged["Rank_B"]
-        ).correlation
-
-        # Top-k overlap
-        k = min(
-            top_k,
-            len(merged)
-        )
-
-        top_a = set(
-            merged
-            .nsmallest(k, "Rank_A")["Feature"]
-        )
-
-        top_b = set(
-            merged
-            .nsmallest(k, "Rank_B")["Feature"]
-        )
-
-        overlap = len(
-            top_a.intersection(top_b)
-        ) / k
-
-        rank_rows.append({
-            "Seed_A": seed_a,
-            "Seed_B": seed_b,
-            "SpearmanRankCorrelation": rho,
-            "TopK": k,
-            "TopKOverlap": overlap
-        })
-
-    rank_stability = pd.DataFrame(rank_rows)
-
-    return (
-        stability_df,
-        stability_summary,
-        rank_stability
-    )
+    return stability_df, stability_summary, pd.DataFrame(rank_rows)

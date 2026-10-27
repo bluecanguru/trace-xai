@@ -32,6 +32,7 @@ CLI_RUNS_DIR = PROJECT_ROOT / "results" / "cli_runs"
 
 
 def build_parser():
+    """Build the Heart demonstration command-line parser."""
     parser = argparse.ArgumentParser(
         description=(
             "Validate the Heart reproducibility bundle or rerun its trusted "
@@ -56,6 +57,7 @@ def build_parser():
 
 
 def read_csv(output_dir, filename):
+    """Load one exported CSV table when it exists."""
     path = output_dir / filename
     if not path.is_file():
         raise FileNotFoundError(f"Expected demo output is missing: {path}")
@@ -63,12 +65,14 @@ def read_csv(output_dir, filename):
 
 
 def print_table(title, table):
+    """Print a titled result table for interactive review."""
     print(f"\n{title}")
     print("-" * len(title))
     print(table.to_string(index=False))
 
 
 def summarize_results(output_dir, top_n):
+    """Print a concise summary of a completed Heart run."""
     native = read_csv(output_dir, "native_importance.csv")
     permutation = read_csv(output_dir, "permutation_importance.csv")
     shap = read_csv(output_dir, "shap_importance.csv")
@@ -181,6 +185,7 @@ def summarize_results(output_dir, top_n):
 
 
 def find_created_output(existing_directories, started_at):
+    """Identify the output directory created by the demonstration run."""
     if not CLI_RUNS_DIR.is_dir():
         raise RuntimeError("The CLI output directory was not created.")
 
@@ -205,6 +210,7 @@ def find_created_output(existing_directories, started_at):
 
 
 def main(argv=None):
+    """Execute the isolated Heart demonstration."""
     args = build_parser().parse_args(argv)
 
     if not CONFIG_PATH.is_file():

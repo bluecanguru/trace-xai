@@ -1,0 +1,5 @@
+project_root: ../../..
+dataset_name: ckd
+bundle_dir: results/{dataset}/bundle
+output_dir: results/scorer_sensitivity/{dataset}_roc_auc_{timestamp}
+scoring: roc_auc

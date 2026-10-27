@@ -1,0 +1,25 @@
+Name                                             Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------------
+src\xai_framework\__init__.py                        8      0   100%
+src\xai_framework\__main__.py                        3      3     0%   1-5
+src\xai_framework\cli.py                           152     35    77%   18-19, 28, 32, 35, 38, 48-49, 54, 80, 84, 91, 93, 101, 103, 105, 108, 110, 115, 124-125, 131, 133-135, 139, 142, 145, 180, 188, 199-202, 206
+src\xai_framework\compare_results.py                58     18    69%   22, 25, 59, 67-80, 84
+src\xai_framework\core\experiment.py                80      2    98%   184-199
+src\xai_framework\core\metrics.py                   16      2    88%   16, 25
+src\xai_framework\core\ranking.py                   19      0   100%
+src\xai_framework\core\state.py                     11      0   100%
+src\xai_framework\core\statsmodels_wrapper.py       19     10    47%   17-18, 27-28, 34-36, 45-47, 53-55
+src\xai_framework\explainers\lime_explainer.py      78     12    85%   21-25, 59, 84, 89, 141-142, 155, 193, 195
+src\xai_framework\explainers\local_explain.py       55     10    82%   21-31, 81, 113, 124
+src\xai_framework\explainers\native.py              13      1    92%   21
+src\xai_framework\explainers\permutation.py          8      1    88%   8
+src\xai_framework\explainers\shap_explainer.py      42     17    60%   11, 14, 19-30, 38, 47, 63, 74-81, 92
+src\xai_framework\exporters\export.py               65     11    83%   10-11, 146-153, 173-180, 203-213, 238
+src\xai_framework\models\selector.py                17      1    94%   28
+src\xai_framework\run_pipeline.py                    6      0   100%
+src\xai_framework\versioning.py                     13      2    85%   20-21
+src\xai_framework\xai\stability.py                  56      3    95%   14, 56, 60
+------------------------------------------------------------------------------
+TOTAL                                              719    128    82%
+
+2 empty files skipped.

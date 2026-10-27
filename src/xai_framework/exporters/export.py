@@ -1,4 +1,3 @@
-# io/export.py
 
 import os
 import json
@@ -7,19 +6,20 @@ import pandas as pd
 
 try:
     from xai_framework.versioning import runtime_versions
-except ImportError:  # Legacy notebooks import modules from src/xai_framework.
+# Support notebooks that import modules directly from src/xai_framework.
+except ImportError:
     from versioning import runtime_versions
 
 
-# ==========================================================
 # Internal helpers
-# ==========================================================
 
 def ensure_directory(path):
+    """Create an output directory and return its resolved path."""
     os.makedirs(path, exist_ok=True)
 
 
 def dataframe(X, feature_names):
+    """Return a feature-aligned DataFrame for export."""
     if isinstance(X, pd.DataFrame):
         return X.copy()
 
@@ -29,6 +29,7 @@ def dataframe(X, feature_names):
     )
 
 def save_json(obj, filename):
+    """Write JSON data using stable, serialisable representations."""
     with open(filename, "w") as f:
         json.dump(
             obj,
@@ -38,9 +39,7 @@ def save_json(obj, filename):
         )
 
 
-# ==========================================================
-# Save model bundle
-# ==========================================================
+# Model-bundle export
 
 def save_xai_bundle(
     model,
@@ -53,6 +52,7 @@ def save_xai_bundle(
     metadata=None
 ):
 
+    """Save the trusted fitted model and aligned analysis inputs."""
     bundle_dir = os.path.join(
         out_dir,
         "bundle"
@@ -123,15 +123,13 @@ def save_xai_bundle(
     )
 
 
-# ==========================================================
-# Recursive exporter
-# ==========================================================
+# Recursive result export
 
 def export_object(obj, out_dir, name):
+    """Export one supported result object to its canonical format."""
     if obj is None:
         return
 
-    # ---------------- DataFrame ----------------
 
     if isinstance(obj, pd.DataFrame):
         obj.to_csv(
@@ -143,7 +141,6 @@ def export_object(obj, out_dir, name):
         )
         return
 
-    # ---------------- Series ----------------
 
     if isinstance(obj, pd.Series):
         obj.to_csv(
@@ -155,7 +152,6 @@ def export_object(obj, out_dir, name):
         )
         return
 
-    # ---------------- Dictionary ----------------
 
     if isinstance(obj, dict):
         folder = os.path.join(
@@ -172,7 +168,6 @@ def export_object(obj, out_dir, name):
             )
         return
 
-    # ---------------- List ----------------
 
     if isinstance(obj, list):
         save_json(
@@ -184,7 +179,6 @@ def export_object(obj, out_dir, name):
         )
         return
 
-    # ---------------- Primitive ----------------
 
     if isinstance(
         obj,
@@ -205,7 +199,6 @@ def export_object(obj, out_dir, name):
         )
         return
 
-    # ---------------- Generic Python object ----------------
 
     try:
         joblib.dump(
@@ -222,9 +215,7 @@ def export_object(obj, out_dir, name):
         )
 
 
-# ==========================================================
-# Main export function
-# ==========================================================
+# Public export function
 
 def export_xai_results(
     results,
@@ -238,9 +229,9 @@ def export_xai_results(
     metadata=None
 ):
 
+    """Export framework results, metadata, and an optional model bundle."""
     ensure_directory(out_dir)
 
-    # ---------------- Save bundle ----------------
 
     if model is not None:
 
@@ -256,7 +247,6 @@ def export_xai_results(
 
         )
 
-    # ---------------- Save results ----------------
 
     for name, obj in results.items():
 

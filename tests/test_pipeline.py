@@ -44,18 +44,31 @@ def test_real_small_binary_pipeline(tmp_path):
         scoring="roc_auc", output_dir=str(tmp_path)
     )
     experiment = run_pipeline(config)
-    assert experiment.state.results["stability"] is None  # No training callback supplied.
+    # The configuration intentionally omits a retraining callback.
+    assert experiment.state.results["stability"] is None
     for filename in ["native_importance", "permutation_importance", "shap_importance"]:
         table = pd.read_csv(tmp_path / (filename + ".csv"))
         assert set(table.Feature) == set(names)
     cases = pd.read_csv(tmp_path / "representative_cases.csv")
     lime = pd.read_csv(tmp_path / "lime_explanations.csv")
+    lime_summary = pd.read_csv(tmp_path / "lime_summary.csv")
+    lime_seed_stability = pd.read_csv(tmp_path / "lime_seed_stability.csv")
     assert not cases.empty and not lime.empty
+    assert not lime_summary.empty and not lime_seed_stability.empty
     assert cases.CaseIndex.is_unique
     assert set(lime.CaseIndex) == set(cases.CaseIndex)
+    assert set(lime.LIMESeed) == set(range(20))
+    assert (lime.groupby("CaseIndex").LIMESeed.nunique() == 20).all()
+    assert (lime_seed_stability.NSeeds == 20).all()
     for idx, group in lime.groupby("CaseIndex"):
         expected = model.predict_proba(X_test.iloc[[int(idx)]])[0, 1]
         np.testing.assert_allclose(group.Probability, expected)
     metadata = json.loads((tmp_path / "bundle" / "metadata.json").read_text())
     assert metadata["dataset"] == "synthetic"
     assert metadata["n_test"] == len(X_test)
+    timing = json.loads((tmp_path / "execution_times.json").read_text())
+    assert timing["global_seconds"] > 0
+    assert timing["local_seconds"] > 0
+    assert timing["stability_performed"] is False
+    assert timing["total_seconds"] >= timing["analysis_seconds"]
+    assert metadata["execution_times"]["total_seconds"] == timing["total_seconds"]

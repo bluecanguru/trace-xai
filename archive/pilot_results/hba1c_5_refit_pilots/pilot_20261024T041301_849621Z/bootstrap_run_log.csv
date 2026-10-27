@@ -1,0 +1,6 @@
+Bootstrap,BootstrapSampleSeed,Status,Converged,FitSeconds,PermutationSeconds,TotalSeconds,Iterations,Warnings,Error
+1,383329927,success,True,28.526982599985786,5.980317800014745,34.50826960001723,324,,
+2,3324115916,success,True,2.0634908999782056,6.324616900004912,8.392343899991829,7,,
+3,2811363264,success,True,12.707921799999895,5.509399000002304,18.2205320999783,154,,
+4,1884968544,failed,False,39.68638700002339,,39.68916320000426,500,overflow encountered in exp | divide by zero encountered in log | overflow encountered in exp | divide by zero encountered in log | Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+5,1859786275,failed,False,63.360230600024806,,63.362999100005254,500,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.

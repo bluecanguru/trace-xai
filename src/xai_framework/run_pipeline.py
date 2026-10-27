@@ -40,6 +40,17 @@ def run_pipeline(config):
         --------
         scoring
         train_model_fn
+        stability_n_bootstrap
+        stability_bootstrap_seed
+        stability_scoring
+        stability_n_repeats
+        stability_permutation_seed
+        stability_top_k
+        classification_threshold
+        local_cases_per_type
+        lime_seeds
+        lime_num_features
+        lime_stability_top_k
         output_dir
     """
 

@@ -148,5 +148,5 @@ def test_result_summary_includes_global_local_and_lime_outputs(
     assert "cp > -0.16" in output
     assert "thal > -0.89" in output
 
-    # Only the three strongest rules should be displayed.
+    # Limit the display to the three strongest rules.
     assert "age > 0.40" not in output

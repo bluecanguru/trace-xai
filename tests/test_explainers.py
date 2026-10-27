@@ -5,6 +5,7 @@ import pandas as pd
 import pytest
 
 from explainers.local_explain import get_representative_cases
+from explainers.lime_explainer import summarize_lime, summarize_lime_seed_stability
 from explainers.native import run_native
 
 
@@ -49,6 +50,52 @@ def test_custom_threshold_is_used():
         ProbabilityColumnModel(), np.array([[.6], [.8]]), [0, 1], ["p"], threshold=.7
     )
     assert cases.set_index("CaseIndex").loc[0, "y_pred"] == 0
+
+
+def test_multiple_cases_are_selected_in_confidence_order():
+    X = np.array([[.99], [.90], [.80], [.01], [.10], [.20]])
+    y = np.array([1, 1, 1, 0, 0, 0])
+    cases = get_representative_cases(
+        ProbabilityColumnModel(), X, y, ["p"], n_per_type=2
+    )
+    assert cases.loc[cases.CaseType == "TP", "CaseIndex"].tolist() == [0, 1]
+    assert cases.loc[cases.CaseType == "TN", "CaseIndex"].tolist() == [3, 4]
+    assert cases.groupby("CaseType").CaseRank.apply(list).to_dict() == {
+        "Borderline": [1, 2], "TN": [1, 2], "TP": [1, 2],
+    }
+
+
+def test_lime_summary_aggregates_cases_and_seeds():
+    raw = pd.DataFrame({
+        "CaseType": ["TP"] * 4,
+        "CaseIndex": [1, 1, 2, 2],
+        "LIMESeed": [0, 1, 0, 1],
+        "Rule": ["x > 0"] * 4,
+        "Weight": [.2, .4, -.1, .1],
+    })
+    summary = summarize_lime(raw, {"TP": 2}).iloc[0]
+    assert summary.NExplanations == 4
+    assert summary.NCases == 2
+    assert summary.NSeeds == 2
+    assert summary.SelectionFrequency == 1
+    assert summary.MeanWeight == pytest.approx(.15)
+    assert summary.MeanAbsWeight == pytest.approx(.2)
+
+
+def test_lime_seed_stability_reports_rank_and_sign_agreement():
+    raw = pd.DataFrame({
+        "CaseType": ["TP"] * 6,
+        "CaseIndex": [1] * 6,
+        "CaseRank": [1] * 6,
+        "LIMESeed": [0, 0, 0, 1, 1, 1],
+        "Rule": ["a", "b", "c", "a", "b", "c"],
+        "Weight": [.5, -.3, .1, .4, -.2, .05],
+    })
+    summary = summarize_lime_seed_stability(raw, top_k=2).iloc[0]
+    assert summary.NSeeds == 2
+    assert summary.MeanPairwiseSpearman == pytest.approx(1)
+    assert summary.MeanTopKOverlap == pytest.approx(1)
+    assert summary.MeanRuleSignConsistency == pytest.approx(1)
 
 
 def test_native_coefficients_use_magnitude_and_keep_sign():

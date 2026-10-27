@@ -12,6 +12,7 @@ PACKAGES = (
 
 
 def runtime_versions():
+    """Collect Python and dependency versions for provenance."""
     packages = {}
     for package in PACKAGES:
         try:

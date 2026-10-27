@@ -1,0 +1,7 @@
+Area,Limitation
+Prediction task,Evidence is limited to binary classification.
+Decision threshold,Representative cases assume the configured binary threshold.
+HbA1c stability,No repeated-fit stability output is available.
+HbA1c representation,"Explanations refer to Patsy design terms and interactions, not only raw variables."
+Local cases,Selected representative cases are descriptive and are not a population sample.
+Method comparison,Importance magnitudes are not directly comparable across XAI methods.

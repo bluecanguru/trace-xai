@@ -2,3 +2,4 @@ project_root: ../../..
 dataset_name: diabetes
 bundle_dir: results/{dataset}/bundle
 output_dir: results/cli_runs/{dataset}_{timestamp}
+scoring: roc_auc

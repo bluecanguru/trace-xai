@@ -1,0 +1,6 @@
+"Dataset","GlobalSeconds","LocalSeconds","StabilitySeconds","StabilityPerformed","ExportSeconds","TotalSeconds","Source"
+"Heart","14.644026299996767","37.86214060001657","2.00001522898674E-06","False","0.18656539998482913","52.69274119997863","results/timing_runs/batch_20261023T214254Z/heart/execution_times.json"
+"Stroke","5.507018700009212","25.811636200000066","2.1999876480549574E-06","False","0.2449610999901779","31.56362299999455","results/timing_runs/batch_20261023T214254Z/stroke/execution_times.json"
+"Diabetes","7.85408489999827","213.21712789998855","1.100008375942707E-06","False","0.2792992999893613","221.35051589997602","results/timing_runs/batch_20261023T214254Z/diabetes/execution_times.json"
+"CKD","10.190055800019763","79.56632299997727","1.500011421740055E-06","False","0.24859550001565367","90.0049791999918","results/timing_runs/batch_20261023T214254Z/ckd/execution_times.json"
+"HbA1c","2122.9484291999834","77.75890909999725","2.200016751885414E-06","False","10.803540699998848","2211.5108871999837","results/timing_runs/batch_20261023T215001Z/hba1c/execution_times.json"

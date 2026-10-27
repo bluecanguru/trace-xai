@@ -20,6 +20,7 @@ except ImportError:
 
 
 def load_config(filename):
+    """Load and validate one YAML pipeline configuration."""
     path = Path(filename).expanduser().resolve()
     with path.open(encoding="utf-8") as stream:
         config = yaml.safe_load(stream)
@@ -55,6 +56,7 @@ def load_config(filename):
 
 
 def validate_output(bundle, output):
+    """Validate exported CSV and JSON outputs for one run."""
     bundle, output = Path(bundle).resolve(), Path(output).resolve()
     source_results = bundle.parent
     # Never write over, inside, or above the input dataset results.
@@ -150,6 +152,7 @@ def prepare_runtime(config, metadata, data, names, scoring):
 
 
 def main(argv=None):
+    """Execute the single-dataset command-line interface."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True, help="Path to a dataset YAML file")
     parser.add_argument("--validate-only", action="store_true",

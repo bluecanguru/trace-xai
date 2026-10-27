@@ -21,10 +21,12 @@ DATASETS = ("heart", "stroke", "diabetes", "ckd", "hba1c")
 
 
 def utc_id():
+    """Return a UTC timestamp identifier suitable for output directories."""
     return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
 def config_paths(configs_dir, datasets):
+    """Resolve the requested dataset configuration paths."""
     directory = Path(configs_dir).expanduser().resolve()
     paths = {dataset: directory / f"{dataset}.yaml" for dataset in datasets}
     missing = [str(path) for path in paths.values() if not path.is_file()]
@@ -34,6 +36,7 @@ def config_paths(configs_dir, datasets):
 
 
 def validate_configs(paths):
+    """Validate all batch configurations before any model is loaded."""
     validated = {}
     for dataset, path in paths.items():
         config = load_config(path)
@@ -51,6 +54,7 @@ def validate_configs(paths):
 
 
 def check_local_outputs(output):
+    """Verify the required files produced by a dataset run."""
     cases_path = output / "representative_cases.csv"
     lime_path = output / "lime_explanations.csv"
     if not cases_path.is_file() or not lime_path.is_file():
@@ -63,12 +67,14 @@ def check_local_outputs(output):
 
 
 def write_json(path, value):
+    """Write a JSON-serialisable value using stable formatting."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2), encoding="utf-8")
 
 
 def run_batch(validated, batch_root, continue_on_error=False,
               compare=False, rtol=0.005, atol=0.0005):
+    """Run validated dataset configurations and record batch progress."""
     batch_root = Path(batch_root).resolve()
     if batch_root.exists():
         raise ValueError(f"Batch output already exists: {batch_root}")
@@ -148,6 +154,7 @@ def run_batch(validated, batch_root, continue_on_error=False,
 
 
 def build_parser():
+    """Build the batch command-line argument parser."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("validate", "run"))
     parser.add_argument(
@@ -175,6 +182,7 @@ def build_parser():
 
 
 def main(argv=None):
+    """Execute the batch command-line interface."""
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "run" and not args.trust_models:
@@ -189,7 +197,8 @@ def main(argv=None):
         parser.error("Comparison tolerances must be nonnegative.")
     try:
         paths = config_paths(args.configs_dir, args.datasets)
-        validated = validate_configs(paths)  # Validate all before loading any pickle.
+        # Validate every configuration before loading a model pickle.
+        validated = validate_configs(paths)
         if args.command == "validate":
             print(f"All {len(validated)} selected bundles passed CSV/JSON validation.")
             return 0

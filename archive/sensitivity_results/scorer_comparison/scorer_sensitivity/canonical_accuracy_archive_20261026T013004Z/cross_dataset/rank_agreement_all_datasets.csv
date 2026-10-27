@@ -1,0 +1,16 @@
+Dataset,Comparison,SpearmanRho,NFeaturesCompared
+Heart,Native vs SHAP,0.9780219780219779,13
+Heart,Native vs Permutation,0.6208791208791209,13
+Heart,SHAP vs Permutation,0.6153846153846153,13
+Stroke,Native vs SHAP,0.8928571428571429,7
+Stroke,Native vs Permutation,0.7387687194103585,7
+Stroke,SHAP vs Permutation,0.6306562238868914,7
+Diabetes,Native vs SHAP,0.9999999999999999,5
+Diabetes,Native vs Permutation,0.9999999999999999,5
+Diabetes,SHAP vs Permutation,0.9999999999999999,5
+CKD,Native vs SHAP,0.9808695652173912,24
+CKD,Native vs Permutation,0.6450174877539081,24
+CKD,SHAP vs Permutation,0.6459888996330555,24
+HbA1c (in-sample),Native vs SHAP,0.046631271350372476,90
+HbA1c (in-sample),Native vs Permutation,0.40850310737951184,90
+HbA1c (in-sample),SHAP vs Permutation,0.8832942338560316,90

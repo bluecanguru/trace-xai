@@ -1,0 +1,6 @@
+[run]
+source = src/xai_framework
+
+[report]
+show_missing = true
+skip_empty = true

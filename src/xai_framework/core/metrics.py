@@ -1,13 +1,12 @@
-# core/metrics.py
 from sklearn.metrics import (
     accuracy_score, f1_score, roc_auc_score,
     mean_squared_error, r2_score
 )
 import numpy as np
-import pandas as pd
 
 def evaluate_model(model, X_test, y_test, task="classification"):
 
+    """Evaluate a fitted model using task-appropriate predictive metrics."""
     y_pred = model.predict(X_test)
 
     if task == "classification":
@@ -31,11 +30,12 @@ def evaluate_model(model, X_test, y_test, task="classification"):
 
 def detect_task_type(y):
 
+    """Infer the supported prediction task from the target values."""
     y = np.asarray(y)
 
     unique = np.unique(y)
 
-    # regression heuristic
+    # Detect regression-like targets.
     if len(unique) > 20 and np.issubdtype(y.dtype, np.floating):
         return "regression"
 

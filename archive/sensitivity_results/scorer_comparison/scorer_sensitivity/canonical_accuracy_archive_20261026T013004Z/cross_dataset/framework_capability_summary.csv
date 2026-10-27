@@ -1,0 +1,6 @@
+Dataset,ModelFamily,InputRepresentation,EvaluationScope,NativeImportanceDemonstrated,PermutationDemonstrated,SHAPDemonstrated,LIMEDemonstrated,StabilityDemonstrated
+Heart,Linear classification,DataFrame,Held-out,True,True,True,True,True
+Stroke,Linear classification,DataFrame,Held-out,True,True,True,True,True
+Diabetes,Tree ensemble,DataFrame,Held-out,True,True,True,True,True
+CKD,Tree ensemble,DataFrame,Held-out,True,True,True,True,True
+HbA1c (in-sample),Statsmodels logistic regression,Patsy design matrix (DataFrame),In-sample,True,True,True,True,False

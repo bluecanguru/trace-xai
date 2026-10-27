@@ -15,3 +15,11 @@ results/
 .env
 
 *.egg-info/
+.pytest_tmp_*/
+
+.coverage
+.coverage_tool/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/

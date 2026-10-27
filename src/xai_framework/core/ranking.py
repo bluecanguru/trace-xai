@@ -1,5 +1,3 @@
-import numpy as np
-import pandas as pd
 from scipy.stats import spearmanr
 
 
@@ -8,23 +6,9 @@ def compare_importance_ranks(
     shap_df,
     perm_df
 ):
-    """
-    Compare rankings obtained from:
-        - Native importance
-        - SHAP importance
-        - Permutation importance
+    """Compare native, SHAP, and permutation rankings and correlations."""
 
-    Returns
-    -------
-    merged_rankings : DataFrame
-
-    agreement : dict
-        Spearman correlations between ranking methods.
-    """
-
-    # -------------------------
-    # Keep common features
-    # -------------------------
+    # Retain features shared by the compared methods.
 
     common = set(shap_df["Feature"]) & set(perm_df["Feature"])
 
@@ -33,9 +17,7 @@ def compare_importance_ranks(
 
     common = list(common)
 
-    # -------------------------
-    # SHAP ranking
-    # -------------------------
+    # Construct the SHAP ranking.
 
     shap_rank = (
         shap_df[
@@ -53,9 +35,7 @@ def compare_importance_ranks(
         method="average"
     )
 
-    # -------------------------
-    # Permutation ranking
-    # -------------------------
+    # Construct the permutation ranking.
 
     perm_rank = (
         perm_df[
@@ -73,9 +53,7 @@ def compare_importance_ranks(
         method="average"
     )
 
-    # -------------------------
-    # Native ranking
-    # -------------------------
+    # Construct the native ranking.
 
     if native_df is None:
 

@@ -1,0 +1,6 @@
+Feature,Importance,Method
+Glucose,0.3535781011591513,tree_importance
+BMI,0.2454398194843926,tree_importance
+Age,0.1832176125311429,tree_importance
+Insulin,0.11857214574889713,tree_importance
+SkinThickness,0.0991923210764161,tree_importance

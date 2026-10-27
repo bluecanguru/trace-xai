@@ -8,6 +8,7 @@ import pandas as pd
 
 
 def _ordered(df):
+    """Return a deterministic representation for nested comparison values."""
     preferred = [c for c in ("Feature", "CaseIndex", "CaseType", "Rule", "Rank") if c in df]
     fallback = [c for c in df if not pd.api.types.is_numeric_dtype(df[c])]
     keys = preferred or fallback
@@ -15,6 +16,7 @@ def _ordered(df):
 
 
 def compare_csv(reference, candidate, rtol=1e-5, atol=1e-8):
+    """Compare two CSV files using exact and numeric tolerances."""
     left, right = pd.read_csv(reference), pd.read_csv(candidate)
     if left.columns.tolist() != right.columns.tolist():
         return {"status": "SCHEMA_DIFFERENT", "reference_columns": left.columns.tolist(),
@@ -45,6 +47,7 @@ def compare_csv(reference, candidate, rtol=1e-5, atol=1e-8):
 
 
 def compare_directories(reference, candidate, rtol=1e-5, atol=1e-8):
+    """Compare the supported result files in two directories."""
     reference, candidate = Path(reference), Path(candidate)
     names = sorted({p.name for p in reference.glob("*.csv")} | {p.name for p in candidate.glob("*.csv")})
     files = {}
@@ -60,6 +63,7 @@ def compare_directories(reference, candidate, rtol=1e-5, atol=1e-8):
 
 
 def main(argv=None):
+    """Execute the result-comparison command-line interface."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference", required=True)
     parser.add_argument("--candidate", required=True)

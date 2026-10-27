@@ -33,6 +33,7 @@ def detect_model_type(model):
 def get_prediction_function(model):
 
     # statsmodels formula-based fitted model
+    """Return the prediction function used by the selected SHAP explainer."""
     if hasattr(model, "params"):
         return lambda X: np.asarray(
             model.predict(X, transform=False)
@@ -105,6 +106,7 @@ def run_shap(
 
     return {
         "explainer": explainer,
+        "explainer_class": type(explainer).__name__,
         "shap_values": shap_values,
         "raw_values": values,
         "expected_value": getattr(explainer, "expected_value", None),

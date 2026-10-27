@@ -1,4 +1,3 @@
-# explainers/local_explain.py
 
 import numpy as np
 import pandas as pd
@@ -37,17 +36,18 @@ def get_representative_cases(
     X_test,
     y_test,
     feature_names,
-    threshold=0.5
+    threshold=0.5,
+    n_per_type=1,
 ):
     """
     Select representative observations for local explanations.
 
     Selected case types:
-    - TP: strongest true positive
-    - TN: strongest true negative
-    - FP: strongest false positive
-    - FN: strongest false negative
-    - Borderline: observation closest to the decision threshold
+    - TP: most confident true positives
+    - TN: most confident true negatives
+    - FP: most confident false positives
+    - FN: most confident false negatives
+    - Borderline: observations closest to the decision threshold
 
     Parameters
     ----------
@@ -66,6 +66,9 @@ def get_representative_cases(
 
     threshold
         Classification threshold. Default is 0.5.
+
+    n_per_type
+        Maximum number of observations selected for each available case type.
 
     Returns
     -------
@@ -117,34 +120,38 @@ def get_representative_cases(
     case_df["y_prob"] = probs
     case_df["distance"] = np.abs(probs - threshold)
 
-    # Strongest correctly classified positive.
+    if not isinstance(n_per_type, int) or n_per_type < 1:
+        raise ValueError("n_per_type must be a positive integer.")
+
+    # Most confident correctly classified positives.
     tp = case_df[
         (case_df["y_true"] == 1) &
         (case_df["y_pred"] == 1)
-    ].nlargest(1, "y_prob").copy()
+    ].nlargest(n_per_type, "y_prob").copy()
 
-    # Strongest correctly classified negative.
+    # Most confident correctly classified negatives.
     tn = case_df[
         (case_df["y_true"] == 0) &
         (case_df["y_pred"] == 0)
-    ].nsmallest(1, "y_prob").copy()
+    ].nsmallest(n_per_type, "y_prob").copy()
 
-    # Most confident false positive.
+    # Most confident false positives.
     fp = case_df[
         (case_df["y_true"] == 0) &
         (case_df["y_pred"] == 1)
-    ].nlargest(1, "y_prob").copy()
+    ].nlargest(n_per_type, "y_prob").copy()
 
-    # Most confident false negative.
+    # Most confident false negatives.
     fn = case_df[
         (case_df["y_true"] == 1) &
         (case_df["y_pred"] == 0)
-    ].nsmallest(1, "y_prob").copy()
+    ].nsmallest(n_per_type, "y_prob").copy()
 
-    # Observation closest to the classification threshold.
-    borderline = case_df.nsmallest(
-        1,
-        "distance"
+    # Borderline observations are selected after the four outcome categories so
+    # the same observation is not explained twice under different labels.
+    selected_indices = set(tp.index) | set(tn.index) | set(fp.index) | set(fn.index)
+    borderline = case_df.loc[~case_df.index.isin(selected_indices)].nsmallest(
+        n_per_type, "distance"
     ).copy()
 
     # Add case labels only when the corresponding case exists.
@@ -177,5 +184,8 @@ def get_representative_cases(
     representative_cases = representative_cases.copy()
 
     representative_cases["CaseIndex"] = representative_cases.index
-    
+    representative_cases["CaseRank"] = (
+        representative_cases.groupby("CaseType", sort=False).cumcount() + 1
+    )
+
     return representative_cases

@@ -4,6 +4,7 @@ import pandas as pd
 
 def run_native(model, feature_names):
 
+    """Extract estimator-specific global feature importance."""
     if hasattr(model, "coef_"):
 
         coef = model.coef_.ravel()

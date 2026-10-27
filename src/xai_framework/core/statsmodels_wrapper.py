@@ -13,6 +13,7 @@ class StatsModelsWrapper(ClassifierMixin, BaseEstimator):
     """
 
     def __init__(self, model):
+        """Wrap a fitted Statsmodels result with the framework prediction interface."""
         self.model = model
         self.classes_ = np.array([0, 1])
 

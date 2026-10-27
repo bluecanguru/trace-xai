@@ -1,7 +1,9 @@
 class ExperimentState:
 
+    """Store aligned inputs, settings, intermediate outputs, and metadata."""
     def __init__(self, config):
 
+        """Initialise an empty experiment-state container."""
         self.config = config
         self.dataset_name = config["dataset_name"]
         self.model = config["model"]

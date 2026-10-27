@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 
 import joblib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (
@@ -43,6 +44,7 @@ METRIC_ORDER = (
 
 
 def specificity_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Return specificity for binary labels, or NaN when no negatives exist."""
     negatives = y_true == 0
     if not negatives.any():
         return float("nan")
@@ -54,6 +56,7 @@ def calculate_metrics(
     y_pred: np.ndarray,
     y_prob: np.ndarray,
 ) -> dict[str, float]:
+    """Calculate the supported binary predictive-performance metrics."""
     return {
         "Accuracy": accuracy_score(y_true, y_pred),
         "Precision": precision_score(y_true, y_pred, zero_division=0),
@@ -111,6 +114,7 @@ def bootstrap_intervals(
 
 
 def load_predictions(bundle_dir: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Load a trusted model bundle and return aligned labels and predictions."""
     x_test = pd.read_csv(bundle_dir / "X_test.csv")
     y_true = pd.read_csv(bundle_dir / "y_test.csv").iloc[:, 0].to_numpy(dtype=int)
     model = joblib.load(bundle_dir / "model.pkl")
@@ -134,10 +138,12 @@ def load_predictions(bundle_dir: Path) -> tuple[np.ndarray, np.ndarray, np.ndarr
 
 
 def format_interval(point: float, low: float, high: float) -> str:
+    """Format a point estimate and confidence interval for reporting."""
     return f"{point:.3f} [{low:.3f}, {high:.3f}]"
 
 
 def dataframe_to_latex(summary: pd.DataFrame) -> str:
+    """Render the uncertainty summary as a compact LaTeX table."""
     columns = ["Dataset", *METRIC_ORDER]
     header = " & ".join(name.replace("_", " ") for name in columns) + r" \\"
     rows = [header, r"\midrule"]
@@ -164,7 +170,43 @@ def dataframe_to_latex(summary: pd.DataFrame) -> str:
     )
 
 
+def export_roc_auc_figure(long_df: pd.DataFrame, output_path: Path) -> None:
+    """Export ROC-AUC estimates and percentile intervals as a thesis figure."""
+    roc = long_df.loc[long_df["Metric"] == "ROC_AUC"].copy()
+    roc["Dataset"] = roc["Dataset"].map(DISPLAY_NAMES)
+    roc = roc.set_index("Dataset").loc[list(DISPLAY_NAMES.values())].reset_index()
+
+    estimates = roc["Estimate"].to_numpy(dtype=float)
+    lower = roc["CI95_Lower"].to_numpy(dtype=float)
+    upper = roc["CI95_Upper"].to_numpy(dtype=float)
+    yerr = np.vstack([estimates - lower, upper - estimates])
+
+    fig, ax = plt.subplots(figsize=(7.2, 4.2))
+    positions = np.arange(len(roc))
+    ax.errorbar(
+        positions,
+        estimates,
+        yerr=yerr,
+        fmt="o",
+        color="#506F5C",
+        ecolor="#789080",
+        elinewidth=1.6,
+        capsize=5,
+        markersize=7,
+    )
+    ax.set_xticks(positions, roc["Dataset"])
+    ax.set_ylabel("ROC AUC")
+    ax.set_ylim(0.70, 1.02)
+    ax.grid(axis="y", color="#D9DFDA", linewidth=0.8)
+    ax.spines[["top", "right"]].set_visible(False)
+    fig.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, bbox_inches="tight")
+    plt.close(fig)
+
+
 def main() -> None:
+    """Run the four-dataset bootstrap analysis and export tables and figures."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--project-root",
@@ -242,6 +284,10 @@ def main() -> None:
     (output_dir / "bootstrap_run.json").write_text(
         json.dumps(run_details, indent=2),
         encoding="utf-8",
+    )
+    export_roc_auc_figure(
+        long_df,
+        project_root / "images" / "results" / "bootstrap_roc_auc.pdf",
     )
 
     print(wide_df.to_string(index=False))

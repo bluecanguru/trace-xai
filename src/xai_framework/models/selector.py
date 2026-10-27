@@ -1,9 +1,9 @@
-# selection/model_selector.py
 
 from core.metrics import evaluate_model, detect_task_type
 
 def select_best_model(models, X_train, X_test, y_train, y_test):
 
+    """Fit candidate models and return their evaluation summary."""
     task = detect_task_type(y_train)
 
     best_model = None
@@ -21,7 +21,7 @@ def select_best_model(models, X_train, X_test, y_train, y_test):
             task=task
         )
 
-        # unified scoring rule
+        # Use the configured scoring rule for every candidate.
         if task == "classification":
             score = metrics.get("auc", metrics.get("accuracy", 0))
         else:

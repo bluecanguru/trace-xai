@@ -1,56 +1,148 @@
-% Acronyms used in the final dissertation.
-\newacronym{ai}{AI}{Artificial Intelligence}
-\newacronym{auc}{AUC}{Area Under the Receiver Operating Characteristic Curve}
-\newacronym{bmi}{BMI}{Body Mass Index}
-\newacronym{cdss}{CDSS}{Clinical Decision Support System}
-\newacronym{ckd}{CKD}{Chronic Kidney Disease}
-\newacronym{cv}{CV}{Cross-Validation}
-\newacronym{dt}{DT}{Decision Tree}
-\newacronym{fn}{FN}{False Negative}
-\newacronym{fp}{FP}{False Positive}
-\newacronym{grnn}{GRNN}{Generalized Regression Neural Network}
-\newacronym{knn}{KNN}{K-Nearest Neighbours}
+% Acronyms used in the final dissertation. Long forms use sentence case so
+% \gls{} reads naturally in running text; \Gls{} capitalises sentence starts.
+\newacronym{ai}{AI}{artificial intelligence}
+\newacronym{ale}{ALE}{accumulated local effects}
+\newacronym{ap}{AP}{average precision}
+\newacronym{api}{API}{application programming interface}
+\newacronym{bmi}{BMI}{body mass index}
+\newacronym[shortplural={CDSS},longplural={clinical decision support systems}]{cdss}{CDSS}{clinical decision support system}
+\newacronym{ci}{CI}{confidence interval}
+\newacronym{ckd}{CKD}{chronic kidney disease}
+\newacronym{csv}{CSV}{comma-separated values}
+\newacronym{cv}{CV}{cross-validation}
+\newacronym{dl}{DL}{deep learning}
+\newacronym{dnn}{DNN}{deep neural network}
+\newacronym{dt}{DT}{decision tree}
+\newacronym{doi}{DOI}{digital object identifier}
+\newacronym{fn}{FN}{false negative}
+\newacronym{fp}{FP}{false positive}
+\newacronym{grnn}{GRNN}{generalised regression neural network}
+\newacronym{json}{JSON}{JavaScript Object Notation}
+\newacronym{knn}{KNN}{k-nearest neighbours}
 \newacronym{lime}{LIME}{Local Interpretable Model-agnostic Explanations}
-\newacronym{ml}{ML}{Machine Learning}
-\newacronym{pca}{PCA}{Principal Component Analysis}
-\newacronym{prisma}{PRISMA}{Preferred Reporting Items for Systematic Reviews and Meta-Analyses}
-\newacronym{rbf}{RBF}{Radial Basis Function}
-\newacronym{rf}{RF}{Random Forest}
-\newacronym{roc}{ROC}{Receiver Operating Characteristic}
+\newacronym{ml}{ML}{machine learning}
+\newacronym{pca}{PCA}{principal component analysis}
+\newacronym{pdp}{PDP}{partial dependence plot}
+\newacronym{rbf}{RBF}{radial basis function}
+\newacronym{rf}{RF}{random forest}
+\newacronym{rocauc}{ROC AUC}{area under the receiver operating characteristic curve}
 \newacronym{shap}{SHAP}{SHapley Additive exPlanations}
-\newacronym{smote}{SMOTE}{Synthetic Minority Over-sampling Technique}
-\newacronym{svm}{SVM}{Support Vector Machine}
-\newacronym{tn}{TN}{True Negative}
-\newacronym{tp}{TP}{True Positive}
-\newacronym{xai}{XAI}{Explainable Artificial Intelligence}
+\newacronym{svm}{SVM}{support vector machine}
+\newacronym{tn}{TN}{true negative}
+\newacronym{tp}{TP}{true positive}
+\newacronym{xai}{XAI}{explainable artificial intelligence}
+\newacronym{xgboost}{XGBoost}{extreme gradient boosting}
 
-% Concepts used in the methodological and interpretive discussion.
+% Concepts central to the methodological and interpretive discussion.
 \newglossaryentry{blackbox}{
     name={Black-box model},
+    text={black-box model},
+    plural={black-box models},
     description={A model whose prediction mechanism is not readily interpretable from its internal representation alone}
+}
+
+\newglossaryentry{bootstraprefit}{
+    name={Bootstrap-refit stability},
+    text={bootstrap-refit stability},
+    description={The persistence of model explanations across models fitted to bootstrap samples drawn with replacement from the training data}
+}
+
+\newglossaryentry{calibration}{
+    name={Calibration},
+    text={calibration},
+    description={Agreement between predicted probabilities and the observed frequency of the outcome}
+}
+
+\newglossaryentry{dataleakage}{
+    name={Data leakage},
+    text={data leakage},
+    description={The unintended use of information outside the training data or stage when constructing or selecting a predictive model}
 }
 
 \newglossaryentry{featureattribution}{
     name={Feature attribution},
+    text={feature attribution},
     description={An explanation that assigns a contribution or relevance value to an input feature for a prediction or collection of predictions}
+}
+
+\newglossaryentry{fidelity}{
+    name={Explanation fidelity},
+    text={explanation fidelity},
+    description={The extent to which an explanation or surrogate accurately represents the behaviour of the model it is intended to explain}
+}
+
+\newglossaryentry{globalexplanation}{
+    name={Global explanation},
+    text={global explanation},
+    plural={global explanations},
+    description={An explanation that summarises fitted-model behaviour across a collection of observations}
+}
+
+\newglossaryentry{heldoutset}{
+    name={Held-out test set},
+    text={held-out test set},
+    description={Observations reserved from model fitting and model selection and used to evaluate the final predictive configuration}
+}
+
+\newglossaryentry{hbaone}{
+    name={HbA1c},
+    text={HbA1c},
+    description={Glycated haemoglobin, a blood marker reflecting average glucose exposure over approximately the preceding two to three months}
 }
 
 \newglossaryentry{localexplanation}{
     name={Local explanation},
+    text={local explanation},
+    plural={local explanations},
     description={An explanation describing the factors associated with an individual prediction or a restricted neighbourhood of the input space}
 }
 
 \newglossaryentry{modelagnostic}{
     name={Model-agnostic method},
+    text={model-agnostic method},
+    plural={model-agnostic methods},
     description={A method that obtains explanations through a model's inputs and outputs without requiring a particular internal estimator structure}
+}
+
+\newglossaryentry{nativeimportance}{
+    name={Native importance},
+    text={native importance},
+    description={An estimator-specific importance representation obtained directly from fitted parameters or model structure, such as coefficient magnitude or impurity-based tree importance}
+}
+
+\newglossaryentry{permutationimportance}{
+    name={Permutation importance},
+    text={permutation importance},
+    description={The reduction in a selected predictive score after the observed values of a feature are randomly permuted while the fitted model is held fixed}
 }
 
 \newglossaryentry{posthoc}{
     name={Post-hoc explainability},
+    text={post-hoc explainability},
     description={Explanation procedures applied after a predictive model has been fitted}
+}
+
+\newglossaryentry{rankagreement}{
+    name={Rank agreement},
+    text={rank agreement},
+    description={Similarity between feature orderings, assessed in this dissertation using Spearman correlation and overlap among the highest-ranked features}
+}
+
+\newglossaryentry{representativecase}{
+    name={Representative case},
+    text={representative case},
+    plural={representative cases},
+    description={An observation selected by a stated rule to illustrate a particular prediction outcome or proximity to the classification threshold}
 }
 
 \newglossaryentry{stability}{
     name={Explanation stability},
-    description={The degree to which an explanation result persists under a defined source of variation, such as repeated model fitting}
+    text={explanation stability},
+    description={The degree to which an explanation result persists under a defined source of variation, such as resampling, model refitting, or changes in an explainer seed}
+}
+
+\newglossaryentry{surrogatemodel}{
+    name={Surrogate model},
+    text={surrogate model},
+    description={An interpretable approximation fitted to reproduce another model's behaviour globally or within a restricted neighbourhood}
 }

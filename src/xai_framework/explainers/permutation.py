@@ -3,6 +3,7 @@ from sklearn.inspection import permutation_importance
 from core.statsmodels_wrapper import StatsModelsWrapper
 
 def run_permutation(model, X_test, y_test, feature_names, scoring):
+    """Calculate global permutation importance with the configured scorer."""
     if hasattr(model, "params"):
         model = StatsModelsWrapper(model)
     

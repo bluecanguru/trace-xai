@@ -1,0 +1,4 @@
+ModelFamily,NDatasets,MeanFeaturesCompared,MeanCrossMethodRho,MeanStabilityRho,MeanTopKOverlap
+Linear classification,2,10.0,0.7460946334066845,0.7560173950228104,0.6933333333333334
+Statsmodels logistic regression,1,90.0,0.44614287086197196,,
+Tree ensemble,2,14.5,0.8786459921007258,0.8990229695110481,0.8246801346801347

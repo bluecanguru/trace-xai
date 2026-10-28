@@ -582,19 +582,14 @@ Timestamped CLI and batch outputs are reproducibility evidence. They should not 
 
 ## Citation and license
 
-See `mybib.bib` for source-paper and software citations. The original software
-in this repository is released under the MIT License; see `LICENSE`. Third-party
-datasets, source publications, and other external materials remain subject to
-their respective access and reuse terms and are not relicensed by this
-repository.
+See `mybib.bib` for source-paper and software citations. The original software in this repository is released under the MIT License; see `LICENSE`. Third-party datasets, source publications, and other external materials remain subject to their respective access and reuse terms and are not relicensed by this repository.
 
-The MIT License applies to the original source code under `src/`, `examples/`,
-`tests/`, and the repository-level Python utilities. It does not by itself
-license the dissertation manuscript, third-party datasets, or externally
-sourced material; those remain subject to their applicable copyright and
-institutional terms.
+The MIT License applies to the original source code under `src/`, `examples/`, `tests/`, and the repository-level Python utilities. It does not by itself license the dissertation manuscript, third-party datasets, or externally sourced material; those remain subject to their applicable copyright and institutional terms.
 
-A version-specific citation and archival DOI will be added after the final
-review, immediately before the public release is deposited. Until that release
-is published, cite the dissertation and repository URL rather than a provisional
-DOI.
+## Archival release
+
+Version **1.0.0** is archived on Zenodo:
+
+**DOI:** [10.5281/zenodo.23699962](https://doi.org/10.5281/zenodo.23699962)
+
+When using this software, please cite the archived release and the associated Master’s dissertation.

@@ -116,10 +116,8 @@ results/uncertainty/           predictive metrics and bootstrap intervals
 results/cross_dataset/         combined analysis tables
 results/cli_runs/              independent bundle-based reruns
 examples/                     optional examples
-chapter/                      thesis text and supplementary appendix source
 archive/                      superseded notebooks, figures, and sensitivity runs
 main.py                       multi-dataset bundle rerun orchestrator
-chapter/main.tex              institutional thesis master; requires its companion template assets
 mybib.bib                     thesis bibliography
 ```
 
@@ -572,7 +570,6 @@ For the final thesis archive, retain:
 - The five executed replication notebooks.
 - The five executed XAI-extension notebooks.
 - Supplementary validation notebooks used in the thesis, including the executable CKD duplicate-integrity checks.
-- `chapter/AppendixLocalExplanations.tex` and the four referenced supplementary LIME figures.
 - The bootstrap script, uncertainty tables and `bootstrap_run.json`.
 - The executed cross-dataset analysis notebook.
 - Canonical dataset results.

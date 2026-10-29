@@ -1,3 +1,5 @@
+"""Tests for safe multi-dataset validation and batch rerun orchestration."""
+
 import json
 from pathlib import Path
 from unittest.mock import Mock
@@ -10,6 +12,16 @@ import main
 
 
 def validated_fixture(tmp_path, datasets=("heart",)):
+    """Build validated in-memory bundle records for batch-run tests.
+
+    Args:
+        tmp_path: Pytest-managed temporary directory.
+        datasets: Dataset identifiers to include in the synthetic batch.
+
+    Returns:
+        Mapping with the structure returned by the batch configuration
+        validator.
+    """
     result = {}
     for dataset in datasets:
         bundle = tmp_path / "canonical" / dataset / "bundle"
@@ -25,6 +37,11 @@ def validated_fixture(tmp_path, datasets=("heart",)):
 
 
 def fake_pipeline(config):
+    """Create the minimum successful local outputs for one synthetic run.
+
+    Args:
+        config: Runtime mapping containing the requested output directory.
+    """
     output = Path(config["output_dir"])
     output.mkdir(parents=True)
     pd.DataFrame({"CaseIndex": [0]}).to_csv(
@@ -36,12 +53,14 @@ def fake_pipeline(config):
 
 
 def test_run_requires_explicit_trust():
+    """Verify batch execution refuses to load models without explicit trust."""
     with pytest.raises(SystemExit) as exc:
         main.main(["run"])
     assert exc.value.code == 2
 
 
 def test_validate_does_not_prepare_models_or_create_outputs(monkeypatch, tmp_path):
+    """Verify validation avoids model preparation and filesystem output."""
     monkeypatch.setattr(main, "config_paths", lambda *args: {"heart": Path("heart.yaml")})
     monkeypatch.setattr(main, "validate_configs", lambda paths: validated_fixture(tmp_path))
     prepare = Mock()
@@ -52,6 +71,7 @@ def test_validate_does_not_prepare_models_or_create_outputs(monkeypatch, tmp_pat
 
 
 def test_successful_batch_writes_manifest(monkeypatch, tmp_path):
+    """Verify successful datasets produce a complete passing batch manifest."""
     validated = validated_fixture(tmp_path, ("heart", "stroke"))
     monkeypatch.setattr(main, "prepare_runtime", lambda config, *args: {
         "output_dir": str(config["output_dir"])
@@ -66,6 +86,7 @@ def test_successful_batch_writes_manifest(monkeypatch, tmp_path):
 
 
 def test_failure_stops_by_default_and_preserves_partial_output(monkeypatch, tmp_path):
+    """Verify the default batch stops after failure and records partial state."""
     validated = validated_fixture(tmp_path, ("heart", "stroke"))
     monkeypatch.setattr(main, "prepare_runtime", lambda config, *args: {
         "output_dir": str(config["output_dir"])
@@ -80,12 +101,14 @@ def test_failure_stops_by_default_and_preserves_partial_output(monkeypatch, tmp_
 
 
 def test_continue_on_error_attempts_remaining_datasets(monkeypatch, tmp_path):
+    """Verify continue-on-error runs remaining datasets after an earlier failure."""
     validated = validated_fixture(tmp_path, ("heart", "stroke"))
     monkeypatch.setattr(main, "prepare_runtime", lambda config, *args: {
         "output_dir": str(config["output_dir"])
     })
     calls = []
     def pipeline(config):
+        """Fail the first synthetic dataset and complete the second."""
         calls.append(Path(config["output_dir"]).name)
         if len(calls) == 1:
             raise RuntimeError("first failed")
@@ -97,6 +120,7 @@ def test_continue_on_error_attempts_remaining_datasets(monkeypatch, tmp_path):
 
 
 def test_existing_batch_directory_is_refused(tmp_path):
+    """Verify batch execution never overwrites an existing destination."""
     output = tmp_path / "batch"
     output.mkdir()
     with pytest.raises(ValueError, match="already exists"):

@@ -18,12 +18,16 @@ import hba1c_grouped_stability as pilot
 
 
 class SumProbabilityModel:
+    """Convert the sum of two design columns to a logistic probability."""
+
     def predict(self, X, transform=False):
+        """Return deterministic logistic probabilities for grouped tests."""
         linear = np.asarray(X)[:, 0] + np.asarray(X)[:, 1]
         return 1 / (1 + np.exp(-linear))
 
 
 def test_grouped_permutation_is_reproducible_and_does_not_mutate_input():
+    """Verify grouped permutation is seeded and leaves the design matrix intact."""
     rng = np.random.default_rng(4)
     signal = rng.normal(size=120)
     X = np.column_stack([signal, signal, rng.normal(size=120)])
@@ -47,6 +51,7 @@ def test_grouped_permutation_is_reproducible_and_does_not_mutate_input():
 
 
 def test_term_groups_exclude_intercept_and_cover_every_other_column():
+    """Verify Patsy terms group all non-intercept design columns exactly once."""
     design_info = SimpleNamespace(
         term_name_slices=OrderedDict(
             [
@@ -68,6 +73,7 @@ def test_term_groups_exclude_intercept_and_cover_every_other_column():
 
 
 def test_stratified_bootstrap_preserves_class_counts():
+    """Verify stratified resampling preserves the original per-class sizes."""
     y = np.array([0] * 17 + [1] * 8)
     indices = pilot.stratified_bootstrap_indices(y, np.random.default_rng(12))
     sampled = y[indices]
@@ -77,6 +83,7 @@ def test_stratified_bootstrap_preserves_class_counts():
 
 
 def test_pairwise_summary_has_expected_perfect_agreement():
+    """Verify proportional rankings yield perfect pairwise stability measures."""
     raw = pd.DataFrame(
         {
             "Bootstrap": [1, 1, 1, 2, 2, 2],
@@ -92,6 +99,7 @@ def test_pairwise_summary_has_expected_perfect_agreement():
 
 
 def test_output_protection_rejects_canonical_paths():
+    """Verify the optional pilot cannot write into canonical HbA1c results."""
     canonical = Path("C:/isolated-test/results/hba1c")
     bundle = canonical / "bundle"
     with pytest.raises(ValueError, match="separate"):
@@ -99,11 +107,13 @@ def test_output_protection_rejects_canonical_paths():
 
 
 def test_full_mode_requires_explicit_confirmation():
+    """Verify a full optional run requires an explicit confirmation argument."""
     with pytest.raises(SystemExit):
         pilot.parse_args(["--mode", "full"])
 
 
 def test_pilot_assessment_recommends_full_only_when_feasible():
+    """Verify a converged, fast pilot receives the proceed recommendation."""
     log = pd.DataFrame(
         {
             "Status": ["success"] * 5,

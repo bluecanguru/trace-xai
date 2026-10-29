@@ -1,11 +1,34 @@
+"""Select SHAP explainers and derive global attribution summaries."""
+
+import warnings
+
+from tqdm import TqdmWarning
+
+warnings.filterwarnings(
+    "ignore",
+    message="IProgress not found.*",
+    category=TqdmWarning,
+)
+
 import shap
 import numpy as np
 import pandas as pd
 
 
 def detect_model_type(model):
-    """
-    Detect the model family to select the most appropriate SHAP explainer.
+    """Infer the model family used for SHAP explainer selection.
+
+    Args:
+        model: Fitted estimator or Statsmodels result.
+
+    Returns:
+        One of ``"tree"``, ``"statsmodels"``, ``"linear"``, or
+        ``"generic"``.
+
+    Notes:
+        Detection relies on fitted attributes first and class-name inspection
+        second. It controls explainer selection only; it does not validate the
+        estimator's statistical specification.
     """
     if hasattr(model, "feature_importances_"):
         return "tree"
@@ -31,9 +54,16 @@ def detect_model_type(model):
 
 
 def get_prediction_function(model):
+    """Return a positive-class prediction callable for model-agnostic SHAP.
 
+    Args:
+        model: Fitted estimator or Statsmodels result.
+
+    Returns:
+        Callable accepting a feature matrix and returning one prediction or
+        positive-class probability per observation.
+    """
     # statsmodels formula-based fitted model
-    """Return the prediction function used by the selected SHAP explainer."""
     if hasattr(model, "params"):
         return lambda X: np.asarray(
             model.predict(X, transform=False)
@@ -53,8 +83,27 @@ def run_shap(
     X_test,
     feature_names
 ):
-    """
-    Computes SHAP values and global feature importance.
+    """Compute observation-level SHAP values and global importance summaries.
+
+    Args:
+        model: Fitted estimator or Statsmodels result to explain.
+        X_train: Reference/background matrix used by model-agnostic explainers.
+        X_test: Matrix containing the observations to explain.
+        feature_names: Ordered feature or design-term names corresponding to
+            the columns of the matrices.
+
+    Returns:
+        Dictionary containing the instantiated explainer, explainer class name,
+        original SHAP explanation object, numeric attribution array, expected
+        value when available, and a feature table with mean absolute and mean
+        signed SHAP values.
+
+    Notes:
+        Tree models use ``TreeExplainer`` when possible. Linear, Statsmodels,
+        and generic models use SHAP's automatic interface with ``X_train`` as
+        background. If the preferred construction fails, the same automatic
+        interface is used as a fallback. Three-dimensional binary-class output
+        is reduced to the positive-class attribution slice.
     """
     model_type = detect_model_type(model)
     try:
@@ -83,7 +132,10 @@ def run_shap(
             X_train
         )
 
-    shap_values = explainer(X_test)
+    if isinstance(explainer, shap.TreeExplainer):
+        shap_values = explainer(X_test)
+    else:
+        shap_values = explainer(X_test, silent=True)
 
     values = shap_values.values
 

@@ -1,4 +1,6 @@
 
+"""Measure permutation-ranking persistence across bootstrap model refits."""
+
 import numpy as np
 import pandas as pd
 
@@ -8,14 +10,31 @@ from sklearn.inspection import permutation_importance
 
 
 def _take_rows(values, indices):
-    """Select rows without discarding pandas column or index metadata."""
+    """Select rows while preserving pandas metadata when available.
+
+    Args:
+        values: Pandas object or NumPy-compatible array.
+        indices: Integer positional indices to select.
+
+    Returns:
+        Independent row subset of the same broad representation as ``values``.
+    """
     if hasattr(values, "iloc"):
         return values.iloc[indices].copy()
     return np.asarray(values)[indices].copy()
 
 
 def _stratified_bootstrap_indices(y, rng):
-    """Sample each observed class with replacement at its original size."""
+    """Draw class-stratified bootstrap indices.
+
+    Args:
+        y: One-dimensional class labels.
+        rng: NumPy random generator controlling the resample and final shuffle.
+
+    Returns:
+        Integer array containing one with-replacement sample per observed class,
+        each retaining that class's original sample size.
+    """
     y_array = np.asarray(y)
     sampled = []
     for label in np.unique(y_array):
@@ -49,6 +68,36 @@ def run_stability_analysis(
     permutation importance on the unchanged test partition. Model and
     permutation seeds are held fixed so that the intended source of variation
     is training-sample composition.
+
+    Args:
+        train_model_fn: Callback receiving one bootstrapped ``(X, y)`` pair and
+            returning a newly fitted estimator with the intended specification.
+        X_train: Training matrix sampled during every bootstrap replicate.
+        X_test: Fixed evaluation matrix used for permutation importance.
+        y_train: Class labels aligned with ``X_train``.
+        y_test: Outcomes aligned with ``X_test``.
+        feature_names: Ordered names for all matrix columns.
+        n_bootstrap: Number of stratified model refits.
+        bootstrap_seed: Master seed used to derive bootstrap-sample seeds.
+        scoring: Scikit-learn scoring rule used for permutation importance.
+        n_repeats: Feature permutations performed within each refit.
+        permutation_seed: Fixed seed used by permutation importance.
+        top_k: Number of highest-ranked features used for overlap comparisons.
+
+    Returns:
+        Three DataFrames: bootstrap-level feature importances and ranks,
+        feature-level stability summaries, and pairwise Spearman/top-k
+        comparisons among fitted bootstrap models.
+
+    Raises:
+        ValueError: If fewer than two bootstraps or one permutation are
+            requested, feature names do not match the training width, or the
+            configured scorer cannot evaluate a refitted model.
+
+    Notes:
+        The fixed permutation seed limits the intended source of between-refit
+        variation to training-sample composition. Pairwise results contain
+        ``n_bootstrap * (n_bootstrap - 1) / 2`` rows.
     """
     if n_bootstrap < 2:
         raise ValueError("n_bootstrap must be at least 2")

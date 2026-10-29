@@ -1,3 +1,5 @@
+"""Orchestrate the global, local, stability, and export pipeline stages."""
+
 from core.state import ExperimentState
 
 import json
@@ -25,10 +27,32 @@ from exporters.export import (
 
 class XAIExperiment:
 
-    """Coordinate global, local, stability, metadata, and export stages."""
+    """Coordinate the analysis and export stages for one XAI experiment.
+
+    The experiment owns a validated :class:`ExperimentState` and populates it
+    with global explanations, local explanations, optional bootstrap-refit
+    stability results, and reproducibility metadata. Stage-level execution
+    times are retained separately and are written during export.
+
+    Attributes:
+        state: Validated experiment inputs, configuration, and generated
+            results.
+        execution_times: Durations and status flags recorded for the analysis
+            and export stages.
+    """
+
     def __init__(self, config):
 
-        """Initialise an experiment around one validated state object."""
+        """Initialise an experiment from a pipeline configuration.
+
+        Args:
+            config: Mapping containing the dataset name, fitted model, aligned
+                analysis data, feature names, method settings, and optional
+                retraining callback accepted by :class:`ExperimentState`.
+
+        Raises:
+            KeyError: If a required configuration entry is absent.
+        """
         self.state = ExperimentState(config)
         self.execution_times = {}
 
@@ -36,7 +60,17 @@ class XAIExperiment:
 
     def run_global(self):
 
-        """Generate global importance outputs and rank comparisons."""
+        """Generate and store the global explanation results.
+
+        Native importance, permutation importance, and SHAP are calculated
+        from the aligned experiment inputs. Their feature rankings are then
+        compared using the shared ranking utilities.
+
+        The resulting importance tables, SHAP values, explainer metadata, and
+        rank-comparison outputs are stored under ``state.results["global"]``.
+        Exceptions raised by an explainer or ranking method are propagated to
+        the caller so that incomplete global results are not silently accepted.
+        """
         model = self.state.model
 
         X_train = self.state.data["X_train"]
@@ -114,7 +148,17 @@ class XAIExperiment:
 
     def run_local(self):
 
-        """Select local cases and generate repeated-seed LIME outputs."""
+        """Generate and store representative-case LIME explanations.
+
+        Cases are selected by prediction outcome using the configured
+        classification threshold and per-category limit. Each selected case is
+        explained across the configured LIME seeds, after which rule summaries
+        and per-observation seed-agreement measures are calculated.
+
+        Representative cases, seed-level explanations, category summaries,
+        and seed-stability results are stored under
+        ``state.results["local"]``.
+        """
         model = self.state.model
 
         X_train = self.state.data["X_train"]
@@ -174,7 +218,18 @@ class XAIExperiment:
 
     def run_stability(self):
 
-        """Evaluate bootstrap-refit permutation-ranking stability when enabled."""
+        """Evaluate and store bootstrap-refit ranking stability when enabled.
+
+        Stability analysis is performed only when the configuration supplies a
+        ``train_model_fn`` callback. The callback is used to refit the specified
+        model on stratified bootstrap samples, after which permutation rankings
+        are compared across successful refits.
+
+        If no callback is available, the method returns without modifying the
+        stability result. Otherwise, bootstrap-level rankings, summary values,
+        and pairwise rank-stability statistics are stored under
+        ``state.results["stability"]``.
+        """
         cfg = self.state.config
 
         if "train_model_fn" not in cfg:
@@ -206,7 +261,13 @@ class XAIExperiment:
 
     def build_metadata(self):
 
-        """Construct reproducibility metadata for the current experiment."""
+        """Construct and store metadata describing the completed analysis.
+
+        The metadata records the dataset and model identifiers, matrix sizes,
+        configured permutation scorer, and instantiated SHAP explainer class.
+        It is stored under ``state.results["metadata"]`` and later included in
+        the exported reproducibility bundle.
+        """
         self.state.results["metadata"] = {
 
             "dataset":
@@ -247,7 +308,16 @@ class XAIExperiment:
 
     def run(self):
 
-        """Execute every enabled analysis stage in sequence."""
+        """Execute the configured analysis stages and record their durations.
+
+        Global explanations, local explanations, and optional stability are
+        executed sequentially. The method records stage-level and total
+        analysis durations, notes whether stability produced a result, and then
+        builds the experiment metadata.
+
+        This method does not write files. Call :meth:`export` after a successful
+        run to create the result tables and reproducibility bundle.
+        """
         run_started = perf_counter()
 
         stage_started = perf_counter()
@@ -272,7 +342,25 @@ class XAIExperiment:
 
     def export(self, out_dir):
 
-        """Export the experiment state and reproducibility bundle."""
+        """Export generated results, the fitted bundle, and runtime metadata.
+
+        Args:
+            out_dir: Destination directory for the canonical result tables,
+                model-and-data bundle, ``execution_times.json``, and updated
+                bundle metadata. The directory is created by the export
+                utilities when required.
+
+        The method exports all available global, local, and stability objects;
+        unavailable optional results remain absent. It records export and total
+        pipeline durations and copies the same timing information into the
+        bundle metadata when that file exists.
+
+        Raises:
+            OSError: If an output directory or file cannot be created or
+                written.
+            TypeError: If a result cannot be serialised by the configured
+                export utility.
+        """
         export_started = perf_counter()
         global_results = self.state.results.get("global") or {}
 

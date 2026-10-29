@@ -1,3 +1,5 @@
+"""Unit tests for feature alignment and cross-method rank agreement."""
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -6,12 +8,18 @@ from core.ranking import compare_importance_ranks
 
 
 def tables():
+    """Create aligned native, SHAP, and permutation importance fixtures.
+
+    Returns:
+        Tuple containing three three-feature importance tables.
+    """
     native = pd.DataFrame({"Feature": ["a", "b", "c"], "Importance": [3., 2., 1.]})
     shap = native.rename(columns={"Importance": "MeanAbsSHAP"})
     return native, shap, native.copy()
 
 
 def test_feature_alignment_does_not_depend_on_row_order():
+    """Verify agreement aligns features by name rather than table row order."""
     native, shap, perm = tables()
     merged, agreement = compare_importance_ranks(
         native.iloc[::-1], shap.iloc[[1, 2, 0]], perm
@@ -21,6 +29,7 @@ def test_feature_alignment_does_not_depend_on_row_order():
 
 
 def test_reverse_ranking_has_negative_correlation():
+    """Verify exactly reversed rankings produce a Spearman correlation of -1."""
     native, shap, perm = tables()
     perm["Importance"] = [1., 2., 3.]
     _, agreement = compare_importance_ranks(native, shap, perm)
@@ -28,6 +37,7 @@ def test_reverse_ranking_has_negative_correlation():
 
 
 def test_only_common_features_are_compared():
+    """Verify rank comparison is restricted to features shared by all methods."""
     native, shap, perm = tables()
     native = native[native.Feature != "c"]
     merged, _ = compare_importance_ranks(native, shap, perm)
@@ -35,6 +45,7 @@ def test_only_common_features_are_compared():
 
 
 def test_native_importance_is_optional():
+    """Verify SHAP and permutation can be compared without native importance."""
     _, shap, perm = tables()
     merged, agreement = compare_importance_ranks(None, shap, perm)
     assert len(merged) == 3
@@ -43,7 +54,7 @@ def test_native_importance_is_optional():
 
 
 def test_tied_importances_receive_average_ranks():
-    """Regression test: currently expected to FAIL, not silently xfail."""
+    """Verify tied importance values receive matching average ranks."""
     native, shap, perm = tables()
     native["Importance"] = perm["Importance"] = [2., 2., 1.]
     shap["MeanAbsSHAP"] = [2., 2., 1.]

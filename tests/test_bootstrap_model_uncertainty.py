@@ -33,11 +33,17 @@ def load_module():
 
 @pytest.fixture(scope="module")
 def uncertainty_module():
+    """Load the predictive-uncertainty script once for this test module.
+
+    Returns:
+        Imported analysis-script module.
+    """
     assert SCRIPT_PATH.exists(), f"Missing analysis script: {SCRIPT_PATH}"
     return load_module()
 
 
 def test_specificity_score(uncertainty_module):
+    """Verify specificity equals the proportion of correctly identified negatives."""
     y_true = np.array([0, 0, 0, 1, 1])
     y_pred = np.array([0, 1, 0, 1, 0])
 
@@ -47,6 +53,7 @@ def test_specificity_score(uncertainty_module):
 
 
 def test_perfect_predictions_produce_perfect_metrics(uncertainty_module):
+    """Verify every reported metric equals one for perfect predictions."""
     y_true = np.array([0, 1, 0, 1, 0, 1])
     y_pred = y_true.copy()
     y_prob = np.array([0.05, 0.95, 0.10, 0.90, 0.20, 0.80])
@@ -59,6 +66,7 @@ def test_perfect_predictions_produce_perfect_metrics(uncertainty_module):
 
 
 def test_bootstrap_is_reproducible_and_well_formed(uncertainty_module):
+    """Verify seeded bootstrap intervals are reproducible and bounded."""
     y_true = np.array([0, 0, 0, 0, 1, 1, 1, 1])
     y_pred = np.array([0, 0, 1, 0, 1, 0, 1, 1])
     y_prob = np.array([0.05, 0.20, 0.65, 0.30, 0.85, 0.40, 0.70, 0.95])
@@ -94,6 +102,7 @@ def test_bootstrap_is_reproducible_and_well_formed(uncertainty_module):
 
 
 def test_single_class_input_is_rejected(uncertainty_module):
+    """Verify bootstrap estimation rejects samples without both outcome classes."""
     y_true = np.zeros(10, dtype=int)
     y_pred = np.zeros(10, dtype=int)
     y_prob = np.full(10, 0.1)
@@ -110,6 +119,7 @@ def test_single_class_input_is_rejected(uncertainty_module):
 
 
 def test_latex_export_contains_expected_structure(uncertainty_module):
+    """Verify the LaTeX exporter emits the expected table label and structure."""
     row = {"Dataset": "Heart"}
     row.update(
         {

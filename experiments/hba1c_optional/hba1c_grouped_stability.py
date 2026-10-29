@@ -38,7 +38,17 @@ DEFAULT_OUTPUT_ROOT = (
 
 
 def _json_default(value):
-    """Convert supported scientific values to JSON-compatible representations."""
+    """Convert a supported nonstandard value for JSON serialisation.
+
+    Args:
+        value: NumPy scalar or path-like value encountered by ``json.dumps``.
+
+    Returns:
+        Native numeric scalar or string path representation.
+
+    Raises:
+        TypeError: If the value has no supported conversion.
+    """
     if isinstance(value, (np.integer, np.floating)):
         return value.item()
     if isinstance(value, Path):
@@ -47,14 +57,38 @@ def _json_default(value):
 
 
 def _write_json(path: Path, data: dict) -> None:
-    """Write one JSON file using stable formatting."""
+    """Write an indented UTF-8 JSON document using scientific conversions.
+
+    Args:
+        path: Destination file path.
+        data: Mapping to serialise.
+
+    Returns:
+        None.
+
+    Raises:
+        OSError: If the destination cannot be written.
+        TypeError: If an unsupported value cannot be serialised.
+    """
     path.write_text(
         json.dumps(data, indent=2, default=_json_default), encoding="utf-8"
     )
 
 
 def ensure_isolated_output(bundle_dir: Path, output_root: Path) -> None:
-    """Reject any output path that could overwrite canonical HbA1c results."""
+    """Ensure optional output cannot overwrite canonical HbA1c results.
+
+    Args:
+        bundle_dir: Canonical trusted-bundle directory.
+        output_root: Proposed parent directory for optional experiment runs.
+
+    Returns:
+        None.
+
+    Raises:
+        ValueError: If either path contains the other or both resolve to the
+            same canonical result location.
+    """
     canonical_results = bundle_dir.resolve().parent
     output_root = output_root.resolve()
     if (
@@ -68,7 +102,18 @@ def ensure_isolated_output(bundle_dir: Path, output_root: Path) -> None:
 
 
 def validate_bundle_files(bundle_dir: Path) -> dict:
-    """Validate the files required by the optional HbA1c experiment."""
+    """Validate the required files and metadata of an HbA1c bundle.
+
+    Args:
+        bundle_dir: Directory containing the saved model and aligned CSV files.
+
+    Returns:
+        Validated metadata mapping.
+
+    Raises:
+        ValueError: If files are missing or dataset and feature metadata are
+            inconsistent.
+    """
     required = (
         "model.pkl",
         "metadata.json",
@@ -94,7 +139,23 @@ def validate_bundle_files(bundle_dir: Path) -> dict:
 
 
 def load_bundle(bundle_dir: Path):
-    """Load a trusted local bundle and validate its saved design matrices."""
+    """Load a trusted HbA1c bundle and validate its aligned design matrices.
+
+    Args:
+        bundle_dir: Directory containing the trusted saved bundle.
+
+    Returns:
+        Tuple of metadata, fitted Statsmodels result, and aligned train/test
+        matrices and labels.
+
+    Raises:
+        ValueError: If schemas, values, labels, model class, or design terms do
+            not agree with the metadata.
+
+    Warning:
+        ``model.pkl`` uses pickle-based deserialisation and must come from a
+        trusted local source.
+    """
     metadata = validate_bundle_files(bundle_dir)
     feature_names = metadata["feature_names"]
     data = {}
@@ -127,7 +188,19 @@ def load_bundle(bundle_dir: Path):
 
 
 def extract_term_groups(model, feature_names) -> OrderedDict[str, tuple[int, ...]]:
-    """Return exact non-intercept Patsy term slices from the saved model."""
+    """Extract complete non-intercept Patsy terms for grouped permutation.
+
+    Args:
+        model: Fitted Statsmodels result retaining Patsy design information.
+        feature_names: Ordered saved design-matrix column names.
+
+    Returns:
+        Ordered mapping from original Patsy term names to design-column indices.
+
+    Raises:
+        ValueError: If term slices are unavailable, empty, overlapping, out of
+            range, or fail to cover every non-intercept design column.
+    """
     design_info = getattr(getattr(model.model, "data", None), "design_info", None)
     term_slices = getattr(design_info, "term_name_slices", None)
     if not term_slices:
@@ -167,7 +240,19 @@ def extract_term_groups(model, feature_names) -> OrderedDict[str, tuple[int, ...
 
 
 def predict_probabilities(model, X: np.ndarray) -> np.ndarray:
-    """Return positive-class probabilities from a fitted Statsmodels result."""
+    """Return validated positive-class probabilities from Statsmodels.
+
+    Args:
+        model: Fitted Statsmodels binary-result object.
+        X: Design matrix aligned with the fitted specification.
+
+    Returns:
+        One-dimensional probability array clipped away from zero and one.
+
+    Raises:
+        ValueError: If predictions have the wrong length or contain nonfinite
+            values.
+    """
     try:
         probabilities = model.predict(X, transform=False)
     except TypeError:
@@ -179,7 +264,20 @@ def predict_probabilities(model, X: np.ndarray) -> np.ndarray:
 
 
 def prediction_score(y, probabilities, scoring: str) -> float:
-    """Evaluate probabilities using the selected continuous scoring rule."""
+    """Evaluate probabilities with ROC AUC or negative log loss.
+
+    Args:
+        y: Observed binary outcomes.
+        probabilities: Positive-class probabilities aligned with ``y``.
+        scoring: Either ``"roc_auc"`` or ``"neg_log_loss"``.
+
+    Returns:
+        Continuous performance score, oriented so larger values are better.
+
+    Raises:
+        ValueError: If the scoring name is unsupported or the metric cannot be
+            evaluated from the supplied outcomes.
+    """
     if scoring == "roc_auc":
         return float(roc_auc_score(y, probabilities))
     if scoring == "neg_log_loss":
@@ -197,7 +295,29 @@ def grouped_permutation_importance(
     scoring: str,
     random_seed: int,
 ) -> pd.DataFrame:
-    """Jointly shuffle all design columns belonging to each Patsy term."""
+    """Measure grouped permutation importance for complete Patsy terms.
+
+    Args:
+        model: Fitted Statsmodels result to evaluate.
+        X: Fixed evaluation design matrix.
+        y: Outcomes aligned with ``X``.
+        groups: Ordered term-to-column-index mapping.
+        n_repeats: Joint permutations performed for each term.
+        scoring: Continuous scoring rule used to measure performance loss.
+        random_seed: Seed controlling the permutation order.
+
+    Returns:
+        DataFrame containing term size, mean importance, variability, baseline
+        score, scorer, and repeat count, sorted by decreasing importance.
+
+    Raises:
+        ValueError: If repeat count or input dimensions are invalid.
+
+    Notes:
+        Columns belonging to one encoded term are permuted together, preserving
+        their internal relationship while breaking their association with the
+        outcome.
+    """
     if n_repeats < 1:
         raise ValueError("n_repeats must be at least 1.")
     base = np.asarray(X, dtype=float)
@@ -237,7 +357,15 @@ def grouped_permutation_importance(
 
 
 def stratified_bootstrap_indices(y, rng) -> np.ndarray:
-    """Draw one class-stratified bootstrap sample of row indices."""
+    """Draw class-stratified bootstrap indices at original class sizes.
+
+    Args:
+        y: Binary outcomes to stratify.
+        rng: NumPy random generator controlling sampling and shuffling.
+
+    Returns:
+        Shuffled integer indices sampled with replacement within each class.
+    """
     y = np.asarray(y)
     sampled = []
     for label in np.unique(y):
@@ -251,7 +379,18 @@ def stratified_bootstrap_indices(y, rng) -> np.ndarray:
 
 
 def fit_bootstrap_logit(X, y, start_params, maxiter: int):
-    """Fit one bootstrap logistic model with the canonical specification."""
+    """Fit one bootstrap logistic model with the canonical specification.
+
+    Args:
+        X: Bootstrapped design matrix.
+        y: Bootstrapped binary outcomes.
+        start_params: Initial coefficient vector supplied to the optimiser.
+        maxiter: Maximum Newton iterations.
+
+    Returns:
+        Tuple containing the fitted result, convergence flag, elapsed seconds,
+        and captured warning messages.
+    """
     start = time.perf_counter()
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
@@ -270,7 +409,16 @@ def fit_bootstrap_logit(X, y, start_params, maxiter: int):
 
 
 def summarise_bootstrap(raw: pd.DataFrame, top_k: int):
-    """Summarise successful bootstrap rankings and pairwise agreement."""
+    """Summarise term rankings and pairwise agreement across successful refits.
+
+    Args:
+        raw: Bootstrap-level grouped-permutation importance rows.
+        top_k: Number of leading terms used for persistence and overlap.
+
+    Returns:
+        Pair of DataFrames containing term-level stability summaries and all
+        pairwise Spearman/top-k comparisons. Empty input yields two empty tables.
+    """
     if raw.empty:
         return pd.DataFrame(), pd.DataFrame()
     raw = raw.copy()
@@ -321,7 +469,18 @@ def summarise_bootstrap(raw: pd.DataFrame, top_k: int):
 
 
 def make_run_directory(output_root: Path, mode: str) -> Path:
-    """Create an isolated timestamped experiment directory."""
+    """Create a unique timestamped directory for one optional run.
+
+    Args:
+        output_root: Parent directory reserved for optional experiments.
+        mode: Run mode included in the directory name.
+
+    Returns:
+        Newly created run directory.
+
+    Raises:
+        OSError: If the parent or unique run directory cannot be created.
+    """
     output_root.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S_%fZ")
     run_dir = output_root / f"{mode}_{stamp}"
@@ -330,7 +489,17 @@ def make_run_directory(output_root: Path, mode: str) -> Path:
 
 
 def save_progress(run_dir, raw_rows, run_rows, top_k):
-    """Persist partial bootstrap outputs without changing canonical results."""
+    """Persist current optional-run tables and recompute stability summaries.
+
+    Args:
+        run_dir: Isolated run directory.
+        raw_rows: Completed grouped-importance DataFrames.
+        run_rows: Per-bootstrap status and timing records.
+        top_k: Number of leading terms used by the summary.
+
+    Returns:
+        Raw importance, run-log, feature-summary, and pairwise DataFrames.
+    """
     raw = pd.concat(raw_rows, ignore_index=True) if raw_rows else pd.DataFrame()
     run_log = pd.DataFrame(run_rows)
     raw.to_csv(run_dir / "bootstrap_grouped_importance.csv", index=False)
@@ -349,7 +518,23 @@ def assess_pilot(
     full_target,
     max_projected_hours,
 ):
-    """Assess pilot convergence and projected computational feasibility."""
+    """Assess whether a pilot justifies attempting the requested full run.
+
+    Args:
+        run_log: Per-bootstrap status, convergence, and timing table.
+        pairwise: Pairwise ranking-stability table from successful refits.
+        requested: Number of bootstraps requested in the pilot.
+        full_target: Bootstrap count planned for a full run.
+        max_projected_hours: Maximum acceptable projected duration.
+
+    Returns:
+        Decision mapping containing convergence, failures, median timings,
+        projected runtime, and the exploratory mean pairwise correlation.
+
+    Notes:
+        The recommendation concerns computational feasibility only and does not
+        establish statistical convergence of the stability estimate.
+    """
     successful = int((run_log.get("Status") == "success").sum())
     converged = int(run_log.get("Converged", pd.Series(dtype=bool)).fillna(False).sum())
     convergence_rate = converged / requested if requested else 0.0
@@ -400,7 +585,11 @@ def assess_pilot(
 
 
 def runtime_metadata():
-    """Collect runtime and dependency metadata for the experiment."""
+    """Collect timestamped Python, platform, and dependency provenance.
+
+    Returns:
+        Mapping suitable for inclusion in the optional run manifest.
+    """
     return {
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "python": platform.python_version(),
@@ -418,7 +607,19 @@ def runtime_metadata():
 
 
 def parse_args(argv=None):
-    """Parse optional HbA1c experiment command-line arguments."""
+    """Parse and validate optional HbA1c experiment arguments.
+
+    Args:
+        argv: Optional command-line argument sequence. ``None`` reads the
+            process arguments.
+
+    Returns:
+        Populated argument namespace with mode-specific defaults applied.
+
+    Raises:
+        SystemExit: If arguments are invalid or full mode lacks explicit
+            confirmation.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=("pilot", "full"), default="pilot")
     parser.add_argument("--confirm-full", action="store_true")
@@ -465,7 +666,23 @@ def parse_args(argv=None):
 
 
 def run(args) -> Path | None:
-    """Execute the isolated grouped-permutation stability experiment."""
+    """Execute or inspect the isolated grouped-permutation experiment.
+
+    Args:
+        args: Validated namespace returned by :func:`parse_args`.
+
+    Returns:
+        Created run directory, or ``None`` for inspection-only mode.
+
+    Raises:
+        ValueError: If bundle contents, term groups, settings, or output paths
+            are invalid.
+        OSError: If required inputs cannot be read or outputs cannot be written.
+
+    Notes:
+        Canonical HbA1c results are never modified. Progress is saved after
+        every attempted refit so interrupted optional runs remain auditable.
+    """
     bundle_dir = args.bundle_dir.expanduser().resolve()
     output_root = args.output_root.expanduser().resolve()
     ensure_isolated_output(bundle_dir, output_root)
@@ -633,7 +850,15 @@ def run(args) -> Path | None:
 
 
 def main(argv=None):
-    """Run the optional HbA1c experiment from the command line."""
+    """Run the optional experiment command-line interface.
+
+    Args:
+        argv: Optional argument sequence passed to :func:`parse_args`.
+
+    Returns:
+        Zero after successful inspection or execution and one after a handled
+        experiment error.
+    """
     args = parse_args(argv)
     try:
         run(args)

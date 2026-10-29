@@ -8,7 +8,16 @@ import pandas as pd
 
 
 def _ordered(df):
-    """Return a deterministic representation for nested comparison values."""
+    """Return a deterministically ordered copy for row-wise comparison.
+
+    Args:
+        df: Result DataFrame to order.
+
+    Returns:
+        DataFrame sorted stably by preferred identifier columns, by available
+        text columns when identifiers are absent, or only reindexed when no
+        suitable sort key exists.
+    """
     preferred = [c for c in ("Feature", "CaseIndex", "CaseType", "Rule", "Rank") if c in df]
     fallback = [c for c in df if not pd.api.types.is_numeric_dtype(df[c])]
     keys = preferred or fallback
@@ -16,7 +25,22 @@ def _ordered(df):
 
 
 def compare_csv(reference, candidate, rtol=1e-5, atol=1e-8):
-    """Compare two CSV files using exact and numeric tolerances."""
+    """Compare two result CSV files using schema and numeric tolerances.
+
+    Args:
+        reference: Path to the canonical CSV file.
+        candidate: Path to the rerun CSV file.
+        rtol: Relative tolerance passed to :func:`numpy.allclose`.
+        atol: Absolute tolerance passed to :func:`numpy.allclose`.
+
+    Returns:
+        Machine-readable report with status ``EXACT``, ``CLOSE``,
+        ``DIFFERENT``, ``SCHEMA_DIFFERENT``, or ``SHAPE_DIFFERENT`` and
+        column-level numeric differences where applicable.
+
+    Raises:
+        OSError: If either CSV file cannot be read.
+    """
     left, right = pd.read_csv(reference), pd.read_csv(candidate)
     if left.columns.tolist() != right.columns.tolist():
         return {"status": "SCHEMA_DIFFERENT", "reference_columns": left.columns.tolist(),
@@ -47,7 +71,19 @@ def compare_csv(reference, candidate, rtol=1e-5, atol=1e-8):
 
 
 def compare_directories(reference, candidate, rtol=1e-5, atol=1e-8):
-    """Compare the supported result files in two directories."""
+    """Compare every top-level CSV present in either result directory.
+
+    Args:
+        reference: Directory containing canonical result CSV files.
+        candidate: Directory containing candidate rerun CSV files.
+        rtol: Relative numeric comparison tolerance.
+        atol: Absolute numeric comparison tolerance.
+
+    Returns:
+        Report containing resolved directories, tolerances, status counts, and
+        one comparison result per discovered filename. Files present in only
+        one directory receive ``MISSING`` status.
+    """
     reference, candidate = Path(reference), Path(candidate)
     names = sorted({p.name for p in reference.glob("*.csv")} | {p.name for p in candidate.glob("*.csv")})
     files = {}
@@ -63,7 +99,20 @@ def compare_directories(reference, candidate, rtol=1e-5, atol=1e-8):
 
 
 def main(argv=None):
-    """Execute the result-comparison command-line interface."""
+    """Execute the result-directory comparison command.
+
+    Args:
+        argv: Optional argument sequence. ``None`` reads :data:`sys.argv`.
+
+    Returns:
+        Process status code. Zero indicates no ``DIFFERENT`` result; one
+        indicates at least one numerically or textually different CSV.
+
+    Notes:
+        Missing, schema-different, and shape-different statuses are retained in
+        the JSON report. The current exit rule is based specifically on the
+        number of files with ``DIFFERENT`` status.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reference", required=True)
     parser.add_argument("--candidate", required=True)

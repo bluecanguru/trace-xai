@@ -32,7 +32,12 @@ CLI_RUNS_DIR = PROJECT_ROOT / "results" / "cli_runs"
 
 
 def build_parser():
-    """Build the Heart demonstration command-line parser."""
+    """Build the command-line parser for safe validation or trusted reruns.
+
+    Returns:
+        Configured :class:`argparse.ArgumentParser` with validation, rerun, and
+        display-limit options.
+    """
     parser = argparse.ArgumentParser(
         description=(
             "Validate the Heart reproducibility bundle or rerun its trusted "
@@ -57,7 +62,18 @@ def build_parser():
 
 
 def read_csv(output_dir, filename):
-    """Load one exported CSV table when it exists."""
+    """Load one required exported CSV table.
+
+    Args:
+        output_dir: Directory containing a completed demonstration run.
+        filename: Expected CSV filename within that directory.
+
+    Returns:
+        Loaded pandas DataFrame.
+
+    Raises:
+        FileNotFoundError: If the requested export is absent.
+    """
     path = output_dir / filename
     if not path.is_file():
         raise FileNotFoundError(f"Expected demo output is missing: {path}")
@@ -65,14 +81,33 @@ def read_csv(output_dir, filename):
 
 
 def print_table(title, table):
-    """Print a titled result table for interactive review."""
+    """Print a labelled DataFrame without its index.
+
+    Args:
+        title: Heading displayed before the table.
+        table: DataFrame containing the rows to display.
+
+    Returns:
+        None.
+    """
     print(f"\n{title}")
     print("-" * len(title))
     print(table.to_string(index=False))
 
 
 def summarize_results(output_dir, top_n):
-    """Print a concise summary of a completed Heart run."""
+    """Print the principal global, local, and LIME outputs of a Heart run.
+
+    Args:
+        output_dir: Directory containing a completed CLI rerun.
+        top_n: Maximum global features displayed for each method.
+
+    Returns:
+        None.
+
+    Raises:
+        FileNotFoundError: If a required canonical result table is missing.
+    """
     native = read_csv(output_dir, "native_importance.csv")
     permutation = read_csv(output_dir, "permutation_importance.csv")
     shap = read_csv(output_dir, "shap_importance.csv")
@@ -185,7 +220,18 @@ def summarize_results(output_dir, top_n):
 
 
 def find_created_output(existing_directories, started_at):
-    """Identify the output directory created by the demonstration run."""
+    """Identify the new Heart output directory created after a start time.
+
+    Args:
+        existing_directories: Directory entries present before the rerun.
+        started_at: Wall-clock timestamp recorded immediately before execution.
+
+    Returns:
+        Most recently modified matching Heart output directory.
+
+    Raises:
+        RuntimeError: If the CLI output root or a new matching run is absent.
+    """
     if not CLI_RUNS_DIR.is_dir():
         raise RuntimeError("The CLI output directory was not created.")
 
@@ -210,7 +256,24 @@ def find_created_output(existing_directories, started_at):
 
 
 def main(argv=None):
-    """Execute the isolated Heart demonstration."""
+    """Validate the Heart bundle or rerun its explicitly trusted saved model.
+
+    Args:
+        argv: Optional command-line argument sequence. ``None`` reads process
+            arguments.
+
+    Returns:
+        None.
+
+    Raises:
+        FileNotFoundError: If the Heart YAML configuration is unavailable.
+        SystemExit: If bundle validation or trusted execution fails.
+
+    Notes:
+        Validation mode is the default and never loads ``model.pkl``. Rerun
+        mode writes only to a new CLI output directory and leaves canonical
+        Heart results unchanged.
+    """
     args = build_parser().parse_args(argv)
 
     if not CONFIG_PATH.is_file():

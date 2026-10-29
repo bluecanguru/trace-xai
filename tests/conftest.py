@@ -18,14 +18,30 @@ sys.path.insert(0, str(FRAMEWORK))
 
 
 def pytest_addoption(parser):
+    """Register the explicit switch for running integration tests.
+
+    Args:
+        parser: Pytest command-line parser supplied during configuration.
+    """
     parser.addoption("--run-integration", action="store_true", default=False)
 
 
 def pytest_configure(config):
+    """Declare the integration marker used by the framework smoke test.
+
+    Args:
+        config: Active pytest configuration object.
+    """
     config.addinivalue_line("markers", "integration: real SHAP/LIME smoke test")
 
 
 def pytest_collection_modifyitems(config, items):
+    """Skip integration tests unless the user requested them explicitly.
+
+    Args:
+        config: Active pytest configuration containing command-line options.
+        items: Collected pytest test items to mark when required.
+    """
     if not config.getoption("--run-integration"):
         for item in items:
             if "integration" in item.keywords:

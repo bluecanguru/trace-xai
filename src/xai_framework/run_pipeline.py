@@ -1,57 +1,45 @@
-"""
-run_pipeline.py
-
-Thin wrapper around the XAI framework.
+"""Public entry point for executing one configured XAI experiment.
 
 The replication notebooks are responsible for:
-    • loading the dataset
-    • preprocessing
-    • training/selecting the final model
+
+* loading the dataset;
+* preprocessing and feature construction; and
+* training or selecting the final model.
 
 The framework is responsible for:
-    • global explanations
-    • local explanations
-    • stability analysis
-    • exporting all artifacts
+
+* global and local explanations;
+* optional bootstrap-refit stability analysis; and
+* reproducible result and model-bundle exports.
 """
 
 from core.experiment import XAIExperiment
 
 
 def run_pipeline(config):
-    """
-    Execute a complete XAI experiment.
+    """Execute and export one complete XAI experiment.
 
-    Parameters
-    ----------
-    config : dict
+    Args:
+        config: Experiment configuration. Required entries are ``dataset_name``,
+            ``model``, ``X_train``, ``X_test``, ``y_train``, ``y_test``,
+            ``feature_names``, and ``output_dir``. Optional entries control the
+            permutation scorer, representative-case threshold and sample size,
+            LIME seeds and rule limits, the retraining callback, bootstrap and
+            permutation settings, and stability top-k comparisons.
 
-        Required keys
-        -------------
-        dataset_name
-        model
-        X_train
-        X_test
-        y_train
-        y_test
-        feature_names
+    Returns:
+        Completed :class:`XAIExperiment`. Its state retains the same result
+        objects that were written to ``config["output_dir"]``.
 
-        Optional
-        --------
-        scoring
-        train_model_fn
-        stability_n_bootstrap
-        stability_bootstrap_seed
-        stability_scoring
-        stability_n_repeats
-        stability_permutation_seed
-        stability_top_k
-        classification_threshold
-        local_cases_per_type
-        lime_seeds
-        lime_num_features
-        lime_stability_top_k
-        output_dir
+    Raises:
+        KeyError: If a required configuration entry is absent.
+        ValueError: If an analysis setting or aligned input is invalid.
+        OSError: If the output directory or exported files cannot be written.
+
+    Notes:
+        Stages run sequentially. Bootstrap-refit stability is skipped when the
+        configuration does not provide ``train_model_fn``; global and local
+        explanations are still generated.
     """
 
     experiment = XAIExperiment(config)

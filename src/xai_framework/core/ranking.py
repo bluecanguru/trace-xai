@@ -1,3 +1,5 @@
+"""Cross-method feature-ranking alignment and agreement statistics."""
+
 from scipy.stats import spearmanr
 
 
@@ -6,7 +8,26 @@ def compare_importance_ranks(
     shap_df,
     perm_df
 ):
-    """Compare native, SHAP, and permutation rankings and correlations."""
+    """Compare aligned native, SHAP, and permutation feature rankings.
+
+    Args:
+        native_df: Native-importance table with ``Feature`` and ``Importance``
+            columns, or ``None`` when native importance is unavailable.
+        shap_df: SHAP table with ``Feature`` and ``MeanAbsSHAP`` columns.
+        perm_df: Permutation-importance table with ``Feature`` and
+            ``Importance`` columns.
+
+    Returns:
+        A pair ``(rank_table, agreement)``. ``rank_table`` contains the
+        method-specific values and average ranks for features shared by every
+        available method. ``agreement`` maps each method pair to its Spearman
+        rank correlation.
+
+    Notes:
+        Rankings are calculated only over common features. Ties receive average
+        ranks, and correlations may be ``NaN`` when a ranking is constant or
+        contains too few features.
+    """
 
     # Retain features shared by the compared methods.
 

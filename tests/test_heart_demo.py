@@ -10,6 +10,7 @@ def test_validation_demo_uses_cli_without_loading_model(
     monkeypatch,
     capsys,
 ):
+    """Verify the demonstration invokes safe CLI validation without model loading."""
     config_path = tmp_path / "heart.yaml"
     config_path.write_text(
         "dataset_name: heart\n",
@@ -19,6 +20,7 @@ def test_validation_demo_uses_cli_without_loading_model(
     received_arguments = []
 
     def fake_cli_main(arguments):
+        """Record arguments passed by the demonstration CLI wrapper."""
         received_arguments.append(arguments)
         return 0
 
@@ -52,6 +54,7 @@ def test_result_summary_includes_global_local_and_lime_outputs(
     tmp_path,
     capsys,
 ):
+    """Verify the demonstration summarises all principal exported result types."""
     pd.DataFrame(
         {
             "Feature": ["thal"],

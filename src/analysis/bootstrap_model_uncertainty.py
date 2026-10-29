@@ -44,7 +44,16 @@ METRIC_ORDER = (
 
 
 def specificity_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    """Return specificity for binary labels, or NaN when no negatives exist."""
+    """Calculate the true-negative rate for binary predictions.
+
+    Args:
+        y_true: Observed binary labels.
+        y_pred: Predicted binary labels aligned with ``y_true``.
+
+    Returns:
+        Proportion of observed negatives predicted as negative, or ``NaN`` when
+        the sample contains no negative observations.
+    """
     negatives = y_true == 0
     if not negatives.any():
         return float("nan")
@@ -56,7 +65,21 @@ def calculate_metrics(
     y_pred: np.ndarray,
     y_prob: np.ndarray,
 ) -> dict[str, float]:
-    """Calculate the supported binary predictive-performance metrics."""
+    """Calculate all predictive metrics reported by the uncertainty analysis.
+
+    Args:
+        y_true: Observed binary outcomes.
+        y_pred: Thresholded predictions aligned with ``y_true``.
+        y_prob: Positive-class probabilities aligned with ``y_true``.
+
+    Returns:
+        Mapping containing accuracy, precision, recall, specificity, F1,
+        ROC AUC, and precision-recall AUC.
+
+    Raises:
+        ValueError: If probability-based metrics cannot be calculated from the
+            supplied outcomes.
+    """
     return {
         "Accuracy": accuracy_score(y_true, y_pred),
         "Precision": precision_score(y_true, y_pred, zero_division=0),
@@ -76,7 +99,26 @@ def bootstrap_intervals(
     n_bootstrap: int,
     seed: int,
 ) -> tuple[dict[str, float], dict[str, tuple[float, float]], int]:
-    """Return point estimates and two-sided 95% percentile intervals."""
+    """Estimate observation-level bootstrap uncertainty for fixed predictions.
+
+    Args:
+        y_true: Observed binary outcomes.
+        y_pred: Fixed class predictions from the fitted model.
+        y_prob: Fixed positive-class probabilities from the fitted model.
+        n_bootstrap: Number of with-replacement observation resamples.
+        seed: Random seed controlling the bootstrap indices.
+
+    Returns:
+        Point-estimate mapping, two-sided 95% percentile intervals by metric,
+        and the number of valid two-class resamples.
+
+    Raises:
+        RuntimeError: If no bootstrap resample contains both outcome classes.
+
+    Notes:
+        This quantifies test-sample uncertainty conditional on the fitted model;
+        it does not refit the estimator or vary the training data.
+    """
     point = calculate_metrics(y_true, y_pred, y_prob)
     rng = np.random.default_rng(seed)
     samples: dict[str, list[float]] = {name: [] for name in METRIC_ORDER}
@@ -114,7 +156,21 @@ def bootstrap_intervals(
 
 
 def load_predictions(bundle_dir: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Load a trusted model bundle and return aligned labels and predictions."""
+    """Load a trusted fitted bundle and generate aligned test predictions.
+
+    Args:
+        bundle_dir: Directory containing ``model.pkl`` and aligned test CSVs.
+
+    Returns:
+        Observed labels, predicted classes, and positive-class probabilities.
+
+    Raises:
+        ValueError: If the model has no unique positive class or output lengths
+            are misaligned.
+
+    Warning:
+        The saved model is pickle-based and must originate from a trusted source.
+    """
     x_test = pd.read_csv(bundle_dir / "X_test.csv")
     y_true = pd.read_csv(bundle_dir / "y_test.csv").iloc[:, 0].to_numpy(dtype=int)
     model = joblib.load(bundle_dir / "model.pkl")
@@ -138,12 +194,29 @@ def load_predictions(bundle_dir: Path) -> tuple[np.ndarray, np.ndarray, np.ndarr
 
 
 def format_interval(point: float, low: float, high: float) -> str:
-    """Format a point estimate and confidence interval for reporting."""
+    """Format a point estimate and interval to three decimal places.
+
+    Args:
+        point: Metric point estimate.
+        low: Lower confidence limit.
+        high: Upper confidence limit.
+
+    Returns:
+        Reporting string in ``estimate [lower, upper]`` form.
+    """
     return f"{point:.3f} [{low:.3f}, {high:.3f}]"
 
 
 def dataframe_to_latex(summary: pd.DataFrame) -> str:
-    """Render the uncertainty summary as a compact LaTeX table."""
+    """Render the wide uncertainty summary as a thesis-ready LaTeX table.
+
+    Args:
+        summary: DataFrame containing ``Dataset`` and every metric in
+            ``METRIC_ORDER`` as preformatted strings.
+
+    Returns:
+        Complete LaTeX table environment with caption and label.
+    """
     columns = ["Dataset", *METRIC_ORDER]
     header = " & ".join(name.replace("_", " ") for name in columns) + r" \\"
     rows = [header, r"\midrule"]
@@ -171,7 +244,19 @@ def dataframe_to_latex(summary: pd.DataFrame) -> str:
 
 
 def export_roc_auc_figure(long_df: pd.DataFrame, output_path: Path) -> None:
-    """Export ROC-AUC estimates and percentile intervals as a thesis figure."""
+    """Export ROC-AUC point estimates and percentile intervals as a PDF figure.
+
+    Args:
+        long_df: Long-form metric table containing estimate and interval columns.
+        output_path: Destination figure path; missing parents are created.
+
+    Returns:
+        None.
+
+    Raises:
+        KeyError: If required metrics, datasets, or columns are absent.
+        OSError: If the figure cannot be written.
+    """
     roc = long_df.loc[long_df["Metric"] == "ROC_AUC"].copy()
     roc["Dataset"] = roc["Dataset"].map(DISPLAY_NAMES)
     roc = roc.set_index("Dataset").loc[list(DISPLAY_NAMES.values())].reset_index()
@@ -206,7 +291,16 @@ def export_roc_auc_figure(long_df: pd.DataFrame, output_path: Path) -> None:
 
 
 def main() -> None:
-    """Run the four-dataset bootstrap analysis and export tables and figures."""
+    """Run fixed-model bootstrap uncertainty for all held-out configurations.
+
+    The command loads trusted canonical bundles, calculates seeded percentile
+    intervals, and exports long and wide CSV tables, a LaTeX table, execution
+    metadata, and the ROC-AUC interval figure. Canonical dataset results are not
+    overwritten.
+
+    Returns:
+        None.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--project-root",

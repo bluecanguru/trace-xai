@@ -65,7 +65,3 @@ The retained full run requested 100 bootstrap refits. Fifty-eight converged and 
 - `pilot_assessment.json`: computational feasibility decision and projected
   full-run time.
 - `run_metadata.json`: configuration, provenance, limitations, and final state.
-
-Keep the canonical thesis results unless the full experiment completes and its
-scientific interpretation is accepted. A failed or slow pilot is evidence for
-retaining the current limitation statement.

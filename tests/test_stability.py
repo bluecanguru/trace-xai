@@ -9,6 +9,11 @@ from xai_framework.xai.stability import run_stability_analysis
 
 
 def _data():
+    """Create a deterministic synthetic binary train/test partition.
+
+    Returns:
+        Training matrix, test matrix, training labels, and test labels.
+    """
     rng = np.random.default_rng(7)
     X = pd.DataFrame(rng.normal(size=(80, 4)), columns=list("abcd"))
     y = pd.Series((1.8 * X["a"] - 0.8 * X["b"] + rng.normal(size=80) > 0).astype(int))
@@ -16,12 +21,22 @@ def _data():
 
 
 def _fit(X_bootstrap, y_bootstrap):
+    """Fit the deterministic logistic specification used in stability tests.
+
+    Args:
+        X_bootstrap: Bootstrapped training matrix.
+        y_bootstrap: Bootstrapped binary outcomes.
+
+    Returns:
+        Fitted logistic-regression estimator.
+    """
     return LogisticRegression(max_iter=1000, random_state=42).fit(
         X_bootstrap, y_bootstrap
     )
 
 
 def test_bootstrap_stability_is_reproducible_and_well_formed():
+    """Verify seeded stability outputs are reproducible and structurally valid."""
     X_train, X_test, y_train, y_test = _data()
     kwargs = dict(
         train_model_fn=_fit,
@@ -50,6 +65,7 @@ def test_bootstrap_stability_is_reproducible_and_well_formed():
 
 
 def test_bootstrap_refits_change_deterministic_logistic_models():
+    """Verify resampled training composition changes fitted importance vectors."""
     X_train, X_test, y_train, y_test = _data()
     raw, _, _ = run_stability_analysis(
         _fit,
@@ -68,6 +84,7 @@ def test_bootstrap_refits_change_deterministic_logistic_models():
 
 
 def test_stability_requires_multiple_bootstrap_refits():
+    """Verify pairwise stability analysis rejects a single requested refit."""
     X_train, X_test, y_train, y_test = _data()
     with pytest.raises(ValueError, match="at least 2"):
         run_stability_analysis(

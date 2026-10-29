@@ -1,3 +1,5 @@
+"""Unit tests for result serialisation and trusted bundle round trips."""
+
 import json
 
 import joblib
@@ -9,6 +11,7 @@ from exporters.export import export_xai_results, save_xai_bundle
 
 
 def test_csv_keeps_caseindex_and_nested_agreement_is_json(tmp_path):
+    """Verify canonical formats preserve case indices and nested scalar values."""
     cases = pd.DataFrame({"CaseIndex": [11, 35], "CaseType": ["TP", "TN"]})
     export_xai_results({
         "representative_cases": cases,
@@ -21,6 +24,7 @@ def test_csv_keeps_caseindex_and_nested_agreement_is_json(tmp_path):
 
 
 def test_bundle_roundtrip_preserves_predictions_and_features(tmp_path):
+    """Verify a locally created bundle preserves schema, labels, and predictions."""
     X = np.array([[0., 1.], [1., 0.], [2., 1.], [3., 0.]])
     y = np.array([0, 1, 0, 1])
     model = DummyClassifier(strategy="prior").fit(X, y)

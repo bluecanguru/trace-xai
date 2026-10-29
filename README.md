@@ -1,21 +1,23 @@
-# Reproducible XAI Framework for Cross-Dataset Replication
+# TRACE-XAI: A Transparent and Reproducible Framework for Auditing Clinical Explanations
 
-This repository contains paper replications for Heart, Stroke, Diabetes, CKD and HbA1c, a reusable binary-classification XAI framework, and cross-dataset analysis.
+This repository contains TRACE-XAI, a reproducible Explainable Artificial Intelligence (XAI) framework developed for the Master’s dissertation *Explainable Artificial Intelligence Applied to Clinical Decision Support Systems* at the University of Minho. It also contains the associated replications and cross-dataset analyses for Heart, Stroke, Diabetes, chronic kidney disease (CKD), and HbA1c-related hospital readmission.
+
+TRACE-XAI provides a standardised workflow for auditing fitted binary clinical prediction models. It integrates native feature importance, permutation importance, SHAP, repeated-seed LIME, representative-case selection, cross-method rank comparison, bootstrap-refit stability analysis, runtime recording, provenance metadata, and reproducible CSV and JSON exports.
 
 The workflow separates three responsibilities:
 
 - **Replication notebooks** reproduce the source-paper analyses and report their results.
-- **XAI-extension notebooks** prepare the specified model and data, call the shared framework, and inspect its outputs. Explanation algorithms are implemented in the framework rather than copied into each notebook.
-- **Predictive uncertainty analysis** evaluates the saved fitted models and test data using the central bootstrap script. Dataset-specific validation notebooks are supplementary analyses, not prerequisites for running XAI.
+- **XAI-extension notebooks** prepare the specified model and data, call TRACE-XAI, and inspect its outputs. Explanation algorithms are implemented in the shared framework rather than copied into each notebook.
+- **Predictive uncertainty analysis** evaluates the saved fitted models and test data using the central bootstrap script. Dataset-specific validation notebooks are supplementary analyses, not prerequisites for running TRACE-XAI.
 
-The XAI framework generates native, permutation, SHAP, repeated LIME, rank-agreement, representative-case and optional bootstrap-refit stability outputs. By default, local analysis selects up to 10 observations per available case category and evaluates each observation under 20 LIME perturbation seeds. Its normal `run_pipeline(config)` path does not generate the full predictive-performance report; the bootstrap script handles that evaluation.
+By default, local analysis selects up to 10 observations per available case category and evaluates each observation under 20 LIME perturbation seeds. The standard `run_pipeline(config)` path does not generate the complete predictive-performance report; the separate bootstrap script performs that evaluation.
 
 
 ## Framework architecture
 
 ![Architecture of the standardised XAI framework](images/framework_architecture_portrait.png)
 
-Dataset notebooks retain responsibility for preprocessing, model selection, and fitting. The shared runner accepts the final fitted model and aligned matrices, executes the global and local branches, optionally evaluates bootstrap-refit stability, and exports explanation tables, a fitted bundle, provenance metadata, and stage-level timings.
+Dataset notebooks retain responsibility for preprocessing, model selection, and fitting. The TRACE-XAI runner accepts the final fitted model and aligned matrices, executes the global and local branches, optionally evaluates bootstrap-refit stability, and exports explanation tables, a fitted bundle, provenance metadata, and stage-level timings.
 
 A direct run uses one configuration dictionary:
 
@@ -46,7 +48,7 @@ The retraining callback is optional. When it is omitted, the same interface prod
 
 ## Supported scope
 
-The framework currently supports:
+TRACE-XAI currently supports:
 
 - Binary classification with class labels `0` and `1`.
 - Scikit-learn estimators.
@@ -289,7 +291,7 @@ python -m coverage report -m
 python -m coverage json -o docs/verification/coverage.json
 ```
 
-The latest measured run contained 62 passing tests, completed in 73.52 seconds, and achieved 82% statement coverage (a separate branch-enabled run achieved 78%) over `src/xai_framework`. The full report is retained under `docs/verification/`.
+The latest measured run contained 62 passing tests, completed in 119.78 seconds, and achieved 82% statement coverage (a separate branch-enabled run achieved 78%) over `src/xai_framework`. The full report is retained under `docs/verification/`.
 
 The tests cover:
 
@@ -542,7 +544,7 @@ Generated results, serialized models, caches, editable-install metadata, and loc
 
 ## Methodological limitations
 
-The framework and analysis have several important limitations:
+TRACE-XAI and the associated analyses have several important limitations:
 
 - Raw importance magnitudes are not directly comparable across different XAI methods.
 - Rank agreement measures ordering similarity rather than equality of explanation meaning.
@@ -582,14 +584,14 @@ Timestamped CLI and batch outputs are reproducibility evidence. They should not 
 
 ## Citation and license
 
-See `mybib.bib` for source-paper and software citations. The original software in this repository is released under the MIT License; see `LICENSE`. Third-party datasets, source publications, and other external materials remain subject to their respective access and reuse terms and are not relicensed by this repository.
+See `mybib.bib` for source-paper and software citations. The original TRACE-XAI software in this repository is released under the MIT License; see `LICENSE`. Third-party datasets, source publications, and other external materials remain subject to their respective access and reuse terms and are not relicensed by this repository.
 
 The MIT License applies to the original source code under `src/`, `examples/`, `tests/`, and the repository-level Python utilities. It does not by itself license the dissertation manuscript, third-party datasets, or externally sourced material; those remain subject to their applicable copyright and institutional terms.
 
 ## Archival release
 
-Version **1.0.0** is archived on Zenodo:
+Version **1.0.0** of TRACE-XAI is archived on Zenodo:
 
 **DOI:** [10.5281/zenodo.23699962](https://doi.org/10.5281/zenodo.23699962)
 
-When using this software, please cite the archived release and the associated Master’s dissertation.
+When using TRACE-XAI, please cite the archived software release and the associated Master’s dissertation.

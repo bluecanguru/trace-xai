@@ -13,6 +13,15 @@ from xai_framework import cli
 
 @pytest.fixture
 def fixture_bundle(tmp_path):
+    """Create a minimal saved bundle and YAML configuration for CLI tests.
+
+    Args:
+        tmp_path: Pytest-managed temporary directory.
+
+    Returns:
+        Path to the generated YAML configuration. The bundle deliberately
+        contains an invalid pickle so validation tests detect unsafe loading.
+    """
     root = tmp_path / "project"
     bundle = root / "results" / "toy" / "bundle"
     bundle.mkdir(parents=True)
@@ -35,6 +44,7 @@ def fixture_bundle(tmp_path):
 
 
 def test_paths_are_not_relative_to_shell(fixture_bundle, monkeypatch, tmp_path):
+    """Verify configuration paths resolve from the YAML location, not the shell."""
     monkeypatch.chdir(tmp_path)
     cfg = cli.load_config(fixture_bundle)
     assert cfg["bundle_dir"].is_dir()
@@ -42,18 +52,21 @@ def test_paths_are_not_relative_to_shell(fixture_bundle, monkeypatch, tmp_path):
 
 
 def test_validation_never_loads_pickle_or_writes_output(fixture_bundle):
+    """Verify validation-only mode neither deserialises nor creates output."""
     cfg = cli.load_config(fixture_bundle)
     assert cli.main(["--config", str(fixture_bundle), "--validate-only"]) == 0
     assert not cfg["output_dir"].exists()
 
 
 def test_trust_acknowledgement_required(fixture_bundle):
+    """Verify a model rerun requires explicit acknowledgement of pickle trust."""
     with pytest.raises(SystemExit) as exc:
         cli.main(["--config", str(fixture_bundle)])
     assert exc.value.code == 2
 
 
 def test_column_order_mismatch_is_rejected(fixture_bundle):
+    """Verify bundle validation rejects matrices with reordered feature columns."""
     cfg = cli.load_config(fixture_bundle)
     path = cfg["bundle_dir"] / "X_test.csv"
     pd.read_csv(path)[["b", "a"]].to_csv(path, index=False)
@@ -62,6 +75,7 @@ def test_column_order_mismatch_is_rejected(fixture_bundle):
 
 
 def test_dataset_mismatch_is_rejected(fixture_bundle):
+    """Verify the requested dataset identifier must match bundle metadata."""
     cfg = cli.load_config(fixture_bundle)
     cfg["dataset_name"] = "wrong"
     with pytest.raises(ValueError, match="dataset_name"):
@@ -69,6 +83,7 @@ def test_dataset_mismatch_is_rejected(fixture_bundle):
 
 
 def test_existing_output_is_never_overwritten(fixture_bundle):
+    """Verify nonempty rerun output is preserved and rejected as a destination."""
     cfg = cli.load_config(fixture_bundle)
     cfg["output_dir"].mkdir(parents=True)
     (cfg["output_dir"] / "keep.txt").write_text("keep")
@@ -78,6 +93,7 @@ def test_existing_output_is_never_overwritten(fixture_bundle):
 
 
 def test_input_dataset_cannot_be_output(fixture_bundle):
+    """Verify rerun output cannot overlap the canonical source-result folder."""
     cfg = cli.load_config(fixture_bundle)
     cfg["output_dir"] = cfg["bundle_dir"].parent
     with pytest.raises(ValueError, match="separate"):
@@ -85,10 +101,13 @@ def test_input_dataset_cannot_be_output(fixture_bundle):
 
 
 def test_runtime_loads_fitted_model_without_training(fixture_bundle, monkeypatch):
+    """Verify runtime preparation loads but never refits the trusted model."""
     import joblib
     cfg = cli.load_config(fixture_bundle)
     metadata, data, names, scoring = cli.read_bundle(cfg)
     class Toy:
+        """Represent a fitted binary estimator that fails if refitting occurs."""
+
         classes_ = np.array([0, 1])
         n_features_in_ = 2
         fit = Mock(side_effect=AssertionError("Must not retrain"))
@@ -102,11 +121,13 @@ def test_runtime_loads_fitted_model_without_training(fixture_bundle, monkeypatch
 
 
 def test_cli_dispatches_existing_pipeline(fixture_bundle, monkeypatch):
+    """Verify a trusted CLI rerun dispatches the pipeline and writes a manifest."""
     from xai_framework import run_pipeline
     cfg = cli.load_config(fixture_bundle)
     sentinel = {"output_dir": str(cfg["output_dir"])}
     monkeypatch.setattr(cli, "prepare_runtime", lambda *args: sentinel)
     def fake_run(runtime):
+        """Write the minimum complete local-output pair expected by the CLI."""
         assert runtime is sentinel
         out = Path(runtime["output_dir"])
         out.mkdir(parents=True)

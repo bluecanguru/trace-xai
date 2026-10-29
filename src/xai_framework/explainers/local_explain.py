@@ -1,4 +1,6 @@
 
+"""Select prediction-outcome cases for repeated local explanation."""
+
 import numpy as np
 import pandas as pd
 
@@ -6,13 +8,21 @@ from core.statsmodels_wrapper import StatsModelsWrapper
 
 
 def get_probabilities(model, X):
-    """
-    Return probabilities for the positive class.
+    """Return positive-class probabilities from a supported fitted model.
 
-    Supports:
-    - sklearn models with predict_proba()
-    - sklearn models with decision_function()
-    - models whose predict() already returns probabilities
+    Args:
+        model: Fitted estimator exposing ``predict_proba``,
+            ``decision_function``, or ``predict``.
+        X: Feature matrix accepted by ``model``.
+
+    Returns:
+        One-dimensional NumPy array of positive-class probabilities or
+        probability-like predictions.
+
+    Notes:
+        Decision-function scores are converted with the logistic function.
+        Floating outputs from ``predict`` are treated as probabilities; other
+        outputs are converted to floating-point values without calibration.
     """
 
     if hasattr(model, "predict_proba"):
@@ -39,41 +49,30 @@ def get_representative_cases(
     threshold=0.5,
     n_per_type=1,
 ):
-    """
-    Select representative observations for local explanations.
+    """Select outcome-stratified observations for local explanation.
 
-    Selected case types:
-    - TP: most confident true positives
-    - TN: most confident true negatives
-    - FP: most confident false positives
-    - FN: most confident false negatives
-    - Borderline: observations closest to the decision threshold
+    Args:
+        model: Fitted classifier or Statsmodels binary-result object.
+        X_test: Evaluation matrix as a DataFrame or NumPy-compatible array.
+        y_test: Binary outcomes aligned positionally with ``X_test``.
+        feature_names: Ordered names used when ``X_test`` is not a DataFrame.
+        threshold: Probability threshold used to assign predicted classes.
+        n_per_type: Maximum observations selected for each available category.
 
-    Parameters
-    ----------
-    model
-        Fitted model.
+    Returns:
+        DataFrame containing the selected features, observed and predicted
+        classes, probability, distance from the threshold, case category,
+        original positional index, and within-category rank.
 
-    X_test
-        Test feature matrix. Can be either a pandas DataFrame
-        or a NumPy array.
+    Raises:
+        ValueError: If inputs have inconsistent row counts or ``n_per_type`` is
+            not a positive integer.
 
-    y_test
-        True test labels.
-
-    feature_names
-        Names of the predictor variables.
-
-    threshold
-        Classification threshold. Default is 0.5.
-
-    n_per_type
-        Maximum number of observations selected for each available case type.
-
-    Returns
-    -------
-    pandas.DataFrame
-        Representative observations and their prediction information.
+    Notes:
+        True positives and false positives are selected by highest positive
+        probability; true negatives and false negatives by lowest probability.
+        Borderline observations are the remaining cases nearest the threshold,
+        preventing the same row from being assigned to two categories.
     """
 
     # Adapt statsmodels objects to an sklearn-like interface.

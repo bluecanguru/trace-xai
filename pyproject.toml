@@ -3,9 +3,9 @@ requires = ["setuptools>=70"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "thesis-xai-framework"
+name = "trace-xai"
 version = "1.0.0"
-description = "Reproducible XAI framework used in the thesis replications"
+description = "A transparent and reproducible framework for auditing clinical explanations"
 authors = [
   { name = "Cátia Sofia dos Santos Rosário" },
   { name = "Hugo Daniel Abreu Peixoto" },

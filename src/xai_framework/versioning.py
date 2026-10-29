@@ -12,7 +12,14 @@ PACKAGES = (
 
 
 def runtime_versions():
-    """Collect Python and dependency versions for provenance."""
+    """Collect timestamped runtime and dependency provenance.
+
+    Returns:
+        Dictionary containing the UTC creation timestamp, Python version and
+        executable, platform description, and installed versions of the
+        framework's principal dependencies. A missing dependency is recorded
+        as ``None`` rather than raising an exception.
+    """
     packages = {}
     for package in PACKAGES:
         try:

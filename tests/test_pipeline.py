@@ -1,3 +1,5 @@
+"""Tests for pipeline orchestration and the complete synthetic integration path."""
+
 import json
 from unittest.mock import Mock
 
@@ -7,6 +9,7 @@ import pytest
 
 
 def test_runner_calls_run_before_export(monkeypatch, tmp_path):
+    """Verify the public runner executes analysis before exporting results."""
     import run_pipeline as runner
 
     events = []
@@ -23,7 +26,11 @@ def test_runner_calls_run_before_export(monkeypatch, tmp_path):
 
 @pytest.mark.integration
 def test_real_small_binary_pipeline(tmp_path):
-    """Real Native/Permutation/SHAP/LIME/export path; no thesis data or writes."""
+    """Exercise native, permutation, SHAP, LIME, timing, and export end to end.
+
+    The integration test uses only synthetic data and a temporary destination;
+    it does not read thesis datasets or modify canonical result folders.
+    """
     from sklearn.datasets import make_classification
     from sklearn.linear_model import LogisticRegression
     from sklearn.model_selection import train_test_split

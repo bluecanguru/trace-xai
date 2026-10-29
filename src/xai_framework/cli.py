@@ -20,7 +20,22 @@ except ImportError:
 
 
 def load_config(filename):
-    """Load and validate one YAML pipeline configuration."""
+    """Load, validate, and resolve one YAML rerun configuration.
+
+    Args:
+        filename: Path to a YAML file describing the dataset bundle and output.
+
+    Returns:
+        Validated configuration mapping whose bundle and output paths are
+        absolute :class:`~pathlib.Path` objects. Supported ``{dataset}`` and
+        ``{timestamp}`` placeholders are expanded.
+
+    Raises:
+        OSError: If the YAML file cannot be read.
+        yaml.YAMLError: If the file is not valid YAML.
+        ValueError: If required fields are missing, fields have invalid types,
+            unknown fields are present, or a path template is unsupported.
+    """
     path = Path(filename).expanduser().resolve()
     with path.open(encoding="utf-8") as stream:
         config = yaml.safe_load(stream)
@@ -56,7 +71,16 @@ def load_config(filename):
 
 
 def validate_output(bundle, output):
-    """Validate exported CSV and JSON outputs for one run."""
+    """Ensure a rerun cannot overwrite source results or existing output.
+
+    Args:
+        bundle: Trusted bundle directory nested under the source result folder.
+        output: Proposed rerun output directory.
+
+    Raises:
+        ValueError: If ``output`` overlaps the source result tree or already
+            contains files.
+    """
     bundle, output = Path(bundle).resolve(), Path(output).resolve()
     source_results = bundle.parent
     # Never write over, inside, or above the input dataset results.
@@ -71,7 +95,25 @@ def validate_output(bundle, output):
 
 
 def read_bundle(config):
-    """Validate CSV/JSON only. Does not deserialize model.pkl or write files."""
+    """Validate a saved bundle without deserialising its fitted model.
+
+    Args:
+        config: Validated mapping returned by :func:`load_config`.
+
+    Returns:
+        Tuple containing metadata, aligned train/test data, ordered feature
+        names, and the selected scoring-rule name.
+
+    Raises:
+        OSError: If a required CSV or JSON file cannot be read.
+        ValueError: If files are missing, metadata and matrix schemas disagree,
+            matrices contain nonnumeric or nonfinite values, labels are not
+            binary, row counts are inconsistent, or ROC AUC lacks both classes.
+
+    Notes:
+        ``model.pkl`` is checked for existence but is not loaded. This function
+        performs no writes and is the safe basis of ``--validate-only``.
+    """
     bundle = config["bundle_dir"]
     required = ["model.pkl", "metadata.json", "X_train.csv", "X_test.csv",
                 "y_train.csv", "y_test.csv"]
@@ -117,7 +159,29 @@ def read_bundle(config):
 
 
 def prepare_runtime(config, metadata, data, names, scoring):
-    """Call only after the user has explicitly acknowledged pickle trust."""
+    """Load a trusted model and assemble the in-memory pipeline configuration.
+
+    Args:
+        config: Validated YAML configuration containing bundle and output paths.
+        metadata: Validated bundle metadata.
+        data: Validated train/test matrices and labels.
+        names: Ordered feature or design-term names.
+        scoring: Scikit-learn scoring-rule name for permutation importance.
+
+    Returns:
+        Configuration mapping accepted by :func:`run_pipeline`.
+
+    Raises:
+        RuntimeError: If the fitted model cannot be deserialised in the current
+            Python environment.
+        ValueError: If model class, feature count, feature order, design terms,
+            or binary class labels disagree with the validated bundle.
+
+    Warning:
+        Joblib model files use pickle and may execute arbitrary code while
+        loading. Call this function only after the user has explicitly trusted
+        the bundle source.
+    """
     import joblib
     try:
         model = joblib.load(config["bundle_dir"] / "model.pkl")
@@ -152,7 +216,20 @@ def prepare_runtime(config, metadata, data, names, scoring):
 
 
 def main(argv=None):
-    """Execute the single-dataset command-line interface."""
+    """Execute the trusted-bundle validation or rerun command.
+
+    Args:
+        argv: Optional argument sequence. ``None`` reads arguments from
+            :data:`sys.argv`.
+
+    Returns:
+        Process status code: zero after successful validation or execution and
+        one when validation or execution raises an exception.
+
+    Notes:
+        A full rerun requires ``--trust-model``. ``--validate-only`` inspects
+        CSV and JSON contents without loading pickle data or writing results.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True, help="Path to a dataset YAML file")
     parser.add_argument("--validate-only", action="store_true",

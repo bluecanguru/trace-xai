@@ -1,0 +1,6 @@
+Dataset,CommonTop5Features,NCommon
+Heart,"ca, cp, exang, sex, thal",5
+Stroke,"age, avg_glucose_level, bmi_missing, ever_married_No",4
+Diabetes,"Age, BMI, Glucose, Insulin, SkinThickness",5
+CKD,"al, pcv, sc, sg",4
+HbA1c,,0

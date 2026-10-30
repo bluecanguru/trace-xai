@@ -1,0 +1,86 @@
+CaseType,Rule,MeanWeight,StdWeight,MeanAbsWeight,MedianWeight,PositiveWeightFraction,NExplanations,NCases,NSeeds,SelectionFrequency
+Borderline,specialty_group[T.Other]:age_group3[T.30 years old or younger] <= 0.00,0.4645483214976424,0.014769807099492743,0.4645483214976424,0.46397394943722003,1.0,200,10,20,1.0
+Borderline,specialty_group[T.Family/general practice]:age_group3[T.30 years old or younger] <= 0.00,0.4084394143499457,0.0485710503290755,0.4084394143499457,0.4124770780832831,1.0,200,10,20,1.0
+Borderline,specialty_group[T.Internal Medicine]:age_group3[T.30 years old or younger] <= 0.00,0.38164487559375987,0.030443173855355353,0.38164487559375987,0.38422668262486315,1.0,200,10,20,1.0
+Borderline,specialty_group[T.Surgery]:age_group3[T.30 years old or younger] <= 0.00,0.37952941138928553,0.07331498622866187,0.37952941138928553,0.3900595913652827,1.0,197,10,20,0.985
+Borderline,specialty_group[T.Missing or unknown]:age_group3[T.30 years old or younger] <= 0.00,0.3042891047215305,0.02002719953868179,0.3042891047215305,0.30396499516659314,1.0,200,10,20,1.0
+Borderline,age_group3[T.30 years old or younger] <= 0.00,-0.25245535887848775,0.006566920088345719,0.2524553588784877,-0.25312792708794185,0.0,100,5,20,0.5
+Borderline,age_group3[T.30 years old or younger] > 0.00,0.24807401463867257,0.006282208445622352,0.2480740146386725,0.24870757362271578,1.0,100,5,20,0.5
+Borderline,primary_diag_group[T.Musculoskeletal] <= 0.00,0.15149073884462558,0.009291416808986106,0.15149073884462558,0.1523302016236603,1.0,197,10,20,0.985
+Borderline,time_in_hospital > 6.00,0.1473920662671035,0.0038439363370157565,0.14739206626710347,0.1471199475899886,1.0,96,5,20,0.48
+Borderline,primary_diag_group[T.Injury]:hba1c_group[T.Normal result of the test] <= 0.00,0.1313946739421636,0.025924878310632404,0.1313946739421636,0.1309838705019451,1.0,80,10,20,0.4
+Borderline,specialty_group[T.Surgery]:time_in_hospital <= 0.00,0.1252973838351648,0.006695636435946726,0.12529738383516478,0.12549380893432063,1.0,10,5,8,0.05
+Borderline,discharge_group[T.Otherwise]:specialty_group[T.Surgery] <= 0.00,-0.1211709324720817,0.009566044631744736,0.1211709324720817,-0.11962325623814464,0.0,37,10,16,0.185
+Borderline,hba1c_group[T.Result was high but the diabetic medication was not changed] > 0.00,-0.12025933626947466,0.011051650851290883,0.12025933626947466,-0.11441984197184273,0.0,3,1,3,0.015
+Borderline,primary_diag_group[T.Musculoskeletal]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.11938537711982843,0.03245436802115,0.11938537711982843,-0.12233285907788118,0.0,127,10,20,0.635
+Borderline,hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,0.11833780854436633,0.0068328549924283185,0.11833780854436633,0.11855514215788795,1.0,5,4,5,0.025
+Borderline,primary_diag_group[T.Respiratory]:hba1c_group[T.Normal result of the test] <= 0.00,0.11706402957757427,0.008609234083081018,0.11706402957757427,0.11624158836266801,1.0,6,3,6,0.03
+Borderline,primary_diag_group[T.Digestive]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.11702481939383341,0.02980226147221344,0.11702481939383341,-0.1163636105428892,0.0,8,4,7,0.04
+Borderline,primary_diag_group[T.Other]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.11387696719222402,0.025149772493275106,0.11387696719222402,-0.12008350351039943,0.0,32,10,18,0.16
+Borderline,primary_diag_group[T.Genitourinary]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,0.10865918436978467,0.05598421771005574,0.108734436552252,0.11996055824772324,0.9230769230769231,13,8,10,0.065
+Borderline,primary_diag_group[T.Musculoskeletal]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.10185541050183028,0.042166956794219,0.10189674636470088,-0.09854968753678257,0.00980392156862745,102,10,20,0.51
+Borderline,primary_diag_group[T.Circulatory]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.10107173427346547,,0.10107173427346547,-0.10107173427346547,0.0,1,1,1,0.005
+Borderline,primary_diag_group[T.Neoplasms]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.09337436997702304,0.046934965734809604,0.09422047402552207,-0.09644925498590137,0.02631578947368421,76,10,20,0.38
+Borderline,primary_diag_group[T.Injury]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.08401846817516936,0.03296200090759402,0.08401846817516935,-0.07792267303428176,0.0,4,2,4,0.02
+Borderline,primary_diag_group[T.Genitourinary]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.08199357781781366,0.02397571904247085,0.08199357781781366,-0.07689173248468492,0.0,4,3,4,0.02
+Borderline,primary_diag_group[T.Neoplasms]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.06659790684125,0.03717070691001736,0.06659790684125,-0.06659790684125,0.0,2,1,2,0.01
+FN,specialty_group[T.Surgery]:age_group3[T.30 years old or younger] > 0.00,-0.5026253393776032,0.03504103580812741,0.5026253393776032,-0.5032316170327156,0.0,20,1,20,0.1
+FN,specialty_group[T.Other]:age_group3[T.30 years old or younger] > 0.00,-0.4739724871801131,0.015211933611745557,0.4739724871801131,-0.4765107684002259,0.0,40,2,20,0.2
+FN,specialty_group[T.Other]:age_group3[T.30 years old or younger] <= 0.00,0.46349965855113406,0.015542504013789446,0.46349965855113406,0.4633873354616538,1.0,160,8,20,0.8
+FN,specialty_group[T.Family/general practice]:age_group3[T.30 years old or younger] <= 0.00,0.4096559138052083,0.04964434779326913,0.4096559138052083,0.4183576110677172,1.0,200,10,20,1.0
+FN,specialty_group[T.Surgery]:age_group3[T.30 years old or younger] <= 0.00,0.3870516975992093,0.06339564189641037,0.3870516975992093,0.3958913172250851,1.0,171,9,20,0.855
+FN,specialty_group[T.Internal Medicine]:age_group3[T.30 years old or younger] <= 0.00,0.3820535609083208,0.0326599438675585,0.3820535609083208,0.3837839270116622,1.0,200,10,20,1.0
+FN,specialty_group[T.Missing or unknown]:age_group3[T.30 years old or younger] <= 0.00,0.30343882829669205,0.02010365801017087,0.30343882829669205,0.3054519985132391,1.0,200,10,20,1.0
+FN,age_group3[T.30 years old or younger] <= 0.00,-0.25303709935139246,0.004871411120832582,0.25303709935139246,-0.2527748940729027,0.0,140,7,20,0.7
+FN,age_group3[T.30 years old or younger] > 0.00,0.250448120065418,0.005832795674269287,0.250448120065418,0.2490543787690465,1.0,60,3,20,0.3
+FN,primary_diag_group[T.Genitourinary]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,0.15842073912409974,0.036164467526178065,0.15842073912409974,0.1609511117077703,1.0,6,5,6,0.03
+FN,primary_diag_group[T.Genitourinary]:hba1c_group[T.Result was high but the diabetic medication was not changed] > 0.00,-0.15675862165502472,0.04228873497622019,0.15675862165502472,-0.14587033976846603,0.0,13,1,13,0.065
+FN,primary_diag_group[T.Musculoskeletal] > 0.00,-0.1536399207794081,0.009189051375609202,0.15363992077940808,-0.15309349055471494,0.0,40,2,20,0.2
+FN,primary_diag_group[T.Musculoskeletal] <= 0.00,0.15253280384758824,0.008768957614559475,0.15253280384758822,0.15261139262949336,1.0,158,8,20,0.79
+FN,primary_diag_group[T.Neoplasms]:hba1c_group[T.Normal result of the test] <= 0.00,-0.14693707381721893,,0.14693707381721893,-0.14693707381721893,0.0,1,1,1,0.005
+FN,time_in_hospital > 6.00,0.14628084186621393,0.004272149758424229,0.1462808418662139,0.14670557316936,1.0,20,1,20,0.1
+FN,primary_diag_group[T.Injury]:hba1c_group[T.Normal result of the test] <= 0.00,0.13844803640788303,0.024253114291379677,0.138448036407883,0.13976725832737752,1.0,88,10,20,0.44
+FN,hba1c_group[T.Result was high but the diabetic medication was not changed] > 0.00,-0.12989147392571146,0.008312205307229377,0.12989147392571143,-0.1265396345782683,0.0,3,2,3,0.015
+FN,specialty_group[T.Surgery]:time_in_hospital > 0.00,-0.1282191951772328,0.0069885119102052915,0.12821919517723282,-0.1252821430543079,0.0,3,2,3,0.015
+FN,specialty_group[T.Surgery]:time_in_hospital <= 0.00,0.12329284168105283,0.009374847436114043,0.12329284168105283,0.12202686412996591,1.0,14,7,10,0.07
+FN,discharge_group[T.Otherwise]:specialty_group[T.Surgery] <= 0.00,-0.1225887318386588,0.011227055865592802,0.1225887318386588,-0.12416341418972762,0.0,71,10,19,0.355
+FN,primary_diag_group[T.Musculoskeletal]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.12233848806073212,0.029899427564783823,0.12233848806073215,-0.12549647011376414,0.0,134,10,20,0.67
+FN,hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,0.12088490755003108,0.012772625791273202,0.12088490755003108,0.12309979353715494,1.0,6,4,5,0.03
+FN,primary_diag_group[T.Respiratory]:hba1c_group[T.Normal result of the test] <= 0.00,0.1177195422666604,0.016441989814433938,0.1177195422666604,0.12317133207626996,1.0,5,3,5,0.025
+FN,primary_diag_group[T.Other]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.11374949666604962,0.024967315459275895,0.11374949666604962,-0.11696320955350407,0.0,32,9,17,0.16
+FN,primary_diag_group[T.Digestive]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.112849475409732,,0.112849475409732,-0.112849475409732,0.0,1,1,1,0.005
+FN,primary_diag_group[T.Digestive]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.11088253842985271,0.014188714190108026,0.11088253842985271,-0.11119194833972856,0.0,4,4,3,0.02
+FN,primary_diag_group[T.Musculoskeletal]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.1040334309689444,0.04999123998644691,0.10540841298553204,-0.10907387297899913,0.034782608695652174,115,10,20,0.575
+FN,primary_diag_group[T.Genitourinary]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.10513018674288373,0.05766567172260457,0.10513018674288373,-0.1220285472263333,0.0,3,3,3,0.015
+FN,primary_diag_group[T.Circulatory]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.1041498715420948,,0.1041498715420948,-0.1041498715420948,0.0,1,1,1,0.005
+FN,primary_diag_group[T.Neoplasms]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.08258641469585885,0.04664002525016389,0.08482931072628916,-0.08787276160020457,0.03571428571428571,84,10,20,0.42
+FN,primary_diag_group[T.Injury]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.07147393968539212,0.05398723379451123,0.07147393968539213,-0.07330971026857806,0.0,6,4,6,0.03
+FN,primary_diag_group[T.Neoplasms]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.03661102345436506,,0.03661102345436506,-0.03661102345436506,0.0,1,1,1,0.005
+TN,specialty_group[T.Surgery]:age_group3[T.30 years old or younger] > 0.00,-0.5004492786658202,0.045527134367407615,0.5004492786658202,-0.5102033567128703,0.0,180,9,20,0.9
+TN,specialty_group[T.Family/general practice]:age_group3[T.30 years old or younger] > 0.00,-0.47315218839166295,0.04089561241270775,0.47315218839166295,-0.4814951600259084,0.0,20,1,20,0.1
+TN,specialty_group[T.Other]:age_group3[T.30 years old or younger] <= 0.00,0.4653628125807215,0.01395254709386732,0.4653628125807215,0.46499689186814874,1.0,200,10,20,1.0
+TN,specialty_group[T.Family/general practice]:age_group3[T.30 years old or younger] <= 0.00,0.41518473688989616,0.04217620096003588,0.41518473688989616,0.41794444257189756,1.0,180,9,20,0.9
+TN,specialty_group[T.Surgery]:age_group3[T.30 years old or younger] <= 0.00,0.3901144876065454,0.05112958067628318,0.3901144876065454,0.3896109115425598,1.0,20,1,20,0.1
+TN,specialty_group[T.Internal Medicine]:age_group3[T.30 years old or younger] <= 0.00,0.3793168725451199,0.03208612447616155,0.3793168725451199,0.38468615705450515,1.0,200,10,20,1.0
+TN,specialty_group[T.Missing or unknown]:age_group3[T.30 years old or younger] <= 0.00,0.30037093558360595,0.020067300047354027,0.30037093558360595,0.3017785839501017,1.0,200,10,20,1.0
+TN,age_group3[T.30 years old or younger] > 0.00,0.25002144618576244,0.005919480570335777,0.25002144618576244,0.24981392224209298,1.0,200,10,20,1.0
+TN,primary_diag_group[T.Musculoskeletal] > 0.00,-0.15257433722749875,0.009000057370309435,0.1525743372274988,-0.1528091947601582,0.0,60,3,20,0.3
+TN,primary_diag_group[T.Musculoskeletal] <= 0.00,0.1515217245655914,0.008812700251134028,0.1515217245655914,0.15169769337854666,1.0,138,7,20,0.69
+TN,time_in_hospital > 6.00,0.1475836601700855,0.004527397017798566,0.1475836601700855,0.1473977113998064,1.0,76,4,20,0.38
+TN,primary_diag_group[T.Genitourinary]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,0.14456947995071226,0.03224638417296186,0.14456947995071226,0.13882955229113117,1.0,3,3,3,0.015
+TN,primary_diag_group[T.Injury]:hba1c_group[T.Normal result of the test] <= 0.00,0.13707891295109007,0.025768197248503193,0.13707891295109007,0.13324439511077438,1.0,85,10,20,0.425
+TN,primary_diag_group[T.Circulatory]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.13533174257111458,,0.13533174257111458,-0.13533174257111458,0.0,1,1,1,0.005
+TN,hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,0.1267729089348605,0.01092035246856491,0.1267729089348605,0.1252521877226223,1.0,5,4,5,0.025
+TN,specialty_group[T.Surgery]:time_in_hospital > 0.00,-0.1254255362212654,0.009914072023104197,0.1254255362212654,-0.12374171593645403,0.0,11,7,8,0.055
+TN,specialty_group[T.Surgery]:time_in_hospital <= 0.00,0.12352568547150296,0.0010327623034771826,0.12352568547150296,0.12297695800060622,1.0,3,1,3,0.015
+TN,primary_diag_group[T.Respiratory]:hba1c_group[T.Normal result of the test] <= 0.00,0.12348859319761889,0.029533010198152607,0.12348859319761889,0.12339901087082203,1.0,3,2,3,0.015
+TN,discharge_group[T.Otherwise]:specialty_group[T.Surgery] <= 0.00,-0.12324933929010791,0.012147267480826817,0.12324933929010791,-0.12464334645845995,0.0,47,7,18,0.235
+TN,primary_diag_group[T.Digestive]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.11855197247814805,,0.11855197247814805,-0.11855197247814805,0.0,1,1,1,0.005
+TN,primary_diag_group[T.Musculoskeletal]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.1179188804428375,0.0314479657161128,0.11791888044283749,-0.11888689126297208,0.0,134,10,20,0.67
+TN,primary_diag_group[T.Other]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.1126253430642719,0.0242018782400752,0.1126253430642719,-0.11740519665256785,0.0,32,10,18,0.16
+TN,primary_diag_group[T.Respiratory]:hba1c_group[T.Normal result of the test] > 0.00,-0.10920994266162784,0.007086945631716725,0.10920994266162784,-0.10920994266162784,0.0,2,1,2,0.01
+TN,primary_diag_group[T.Musculoskeletal]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.0994864578317866,0.045009936453123005,0.1008838449989325,-0.1020148055373192,0.018518518518518517,108,10,20,0.54
+TN,primary_diag_group[T.Neoplasms]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.086828011338489,0.04209586084518168,0.0881423477676658,-0.0911922909856139,0.023529411764705882,85,10,20,0.425
+TN,primary_diag_group[T.Genitourinary]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,-0.07787655759494269,0.017611793373536674,0.07787655759494269,-0.07497205480627786,0.0,3,3,2,0.015
+TN,primary_diag_group[T.Injury]:hba1c_group[T.Result was high but the diabetic medication was not changed] <= 0.00,-0.07748440193656023,0.05799708774377223,0.07748440193656023,-0.07748440193656023,0.0,2,2,1,0.01
+TN,primary_diag_group[T.Neoplasms]:hba1c_group[T.Result was high and the diabetic medication was changed] <= 0.00,0.027673193857658093,,0.027673193857658093,0.027673193857658093,1.0,1,1,1,0.005

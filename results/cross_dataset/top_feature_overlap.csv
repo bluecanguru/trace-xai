@@ -1,0 +1,6 @@
+Dataset,Native_SHAP_TopK,Native_Permutation_TopK,SHAP_Permutation_TopK,Common_All_Three
+Heart,1.0,1.0,1.0,5
+Stroke,1.0,0.8,0.8,4
+Diabetes,1.0,1.0,1.0,5
+CKD,1.0,0.8,0.8,4
+HbA1c,0.0,0.0,0.8,0

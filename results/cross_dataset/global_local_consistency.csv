@@ -1,0 +1,6 @@
+Dataset,GlobalTop5,AppearingInLIME,NMatched
+Heart,"thal, ca, cp, exang, sex","thal, ca, cp, exang, sex",5
+Stroke,"age, avg_glucose_level, bmi_missing, hypertension, ever_married_No","age, avg_glucose_level, bmi_missing, hypertension, ever_married_No",5
+Diabetes,"Glucose, BMI, Age, Insulin, SkinThickness","Glucose, BMI, Age, Insulin, SkinThickness",5
+CKD,"sg, sc, hemo, pcv, al","sg, sc, hemo, pcv, al",5
+HbA1c,"time_in_hospital, specialty_group[T.Missing or unknown], discharge_group[T.Otherwise], specialty_group[T.Missing or unknown]:time_in_hospital, age_group3[T.Older than 60]","time_in_hospital, specialty_group[T.Missing or unknown], discharge_group[T.Otherwise]",3

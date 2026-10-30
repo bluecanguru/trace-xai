@@ -1,0 +1,213 @@
+Dataset,CaseIndex,NGlobalFeatures,NGlobalTop5Matched,GlobalLocalOverlap,MatchedFeatures,CaseType,CaseRank
+Heart,2,5,3,0.6,"cp, exang, thalach",TP,2
+Heart,4,5,4,0.8,"thal, cp, exang, slope",FN,1
+Heart,6,5,4,0.8,"thal, cp, exang, thalach",TN,8
+Heart,7,5,4,0.8,"thal, cp, exang, thalach",FP,4
+Heart,11,5,4,0.8,"thal, cp, exang, thalach",TP,9
+Heart,12,5,4,0.8,"thal, cp, exang, thalach",TN,6
+Heart,14,5,3,0.6,"cp, exang, thalach",TP,4
+Heart,15,5,3,0.6,"thal, cp, exang",Borderline,8
+Heart,18,5,3,0.6,"cp, exang, thalach",TP,7
+Heart,26,5,3,0.6,"cp, exang, thalach",TP,6
+Heart,30,5,4,0.8,"thal, cp, exang, thalach",TN,3
+Heart,31,5,3,0.6,"thal, cp, exang",Borderline,6
+Heart,33,5,3,0.6,"thal, cp, exang",Borderline,4
+Heart,39,5,3,0.6,"cp, exang, thalach",FP,5
+Heart,44,5,4,0.8,"thal, cp, exang, slope",Borderline,1
+Heart,46,5,3,0.6,"cp, exang, thalach",TP,5
+Heart,47,5,4,0.8,"thal, cp, exang, thalach",TN,1
+Heart,51,5,4,0.8,"thal, cp, exang, thalach",TN,4
+Heart,57,5,4,0.8,"thal, cp, exang, thalach",TN,10
+Heart,58,5,4,0.8,"thal, cp, exang, thalach",FN,7
+Heart,59,5,4,0.8,"thal, cp, exang, slope",FP,8
+Heart,60,5,4,0.8,"thal, cp, exang, thalach",TP,10
+Heart,61,5,4,0.8,"thal, cp, exang, slope",FN,5
+Heart,67,5,4,0.8,"thal, cp, exang, slope",FN,6
+Heart,71,5,3,0.6,"thal, cp, exang",Borderline,7
+Heart,74,5,4,0.8,"thal, cp, exang, thalach",TP,8
+Heart,75,5,4,0.8,"thal, cp, exang, slope",TN,9
+Heart,76,5,3,0.6,"thal, cp, exang",FP,7
+Heart,79,5,3,0.6,"thal, cp, exang",FP,6
+Heart,81,5,4,0.8,"thal, cp, exang, thalach",Borderline,9
+Heart,84,5,3,0.6,"cp, exang, thalach",TP,1
+Heart,94,5,3,0.6,"thal, cp, exang",Borderline,2
+Heart,95,5,4,0.8,"thal, cp, exang, thalach",FP,1
+Heart,97,5,4,0.8,"thal, cp, exang, thalach",TN,7
+Heart,99,5,4,0.8,"thal, cp, exang, thalach",FN,4
+Heart,108,5,4,0.8,"thal, cp, exang, thalach",Borderline,10
+Heart,111,5,4,0.8,"thal, cp, exang, slope",FP,9
+Heart,115,5,4,0.8,"thal, cp, exang, slope",FP,10
+Heart,116,5,4,0.8,"thal, cp, exang, thalach",FN,8
+Heart,117,5,3,0.6,"thal, cp, exang",FN,10
+Heart,123,5,4,0.8,"thal, cp, exang, thalach",FP,2
+Heart,124,5,3,0.6,"thal, cp, exang",Borderline,3
+Heart,125,5,3,0.6,"cp, exang, thalach",TP,3
+Heart,127,5,3,0.6,"thal, cp, exang",Borderline,5
+Heart,128,5,3,0.6,"thal, cp, exang",FN,2
+Heart,135,5,4,0.8,"thal, cp, exang, thalach",TN,2
+Heart,141,5,4,0.8,"thal, cp, exang, thalach",FN,9
+Heart,143,5,4,0.8,"thal, cp, exang, thalach",FN,3
+Heart,145,5,4,0.8,"thal, cp, exang, thalach",TN,5
+Heart,148,5,4,0.8,"thal, cp, exang, slope",FP,3
+Stroke,14,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,9
+Stroke,28,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,3
+Stroke,57,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,7
+Stroke,61,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,9
+Stroke,96,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,1
+Stroke,135,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,10
+Stroke,165,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,6
+Stroke,207,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,1
+Stroke,211,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,4
+Stroke,231,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,2
+Stroke,234,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,4
+Stroke,239,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,6
+Stroke,240,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,2
+Stroke,249,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,8
+Stroke,250,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,2
+Stroke,253,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,7
+Stroke,285,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,8
+Stroke,330,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,7
+Stroke,352,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,5
+Stroke,353,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,2
+Stroke,361,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,1
+Stroke,368,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,6
+Stroke,415,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,10
+Stroke,419,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,8
+Stroke,468,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,6
+Stroke,521,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,3
+Stroke,553,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,1
+Stroke,571,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,9
+Stroke,582,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,7
+Stroke,615,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,3
+Stroke,616,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,7
+Stroke,662,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,1
+Stroke,686,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,5
+Stroke,700,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,5
+Stroke,701,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,2
+Stroke,713,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,10
+Stroke,747,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,4
+Stroke,757,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,9
+Stroke,762,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,8
+Stroke,802,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",Borderline,3
+Stroke,859,5,4,0.8,"age, hypertension, bmi_missing, heart_disease",FP,5
+Stroke,866,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,4
+Stroke,880,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TP,3
+Stroke,924,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,5
+Stroke,927,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,6
+Stroke,949,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,9
+Stroke,978,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FN,4
+Stroke,994,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,10
+Stroke,1008,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",FP,8
+Stroke,1013,5,5,1.0,"age, avg_glucose_level, hypertension, bmi_missing, heart_disease",TN,10
+Diabetes,0,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,1
+Diabetes,5,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,2
+Diabetes,8,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,7
+Diabetes,10,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,10
+Diabetes,14,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,6
+Diabetes,17,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,1
+Diabetes,23,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,3
+Diabetes,24,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,1
+Diabetes,25,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,6
+Diabetes,27,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,4
+Diabetes,28,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,8
+Diabetes,31,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,8
+Diabetes,40,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,4
+Diabetes,46,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,5
+Diabetes,52,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,1
+Diabetes,53,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,5
+Diabetes,54,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,9
+Diabetes,55,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,3
+Diabetes,70,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,6
+Diabetes,71,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,9
+Diabetes,78,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,4
+Diabetes,82,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,4
+Diabetes,92,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,3
+Diabetes,103,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,10
+Diabetes,105,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,4
+Diabetes,108,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,2
+Diabetes,110,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,9
+Diabetes,112,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,7
+Diabetes,120,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,9
+Diabetes,138,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,2
+Diabetes,143,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,5
+Diabetes,144,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,8
+Diabetes,147,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,8
+Diabetes,149,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,6
+Diabetes,150,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,10
+Diabetes,152,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,7
+Diabetes,153,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,9
+Diabetes,159,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,2
+Diabetes,175,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,7
+Diabetes,179,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,2
+Diabetes,186,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,8
+Diabetes,190,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TN,6
+Diabetes,194,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,5
+Diabetes,196,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",TP,10
+Diabetes,204,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,10
+Diabetes,218,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FP,3
+Diabetes,220,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,1
+Diabetes,223,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,7
+Diabetes,226,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",Borderline,3
+Diabetes,228,5,5,1.0,"Glucose, BMI, Age, Insulin, SkinThickness",FN,5
+CKD,0,5,4,0.8,"sc, hemo, pcv, al",TP,1
+CKD,1,5,4,0.8,"sg, sc, hemo, pcv",TN,1
+CKD,2,5,4,0.8,"sc, hemo, pcv, al",TP,2
+CKD,5,5,3,0.6,"sc, hemo, pcv",TP,3
+CKD,6,5,3,0.6,"sc, hemo, pcv",TP,4
+CKD,7,5,4,0.8,"sc, hemo, pcv, al",TN,2
+CKD,8,5,4,0.8,"sg, sc, hemo, pcv",Borderline,2
+CKD,10,5,4,0.8,"sg, sc, hemo, pcv",TP,5
+CKD,11,5,4,0.8,"sg, sc, hemo, pcv",TP,6
+CKD,14,5,4,0.8,"sg, hemo, pcv, al",TN,3
+CKD,22,5,4,0.8,"sg, sc, hemo, pcv",Borderline,4
+CKD,24,5,4,0.8,"sg, sc, hemo, pcv",TP,7
+CKD,25,5,3,0.6,"sc, hemo, pcv",TP,8
+CKD,28,5,3,0.6,"sc, hemo, pcv",TP,9
+CKD,30,5,4,0.8,"sc, hemo, pcv, al",Borderline,10
+CKD,31,5,4,0.8,"sc, hemo, pcv, al",Borderline,7
+CKD,35,5,4,0.8,"sg, sc, hemo, pcv",TP,10
+CKD,37,5,4,0.8,"sg, sc, pcv, al",TN,4
+CKD,40,5,4,0.8,"sc, hemo, pcv, al",TN,5
+CKD,41,5,4,0.8,"sg, sc, hemo, pcv",TN,6
+CKD,44,5,4,0.8,"sc, hemo, pcv, al",Borderline,1
+CKD,45,5,4,0.8,"sg, sc, pcv, al",TN,7
+CKD,48,5,4,0.8,"sg, sc, pcv, al",TN,8
+CKD,52,5,4,0.8,"sg, sc, pcv, al",Borderline,3
+CKD,53,5,4,0.8,"sc, hemo, pcv, al",FP,1
+CKD,57,5,4,0.8,"sg, sc, hemo, pcv",TN,9
+CKD,74,5,4,0.8,"sc, hemo, pcv, al",Borderline,5
+CKD,75,5,4,0.8,"sg, sc, pcv, al",TN,10
+CKD,100,5,3,0.6,"sc, hemo, pcv",Borderline,8
+CKD,110,5,4,0.8,"sc, hemo, pcv, al",FN,1
+CKD,112,5,4,0.8,"sc, hemo, pcv, al",Borderline,9
+CKD,116,5,3,0.6,"sc, hemo, pcv",Borderline,6
+HbA1c (in-sample),1168,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,8
+HbA1c (in-sample),1934,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,2
+HbA1c (in-sample),8785,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,9
+HbA1c (in-sample),10298,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,3
+HbA1c (in-sample),12838,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,3
+HbA1c (in-sample),15922,5,1,0.2,specialty_group[T.Missing or unknown],Borderline,3
+HbA1c (in-sample),17202,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,6
+HbA1c (in-sample),18037,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,9
+HbA1c (in-sample),20203,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",Borderline,10
+HbA1c (in-sample),20468,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,4
+HbA1c (in-sample),23758,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,10
+HbA1c (in-sample),24014,5,1,0.2,specialty_group[T.Missing or unknown],Borderline,7
+HbA1c (in-sample),27973,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,7
+HbA1c (in-sample),27989,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,2
+HbA1c (in-sample),31444,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,4
+HbA1c (in-sample),31569,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",Borderline,2
+HbA1c (in-sample),35462,5,1,0.2,specialty_group[T.Missing or unknown],FN,6
+HbA1c (in-sample),37173,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",Borderline,8
+HbA1c (in-sample),39776,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",Borderline,9
+HbA1c (in-sample),39925,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",Borderline,5
+HbA1c (in-sample),40982,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,5
+HbA1c (in-sample),41626,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",Borderline,1
+HbA1c (in-sample),46342,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,10
+HbA1c (in-sample),46540,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,5
+HbA1c (in-sample),48249,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,1
+HbA1c (in-sample),48396,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,1
+HbA1c (in-sample),48516,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",Borderline,6
+HbA1c (in-sample),55172,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",FN,7
+HbA1c (in-sample),58480,5,2,0.4,"time_in_hospital, specialty_group[T.Missing or unknown]",TN,8
+HbA1c (in-sample),60385,5,1,0.2,specialty_group[T.Missing or unknown],Borderline,4

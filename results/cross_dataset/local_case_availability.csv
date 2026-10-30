@@ -1,0 +1,6 @@
+Dataset,Borderline,FN,FP,TN,TP
+CKD,1,1,1,1,1
+Diabetes,1,1,1,1,1
+HbA1c (in-sample),1,1,0,1,0
+Heart,1,1,1,1,1
+Stroke,1,1,1,1,1

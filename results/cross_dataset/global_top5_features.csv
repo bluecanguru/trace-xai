@@ -1,0 +1,26 @@
+Dataset,Rank,Native,Permutation,SHAP
+Heart,1,thal,thal,thal
+Heart,2,cp,ca,cp
+Heart,3,exang,sex,exang
+Heart,4,thalach,thalach,thalach
+Heart,5,ca,cp,slope
+Stroke,1,age,age,age
+Stroke,2,bmi_missing,avg_glucose_level,avg_glucose_level
+Stroke,3,avg_glucose_level,bmi_missing,hypertension
+Stroke,4,hypertension,heart_disease,bmi_missing
+Stroke,5,heart_disease,ever_married_No,heart_disease
+Diabetes,1,Glucose,Glucose,Glucose
+Diabetes,2,BMI,BMI,BMI
+Diabetes,3,Age,Age,Age
+Diabetes,4,Insulin,Insulin,Insulin
+Diabetes,5,SkinThickness,SkinThickness,SkinThickness
+CKD,1,sc,sg,sg
+CKD,2,sg,sc,sc
+CKD,3,hemo,pcv,hemo
+CKD,4,pcv,rc,pcv
+CKD,5,al,al,al
+HbA1c (in-sample),1,specialty_group[T.Surgery]:age_group3[T.30 years old or younger],time_in_hospital,time_in_hospital
+HbA1c (in-sample),2,specialty_group[T.Family/general practice]:age_group3[T.30 years old or younger],specialty_group[T.Missing or unknown],specialty_group[T.Missing or unknown]
+HbA1c (in-sample),3,specialty_group[T.Other]:age_group3[T.30 years old or younger],discharge_group[T.Otherwise],discharge_group[T.Otherwise]
+HbA1c (in-sample),4,specialty_group[T.Internal Medicine]:age_group3[T.30 years old or younger],specialty_group[T.Internal Medicine],specialty_group[T.Missing or unknown]:time_in_hospital
+HbA1c (in-sample),5,age_group3[T.30 years old or younger],specialty_group[T.Missing or unknown]:time_in_hospital,age_group3[T.Older than 60]

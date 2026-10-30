@@ -1,0 +1,6 @@
+Dataset,Model,ModelFamily,FeaturesCompared,MeanCrossMethodRho,MeanStabilityRho,MeanTopKOverlap
+Heart,LogisticRegressionCV,Linear classification,13,0.738095238095238,0.7002786102786103,0.6452525252525253
+Stroke,LogisticRegression,Linear classification,7,0.7540940287181309,0.8117561797670106,0.7414141414141414
+Diabetes,RandomForestClassifier,Tree ensemble,5,0.9999999999999999,0.8488080808080807,0.8904377104377104
+CKD,RandomForestClassifier,Tree ensemble,24,0.8165897419022342,0.9492378582140154,0.758922558922559
+HbA1c (in-sample),Statsmodels logistic regression,Statsmodels logistic regression,90,0.44647212961819704,,

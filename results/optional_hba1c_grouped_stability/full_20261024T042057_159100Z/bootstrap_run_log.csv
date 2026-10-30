@@ -1,0 +1,101 @@
+Bootstrap,BootstrapSampleSeed,Status,Converged,FitSeconds,PermutationSeconds,TotalSeconds,Iterations,Warnings,Error
+1,383329927,success,True,27.386948900006246,21.431227900000522,48.81936080000014,324.0,,
+2,3324115916,success,True,1.535173299984308,21.819395399972564,23.35952399999951,7.0,,
+3,2811363264,success,True,15.8399607000174,20.48129749999498,36.325456999999005,154.0,,
+4,1884968544,failed,False,40.38271210002131,,40.38547410001047,500.0,overflow encountered in exp | divide by zero encountered in log | overflow encountered in exp | divide by zero encountered in log | Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+5,1859786275,failed,False,71.38069719998748,,71.38372110002092,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+6,3687649985,failed,False,58.872844900004566,,58.877755599998636,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+7,369133708,failed,False,59.48528799999622,,59.48791920000804,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+8,2995172877,success,True,1.3505440000153612,22.382151700003305,23.737595000013243,5.0,,
+9,865305066,failed,False,,,59.298368000017945,,,LinAlgError: Singular matrix
+10,404488628,success,True,18.448858700023266,20.709815799986245,39.163440100004664,160.0,,
+11,2261209995,success,True,3.283210900000995,32.071851400018204,35.3620245999773,6.0,,
+12,4190266092,success,True,2.9732068000012077,24.721801999985473,27.70351870000013,6.0,,
+13,3160032368,success,True,2.250041399995098,20.577839900011895,22.831434299994726,6.0,,
+14,3269070126,failed,False,56.896440200012876,,56.90275609999662,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+15,3081541439,success,True,2.2831066999933682,26.151578599994536,28.442200599994976,7.0,,
+16,3376120482,failed,False,43.22215860002325,,43.22503279999364,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+17,2204291346,failed,False,69.7974974999961,,69.80627279999317,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+18,550243861,success,True,8.197223700000905,21.837158799986355,30.04015139999683,32.0,,
+19,3606691181,success,True,1.3001151000207756,19.476185400009854,20.77977419999661,6.0,,
+20,1934392872,failed,False,,,68.76575419999426,,,LinAlgError: Singular matrix
+21,2148995112,failed,False,51.96527810001862,,51.968129399989266,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+22,1592565386,success,True,1.2701214000117034,21.450882400007686,22.7250028999988,6.0,,
+23,784044718,failed,False,53.62248950000503,,53.626143900008174,500.0,overflow encountered in exp | divide by zero encountered in log | overflow encountered in exp | divide by zero encountered in log | Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+24,3980425317,success,True,22.822595399979036,21.847521599993343,44.67347530002007,241.0,,
+25,3356806661,success,True,2.3786269999982323,24.297386000020197,26.681207000016002,6.0,,
+26,2765379632,success,True,1.9258802000258584,18.82816790000652,20.758428100001765,7.0,,
+27,1728356533,failed,False,50.82253189999028,,50.82786610000767,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+28,3533734220,failed,False,,,58.79804549997789,,,LinAlgError: Singular matrix
+29,2342600226,failed,False,46.580735299998196,,46.58524370001396,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+30,1904449481,success,True,1.903747900010785,24.035767900000792,25.946865500009153,6.0,,
+31,1934709049,success,True,6.853430299990578,21.582900100009283,28.44255529998918,42.0,,
+32,975982877,success,True,1.3375250999815762,20.79649400000926,22.137528599996585,7.0,,
+33,395720737,failed,False,44.77838860001066,,44.78124919999391,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+34,2381923522,success,True,1.478202300000703,24.568118199997116,26.050689499999862,7.0,,
+35,3813457838,failed,False,51.46875079997699,,51.4723524999863,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+36,274093026,success,True,1.4926801999972668,23.30691250000382,24.803547699993942,6.0,,
+37,3686333037,success,True,1.2882120000140276,21.09826939998311,22.38982360000955,7.0,,
+38,3554648815,success,True,1.9753374999854714,21.600956500013126,23.581134100008057,6.0,,
+39,1188673835,failed,False,52.89585190001526,,52.90042469999753,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+40,2712977935,success,True,8.581886699976167,26.056445399997756,34.645882100012386,34.0,,
+41,709653492,success,True,1.5887460999947507,23.61130650000996,25.204139100009343,6.0,,
+42,3255962050,success,True,1.6237623000051826,20.346603900019545,21.9743121000065,7.0,,
+43,3008723230,failed,False,38.82017029999406,,38.82321339999908,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+44,1522677437,failed,False,53.952781599975424,,53.95551670002169,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+45,291714184,success,True,1.453840100002708,19.996348000015132,21.454067500017118,7.0,,
+46,4169116268,failed,False,,,41.01973810000345,,,LinAlgError: Singular matrix
+47,1914213179,failed,False,,,50.317094799975166,,,LinAlgError: Singular matrix
+48,3835926006,success,True,2.3537431999866385,19.96259160002228,22.321937400003662,6.0,,
+49,2911639983,failed,False,38.92892930001835,,38.9315612000064,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+50,3343131662,success,True,1.4524794000026304,19.08651940000709,20.543353699991712,6.0,,
+51,3263743247,failed,False,50.548295699991286,,50.552438900020206,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+52,835966883,failed,False,,,18.85300139998435,,,LinAlgError: Singular matrix
+53,1562964502,success,True,1.3887016999942716,19.849882799986517,21.24321039998904,6.0,,
+54,2004551446,success,True,1.4673367000068538,19.274724499991862,20.74549400000251,6.0,,
+55,2137998392,failed,False,39.367794899997534,,39.370475499978056,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+56,188135740,failed,False,54.42716520000249,,54.43073219998041,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+57,2347498143,failed,False,39.18963030001032,,39.19285549997585,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+58,662668321,failed,False,52.771523200004594,,52.77581910000299,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+59,3192775210,success,True,1.7944041999871843,19.512349099997664,21.311447799991583,5.0,,
+60,2933672914,success,True,1.2987775999936275,19.428238899999997,20.730587999976706,6.0,,
+61,3962226899,success,True,2.235848900018027,22.58125950000249,24.820401200006017,16.0,,
+62,3198729101,success,True,1.4351961000065785,19.405732100014575,20.84450669999933,6.0,,
+63,1574718218,success,True,1.4441552000062075,19.24522939999588,20.693110899999738,7.0,,
+64,4155422658,failed,False,39.00921839999501,,39.01308149998658,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+65,1764588833,failed,False,52.299112900014734,,52.303401999990456,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+66,1399409256,failed,False,38.88621649998822,,38.889987900009146,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+67,3889246497,success,True,1.4331949999905191,19.2338635000051,20.67108059997554,7.0,,
+68,1591112320,failed,False,42.314784799993504,,42.3205231000029,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+69,327891486,success,True,2.5454365000186954,21.412010200001532,23.963793600007193,6.0,,
+70,2016726852,success,True,1.5902905999973882,19.49253819999285,21.086394399986602,6.0,,
+71,3417419471,success,True,1.5322592000011355,19.33624829998007,20.87209819999407,6.0,,
+72,813773289,success,True,1.5469197000202257,19.55469129999983,21.105483000021195,6.0,,
+73,1988314613,success,True,1.6470620000036433,19.261352400004398,20.912003000004916,6.0,,
+74,558008615,success,True,1.4014940000197385,19.413919199985685,20.81918869999936,5.0,,
+75,2948401464,failed,False,39.78548680001404,,39.78847470000619,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+76,2043137099,failed,False,50.9725732000079,,50.975437799992505,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+77,1418182452,failed,False,,,2.698714199999813,,,LinAlgError: Singular matrix
+78,974568232,success,True,1.40378839999903,19.892978799995035,21.300470399990445,6.0,,
+79,2424508582,failed,False,39.058760899992194,,39.06147049998981,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+80,2876829200,success,True,51.27924860001076,19.645493699994404,70.92962650000118,491.0,,
+81,4038583929,success,True,1.3372965999878943,19.032713699998567,20.373594900011085,6.0,,
+82,1877553193,success,True,1.3373301999818068,19.162785699998494,20.50393459998304,6.0,,
+83,690150400,failed,False,38.610269199998584,,38.61290910001844,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+84,3576325619,success,True,1.3573262999998406,19.668664199998602,21.030848499998683,6.0,,
+85,2704817078,failed,False,,,43.43313540000236,,,LinAlgError: Singular matrix
+86,3007615710,success,True,2.101998800004367,22.651642700016964,24.75924660000601,6.0,,
+87,417585214,success,True,1.324993699992774,19.230981399974553,20.559521000017412,5.0,,
+88,1341604508,success,True,1.484387800010154,19.265772899991134,20.753685500007123,6.0,,
+89,3297864500,success,True,1.3848919000010937,19.251271300017834,20.64000159999705,6.0,,
+90,3574528627,failed,False,38.663015699974494,,38.66563470000983,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+91,1869241353,success,True,1.3739872000005562,19.259394400025485,20.637271599989617,6.0,,
+92,3456436595,success,True,17.199878799990984,20.35569649998797,37.560475900012534,186.0,,
+93,3615039049,failed,False,44.9391706000024,,44.943458399997326,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+94,1664206964,failed,False,,,46.37250860000495,,,LinAlgError: Singular matrix
+95,3857256981,success,True,2.741239399998449,19.31255030000466,22.05789680001908,23.0,,
+96,1238359775,success,True,1.4552565999911167,19.64165880001383,21.101468199980445,7.0,,
+97,1028892848,failed,False,39.30079119998845,,39.30357700001332,500.0,Maximum Likelihood optimization failed to converge. Check mle_retvals,RuntimeError: Statsmodels optimiser did not converge.
+98,2931295868,success,True,2.233918200014159,20.91722070000833,23.156542100012302,6.0,,
+99,2734871216,success,True,1.4320961000048555,19.695004300010623,21.130853100010427,6.0,,
+100,600232345,success,True,1.374319499998819,19.51696060001268,20.8946425000031,6.0,,

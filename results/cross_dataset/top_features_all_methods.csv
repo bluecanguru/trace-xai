@@ -1,0 +1,76 @@
+Dataset,Method,Rank,Feature,Importance
+Heart,Native,1,thal,0.4787646451373767
+Heart,Native,2,ca,0.4443042343689149
+Heart,Native,3,cp,0.3343447457634489
+Heart,Native,4,exang,0.3121989196859482
+Heart,Native,5,sex,0.2820548131963215
+Heart,Permutation,1,ca,0.0475446428571429
+Heart,Permutation,2,thal,0.0301835317460318
+Heart,Permutation,3,cp,0.0178323412698413
+Heart,Permutation,4,sex,0.012921626984127
+Heart,Permutation,5,exang,0.0115575396825397
+Heart,SHAP,1,thal,0.0925824656983707
+Heart,SHAP,2,ca,0.0706806881252099
+Heart,SHAP,3,cp,0.0532666679389091
+Heart,SHAP,4,exang,0.0528682757115371
+Heart,SHAP,5,sex,0.0488746604902445
+Stroke,Native,1,age,1.5489010912870511
+Stroke,Native,2,bmi_missing,0.290113522323651
+Stroke,Native,3,avg_glucose_level,0.1824054625842407
+Stroke,Native,4,hypertension,0.1328415267392235
+Stroke,Native,5,ever_married_No,0.0604295080330603
+Stroke,Permutation,1,age,0.3087314814814815
+Stroke,Permutation,2,avg_glucose_level,0.0046244855967078
+Stroke,Permutation,3,bmi_missing,0.0033333333333333
+Stroke,Permutation,4,heart_disease,0.0006203703703703
+Stroke,Permutation,5,ever_married_No,-0.0001563786008229
+Stroke,SHAP,1,age,0.0439563673379837
+Stroke,SHAP,2,avg_glucose_level,0.0080404841339402
+Stroke,SHAP,3,bmi_missing,0.0069857302375494
+Stroke,SHAP,4,hypertension,0.0056633472512149
+Stroke,SHAP,5,ever_married_No,0.0019760100508004
+Diabetes,Native,1,Glucose,0.353248627501802
+Diabetes,Native,2,BMI,0.2429286381897049
+Diabetes,Native,3,Age,0.1840174354988957
+Diabetes,Native,4,Insulin,0.1203067341225673
+Diabetes,Native,5,SkinThickness,0.0994985646870299
+Diabetes,Permutation,1,Glucose,0.0754347826086956
+Diabetes,Permutation,2,BMI,0.0399999999999999
+Diabetes,Permutation,3,Age,0.0260869565217391
+Diabetes,Permutation,4,Insulin,0.0193478260869565
+Diabetes,Permutation,5,SkinThickness,0.0115217391304347
+Diabetes,SHAP,1,Glucose,0.1441555445541828
+Diabetes,SHAP,2,BMI,0.0872233200660978
+Diabetes,SHAP,3,Age,0.0702187011577733
+Diabetes,SHAP,4,Insulin,0.0373210820691352
+Diabetes,SHAP,5,SkinThickness,0.0222789686807643
+Ckd,Native,1,sc,0.1727942033581276
+Ckd,Native,2,sg,0.1722091776009918
+Ckd,Native,3,hemo,0.151966388708314
+Ckd,Native,4,pcv,0.1371964524707081
+Ckd,Native,5,al,0.0734557778264815
+Ckd,Permutation,1,sg,0.1245833333333333
+Ckd,Permutation,2,sc,0.0087499999999999
+Ckd,Permutation,3,pcv,0.0058333333333333
+Ckd,Permutation,4,rc,0.0024999999999999
+Ckd,Permutation,5,al,0.0024999999999999
+Ckd,SHAP,1,sg,0.093745604699889
+Ckd,SHAP,2,sc,0.0828618764857858
+Ckd,SHAP,3,hemo,0.0784689989865762
+Ckd,SHAP,4,pcv,0.0740071545556471
+Ckd,SHAP,5,al,0.0436596146276745
+Hba1c,Native,1,specialty_group[T.Surgery]:age_group3[T.30 years old or younger],2.989243902923027
+Hba1c,Native,2,specialty_group[T.Family/general practice]:age_group3[T.30 years old or younger],2.4989765201192893
+Hba1c,Native,3,specialty_group[T.Other]:age_group3[T.30 years old or younger],2.409895390733972
+Hba1c,Native,4,specialty_group[T.Internal Medicine]:age_group3[T.30 years old or younger],2.0239711906835423
+Hba1c,Native,5,age_group3[T.30 years old or younger],1.8576468546649425
+Hba1c,Permutation,1,time_in_hospital,0.0656031228874409
+Hba1c,Permutation,2,specialty_group[T.Missing or unknown],0.0226084198306866
+Hba1c,Permutation,3,discharge_group[T.Otherwise],0.0151376028708444
+Hba1c,Permutation,4,specialty_group[T.Internal Medicine],0.0121623430765089
+Hba1c,Permutation,5,specialty_group[T.Missing or unknown]:time_in_hospital,0.0114732539374761
+Hba1c,SHAP,1,time_in_hospital,0.025382937858261
+Hba1c,SHAP,2,specialty_group[T.Missing or unknown],0.0173916364138803
+Hba1c,SHAP,3,discharge_group[T.Otherwise],0.0117439572038694
+Hba1c,SHAP,4,specialty_group[T.Missing or unknown]:time_in_hospital,0.0113961588487819
+Hba1c,SHAP,5,age_group3[T.Older than 60],0.0101540664179966

@@ -1,0 +1,18 @@
+{
+  "decision": "KEEP_CANONICAL_RESULTS_AND_REVIEW_PILOT",
+  "decision_scope": "Computational feasibility only: optimiser convergence, failures, and projected runtime. A small pilot does not establish statistical convergence of the stability estimates.",
+  "requested_bootstraps": 100,
+  "successful_bootstraps": 58,
+  "failed_bootstraps": 42,
+  "converged_fits": 58,
+  "convergence_rate": 0.58,
+  "median_fit_seconds": 1.5410465000022668,
+  "median_grouped_permutation_seconds": 19.979469800018705,
+  "median_total_seconds_per_bootstrap": 22.097712700007833,
+  "projected_full_bootstraps": 100,
+  "projected_full_runtime_hours": 0.6138253527779953,
+  "maximum_acceptable_projected_hours": 12.0,
+  "pilot_mean_pairwise_spearman": 0.8032498843457531,
+  "canonical_results_changed": false,
+  "current_model_grouped_permutation_seconds": 43.725009999994654
+}

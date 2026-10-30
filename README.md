@@ -587,7 +587,7 @@ The MIT License applies to the original source code under `src/`, `examples/`, `
 
 ## Archival release
 
-Version **1.0.0** of TRACE-XAI is archived on Zenodo:
+Version **1.0.0** of TRACE-XAI has been assigned the following Zenodo DOI:
 
 **DOI:** [10.5281/zenodo.23699962](https://doi.org/10.5281/zenodo.23699962)
 
